@@ -3,18 +3,27 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>To Jiayi · 19th Birthday</title>
+  <title>想和你一起去很多地方 · To Jiayi 19th</title>
   <style>
-    /* 基础变量与配色：取自午夜星轨深蓝与暖金微光 */
+    /* ==========================================================
+       配色系统：温和奶油羊皮纸 + 落日琥珀暖调 + 复古胶片茶褐
+       ========================================================== */
     :root {
-      --bg-deep: #070b18;
-      --bg-mid: #0e1933;
-      --gold-warm: #e8cfa4;
-      --gold-muted: #ac916d;
-      --text-main: #f5efe6;
-      --text-sub: rgba(245, 239, 230, 0.72);
-      --glass-bg: rgba(255, 255, 255, 0.04);
-      --glass-border: rgba(232, 207, 164, 0.22);
+      --bg-paper: #f6efe6;
+      --bg-paper-deep: #ede1d1;
+      --card-paper: #fbf7f1;
+      --ink-main: #433227;
+      --ink-soft: #6e5849;
+      --ink-muted: #9a8272;
+      --amber: #d88b56;
+      --amber-glow: rgba(232, 165, 110, 0.34);
+      --peach-flare: rgba(244, 190, 148, 0.38);
+      --stamp-red: #d96b43;
+      --border-soft: rgba(120, 92, 72, 0.14);
+      --shadow-warm: 0 18px 44px -14px rgba(74, 52, 36, 0.16), 0 4px 12px rgba(74, 52, 36, 0.06);
+      --serif: "Songti SC", "STSong", "Noto Serif SC", "Source Han Serif SC", Georgia, serif;
+      --sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
     }
 
     * {
@@ -24,318 +33,1257 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    html, body {
-      width: 100%;
-      height: 100%;
-      min-height: 100dvh;
-      background: radial-gradient(circle at 50% 25%, #16274c 0%, var(--bg-mid) 45%, var(--bg-deep) 100%);
-      color: var(--text-main);
-      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Noto Serif SC", serif;
-      overflow: hidden;
-      user-select: none;
+    html {
+      scroll-behavior: smooth;
+      background-color: var(--bg-paper);
     }
 
-    /* 背景星光画布 */
-    #starfield {
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 15% 12%, rgba(245, 196, 152, 0.34) 0%, transparent 45%),
+        radial-gradient(circle at 86% 32%, rgba(236, 174, 148, 0.25) 0%, transparent 42%),
+        radial-gradient(circle at 25% 78%, rgba(226, 188, 144, 0.24) 0%, transparent 48%),
+        linear-gradient(180deg, #f7f1e8 0%, #f3e9dc 52%, #efe3d2 100%);
+      color: var(--ink-main);
+      font-family: var(--sans);
+      line-height: 1.75;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* ==========================================================
+       35mm 胶片颗粒与光学暖色炫光层（固定铺满屏幕，不遮挡点击）
+       ========================================================== */
+    .film-grain {
+      position: fixed;
+      inset: -10%;
+      width: 120%;
+      height: 120%;
+      pointer-events: none;
+      z-index: 50;
+      opacity: 0.06;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+      animation: grainShift 0.36s steps(2) infinite;
+    }
+
+    @keyframes grainShift {
+      0% { transform: translate(0, 0); }
+      25% { transform: translate(-1.5%, 1%); }
+      50% { transform: translate(1.2%, -1.5%); }
+      75% { transform: translate(-1%, -1%); }
+      100% { transform: translate(0.8%, 1.2%); }
+    }
+
+    /* 暖橘炫光光晕漂移背景 */
+    .flare-layer {
       position: fixed;
       inset: 0;
-      width: 100%;
-      height: 100%;
       pointer-events: none;
       z-index: 0;
+      overflow: hidden;
     }
 
-    /* 居中主卡片容器 */
-    .stage {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      height: 100dvh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 28px 24px env(safe-area-inset-bottom, 24px);
-      text-align: center;
-    }
-
-    /* 呼吸光球 */
-    .orb-wrap {
-      position: relative;
-      width: 96px;
-      height: 96px;
-      margin-bottom: 34px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-    }
-
-    .orb-halo {
+    .flare-orb {
       position: absolute;
-      inset: -14px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(232, 207, 164, 0.32) 0%, rgba(232, 207, 164, 0) 70%);
-      animation: breathe 4.2s ease-in-out infinite;
+      filter: blur(55px);
+      will-change: transform;
+      opacity: 0.65;
     }
 
-    .orb-core {
+    .flare-1 {
+      width: 340px;
+      height: 340px;
+      top: -80px;
+      right: -90px;
+      background: radial-gradient(circle, rgba(242, 178, 126, 0.55) 0%, rgba(242, 178, 126, 0) 70%);
+      animation: floatSlow 14s ease-in-out infinite alternate;
+    }
+
+    .flare-2 {
+      width: 300px;
+      height: 300px;
+      top: 42%;
+      left: -110px;
+      background: radial-gradient(circle, rgba(235, 168, 152, 0.42) 0%, rgba(235, 168, 152, 0) 70%);
+      animation: floatSlow 18s ease-in-out infinite alternate-reverse;
+    }
+
+    .flare-3 {
+      width: 280px;
+      height: 280px;
+      bottom: -60px;
+      right: 5%;
+      background: radial-gradient(circle, rgba(226, 175, 118, 0.45) 0%, rgba(226, 175, 118, 0) 72%);
+      animation: floatSlow 16s ease-in-out infinite alternate;
+    }
+
+    @keyframes floatSlow {
+      0% { transform: translate3d(0, 0, 0) scale(1); }
+      100% { transform: translate3d(24px, -28px, 0) scale(1.1); }
+    }
+
+    /* 柔和快门闪光遮罩 */
+    .shutter-flash {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at center, #fffaf2 0%, #f9e7cf 100%);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 90;
+      transition: opacity 0.55s ease-out;
+    }
+
+    .shutter-flash.active {
+      opacity: 0.78;
+      transition: opacity 0.06s ease-in;
+    }
+
+    /* ==========================================================
+       主内容容器
+       ========================================================== */
+    .page-wrap {
       position: relative;
-      width: 58px;
-      height: 58px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 35% 32%, #fff5e1 0%, var(--gold-warm) 42%, var(--gold-muted) 100%);
-      box-shadow: 0 0 28px rgba(232, 207, 164, 0.45), inset 0 0 12px rgba(255, 255, 255, 0.6);
+      z-index: 2;
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 20px 18px 80px;
+    }
+
+    /* ==========================================================
+       顶部 CCD 相机取景器 HUD 状态栏
+       ========================================================== */
+    .ccd-hud {
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      font-weight: 600;
-      letter-spacing: 1px;
-      color: #24190e;
-      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    .orb-wrap:active .orb-core {
-      transform: scale(0.92);
-    }
-
-    @keyframes breathe {
-      0%, 100% {
-        transform: scale(0.92);
-        opacity: 0.65;
-      }
-      50% {
-        transform: scale(1.16);
-        opacity: 1;
-      }
-    }
-
-    /* 英文徽章 */
-    .badge {
-      font-family: ui-serif, Georgia, "Times New Roman", serif;
-      font-size: 12px;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      color: var(--gold-warm);
-      opacity: 0.85;
-      margin-bottom: 18px;
-      animation: fadeUp 1s ease forwards;
-    }
-
-    /* 主标题与正文 */
-    .headline {
-      font-size: clamp(26px, 6.8vw, 34px);
-      font-weight: 500;
+      justify-content: space-between;
+      padding: 12px 16px;
+      margin-bottom: 26px;
+      border-radius: 14px;
+      background: rgba(251, 247, 241, 0.62);
+      border: 1px solid var(--border-soft);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--ink-soft);
       letter-spacing: 0.08em;
-      line-height: 1.45;
-      margin-bottom: 16px;
-      color: var(--text-main);
-      animation: fadeUp 1.15s ease forwards;
     }
 
-    .subtitle {
-      max-width: 320px;
-      font-size: 15px;
-      line-height: 1.9;
-      color: var(--text-sub);
-      font-weight: 300;
-      letter-spacing: 0.04em;
-      animation: fadeUp 1.35s ease forwards;
+    .hud-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    /* 底部提示卡片 */
-    .pill {
-      margin-top: 40px;
-      padding: 12px 22px;
+    .rec-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--stamp-red);
+      box-shadow: 0 0 8px rgba(217, 107, 67, 0.65);
+      animation: recBlink 2.2s ease-in-out infinite;
+    }
+
+    @keyframes recBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.25; }
+    }
+
+    .hud-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
       border-radius: 999px;
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      font-size: 13px;
-      letter-spacing: 0.08em;
-      color: var(--gold-warm);
+      border: 1px solid rgba(120, 92, 72, 0.22);
+      background: rgba(255, 252, 247, 0.7);
+      font-family: var(--mono);
+      font-size: 10.5px;
+      color: var(--ink-main);
       cursor: pointer;
-      transition: background 0.3s ease, transform 0.25s ease;
-      animation: fadeUp 1.55s ease forwards;
+      transition: all 0.25s ease;
     }
 
-    .pill:active {
-      transform: scale(0.96);
-      background: rgba(232, 207, 164, 0.12);
+    .hud-toggle:active {
+      transform: scale(0.95);
     }
 
-    .whisper {
-      margin-top: 16px;
-      min-height: 22px;
-      font-size: 12.5px;
-      color: rgba(232, 207, 164, 0.78);
+    /* ==========================================================
+       第一幕：序言 Hero 卡片（复古取景框）
+       ========================================================== */
+    .hero-card {
+      position: relative;
+      padding: 40px 26px 36px;
+      border-radius: 22px;
+      background: linear-gradient(155deg, rgba(253, 250, 245, 0.88) 0%, rgba(246, 236, 223, 0.82) 100%);
+      border: 1px solid rgba(154, 130, 114, 0.2);
+      box-shadow: var(--shadow-warm);
+      overflow: hidden;
+      text-align: center;
+      margin-bottom: 42px;
+    }
+
+    /* 四角相机对焦框线 */
+    .vf-corner {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-color: rgba(154, 130, 114, 0.42);
+      border-style: solid;
+      pointer-events: none;
+    }
+    .vf-tl { top: 14px; left: 14px; border-width: 1.5px 0 0 1.5px; }
+    .vf-tr { top: 14px; right: 14px; border-width: 1.5px 1.5px 0 0; }
+    .vf-bl { bottom: 14px; left: 14px; border-width: 0 0 1.5px 1.5px; }
+    .vf-br { bottom: 14px; right: 14px; border-width: 0 1.5px 1.5px 0; }
+
+    /* 模拟右上角柔光漏光 */
+    .hero-flare {
+      position: absolute;
+      top: -60px;
+      right: -50px;
+      width: 220px;
+      height: 220px;
+      background: radial-gradient(circle, rgba(238, 162, 102, 0.34) 0%, rgba(238, 162, 102, 0) 70%);
+      pointer-events: none;
+    }
+
+    .hero-tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      color: var(--amber);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .hero-title {
+      font-family: var(--serif);
+      font-size: clamp(26px, 6.2vw, 34px);
+      font-weight: 600;
       letter-spacing: 0.06em;
-      opacity: 0;
+      line-height: 1.4;
+      color: var(--ink-main);
+      margin-bottom: 18px;
+    }
+
+    .hero-hug {
+      display: inline-block;
+      padding: 10px 18px;
+      border-radius: 12px;
+      background: rgba(216, 139, 86, 0.09);
+      border: 1px dashed rgba(216, 139, 86, 0.32);
+      font-size: 14.5px;
+      color: var(--ink-soft);
+      line-height: 1.8;
+      margin-bottom: 20px;
+    }
+
+    .hero-lead {
+      max-width: 500px;
+      margin: 0 auto 26px;
+      font-size: 14.5px;
+      color: var(--ink-soft);
+      line-height: 1.9;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .btn-warm {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 11px 22px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, #d88b56 0%, #c87642 100%);
+      color: #fffaf3;
+      font-size: 13.5px;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-decoration: none;
+      cursor: pointer;
+      box-shadow: 0 8px 20px -6px rgba(200, 118, 66, 0.45);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .btn-warm:active {
+      transform: scale(0.96);
+    }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 11px 20px;
+      border-radius: 999px;
+      border: 1px solid rgba(120, 92, 72, 0.24);
+      background: rgba(255, 252, 247, 0.68);
+      color: var(--ink-main);
+      font-size: 13.5px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.25s ease, transform 0.25s ease;
+    }
+
+    .btn-ghost:active {
+      transform: scale(0.96);
+    }
+
+    /* ==========================================================
+       第二幕：想去很多地方 · 6张风格化胶片与 CCD 相纸画廊
+       ========================================================== */
+    .section-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 0 4px 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .section-kicker {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      letter-spacing: 0.2em;
+      color: var(--amber);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .section-title {
+      font-family: var(--serif);
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--ink-main);
+    }
+
+    .section-hint {
+      font-size: 12px;
+      color: var(--ink-muted);
+      text-align: right;
+    }
+
+    .film-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 28px;
+      margin-bottom: 54px;
+    }
+
+    @media (min-width: 680px) {
+      .film-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 28px 24px;
+      }
+      .film-card:nth-child(even) {
+        transform: translateY(18px);
+      }
+    }
+
+    /* 单张胶片拍立得卡片 */
+    .film-card {
+      position: relative;
+      background: var(--card-paper);
+      padding: 13px 13px 20px;
+      border-radius: 14px;
+      border: 1px solid rgba(130, 102, 82, 0.14);
+      box-shadow: var(--shadow-warm);
+      transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.45s ease;
+    }
+
+    .film-card:hover {
+      box-shadow: 0 22px 48px -14px rgba(74, 52, 36, 0.22);
+    }
+
+    /* 胶片画面视窗 */
+    .photo-frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #e5d8c8;
+      cursor: pointer;
+    }
+
+    .photo-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      /* 默认带着一点温和复古的 CCD 柔和晕影与轻微失焦梦境感 */
+      filter: blur(0.6px) saturate(0.94) contrast(0.93) sepia(0.08);
+      transform: scale(1.015);
+      transition: filter 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s ease;
+    }
+
+    /* 全局开启强化 CCD 模糊模式，或单张点击进入深朦胧回忆感 */
+    body.dreamy-ccd .photo-img,
+    .photo-frame.is-hazy .photo-img {
+      filter: blur(2.6px) saturate(0.88) contrast(0.88) brightness(1.03) sepia(0.14);
+      transform: scale(1.045);
+    }
+
+    .photo-frame.is-focused .photo-img {
+      filter: blur(0px) saturate(0.98) contrast(0.96) sepia(0.05);
+      transform: scale(1);
+    }
+
+    /* 每张照片内部叠加动态暖色炫光与胶片漏光光斑 */
+    .photo-flare {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 86% 14%, rgba(255, 198, 134, 0.36) 0%, rgba(255, 198, 134, 0) 44%),
+        radial-gradient(circle at 12% 88%, rgba(242, 152, 118, 0.22) 0%, rgba(242, 152, 118, 0) 42%);
+      mix-blend-mode: screen;
       transition: opacity 0.5s ease;
     }
 
-    .whisper.show {
-      opacity: 1;
+    /* 轻微暗角与纸质相纸边缘柔化 */
+    .photo-vignette {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      box-shadow: inset 0 0 38px rgba(42, 26, 16, 0.26);
     }
 
-    .footer-sign {
-      position: fixed;
-      bottom: max(18px, env(safe-area-inset-bottom, 18px));
-      left: 0;
-      right: 0;
-      text-align: center;
+    /* 复古相机橙红色液晶日期戳 */
+    .ccd-stamp {
+      position: absolute;
+      right: 12px;
+      bottom: 10px;
+      font-family: var(--mono);
       font-size: 11px;
-      letter-spacing: 0.18em;
-      color: rgba(245, 239, 230, 0.35);
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      color: rgba(255, 146, 86, 0.88);
+      text-shadow: 0 0 8px rgba(255, 122, 56, 0.65), 0 1px 2px rgba(0, 0, 0, 0.4);
       pointer-events: none;
     }
 
-    @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(14px);
+    /* 取景器 AF 聚焦状态徽章 */
+    .focus-chip {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: rgba(34, 24, 18, 0.42);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      font-family: var(--mono);
+      font-size: 10px;
+      color: rgba(255, 244, 230, 0.9);
+      letter-spacing: 0.08em;
+      pointer-events: none;
+    }
+
+    /* 背面翻面寄语层（覆盖在画面上方，轻柔毛玻璃卡片） */
+    .photo-note-overlay {
+      position: absolute;
+      inset: 0;
+      padding: 24px 20px;
+      background: rgba(249, 243, 234, 0.92);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    .photo-frame.show-note .photo-note-overlay {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .note-quote {
+      font-family: var(--serif);
+      font-size: 15.5px;
+      line-height: 1.9;
+      color: var(--ink-main);
+      margin-bottom: 14px;
+    }
+
+    .note-ref {
+      font-size: 11.5px;
+      color: var(--ink-muted);
+      letter-spacing: 0.06em;
+    }
+
+    /* 卡片底部配文区 */
+    .card-caption {
+      padding: 14px 4px 2px;
+    }
+
+    .caption-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .place-name {
+      font-family: var(--serif);
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--ink-main);
+      letter-spacing: 0.04em;
+    }
+
+    .place-code {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      color: var(--ink-muted);
+      letter-spacing: 0.08em;
+    }
+
+    .place-desc {
+      font-size: 13.5px;
+      color: var(--ink-soft);
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+
+    .card-tools {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .mini-btn {
+      padding: 5px 11px;
+      border-radius: 999px;
+      border: 1px solid rgba(120, 92, 72, 0.2);
+      background: rgba(246, 239, 230, 0.7);
+      font-size: 11.5px;
+      color: var(--ink-soft);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .mini-btn:active {
+      transform: scale(0.95);
+    }
+
+    .mini-btn.active {
+      background: rgba(216, 139, 86, 0.16);
+      border-color: rgba(216, 139, 86, 0.45);
+      color: var(--ink-main);
+    }
+
+    /* ==========================================================
+       第三幕：致十九岁的嘉怡 · 见信好（信封 + 复古棉纸信笺）
+       ========================================================== */
+    .letter-section {
+      margin-bottom: 48px;
+    }
+
+    /* 信封封面（点击拆开） */
+    .envelope-box {
+      position: relative;
+      padding: 36px 24px;
+      border-radius: 20px;
+      background: linear-gradient(160deg, #f3e6d5 0%, #ead7c0 100%);
+      border: 1px solid rgba(145, 114, 90, 0.24);
+      box-shadow: var(--shadow-warm);
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.35s ease, opacity 0.35s ease;
+    }
+
+    .envelope-box:active {
+      transform: scale(0.985);
+    }
+
+    .envelope-box.is-hidden {
+      display: none;
+    }
+
+    .wax-seal {
+      width: 62px;
+      height: 62px;
+      margin: 0 auto 18px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #e07c56 0%, #b84f32 70%, #8f3922 100%);
+      box-shadow: 0 8px 18px rgba(143, 57, 34, 0.32), inset 0 2px 6px rgba(255, 220, 200, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--serif);
+      font-size: 20px;
+      font-weight: 600;
+      color: #fbeee2;
+      letter-spacing: 1px;
+    }
+
+    .envelope-title {
+      font-family: var(--serif);
+      font-size: 21px;
+      color: var(--ink-main);
+      margin-bottom: 8px;
+    }
+
+    .envelope-sub {
+      font-size: 13.5px;
+      color: var(--ink-soft);
+      margin-bottom: 16px;
+    }
+
+    .envelope-cta {
+      display: inline-block;
+      padding: 7px 16px;
+      border-radius: 999px;
+      background: rgba(255, 250, 244, 0.72);
+      border: 1px solid rgba(145, 114, 90, 0.24);
+      font-size: 12.5px;
+      color: var(--ink-main);
+    }
+
+    /* 展开后的棉纸信笺 */
+    .letter-paper {
+      display: none;
+      position: relative;
+      padding: 36px 24px 40px;
+      border-radius: 18px;
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          transparent 0px,
+          transparent 33px,
+          rgba(154, 130, 114, 0.08) 34px
+        ),
+        linear-gradient(180deg, #fcf8f2 0%, #f8f0e4 100%);
+      border: 1px solid rgba(154, 130, 114, 0.2);
+      box-shadow: var(--shadow-warm);
+      animation: fadeSlideIn 0.6s ease forwards;
+    }
+
+    @media (min-width: 640px) {
+      .letter-paper {
+        padding: 48px 44px 52px;
       }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    }
+
+    .letter-paper.is-open {
+      display: block;
+    }
+
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .letter-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 14px;
+      border-bottom: 1px dashed rgba(154, 130, 114, 0.28);
+    }
+
+    .letter-salutation {
+      font-family: var(--serif);
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--ink-main);
+    }
+
+    .letter-date {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--ink-muted);
+      letter-spacing: 0.08em;
+    }
+
+    .letter-body p {
+      font-family: var(--serif);
+      font-size: 15.8px;
+      line-height: 2.05;
+      color: var(--ink-main);
+      margin-bottom: 18px;
+      letter-spacing: 0.02em;
+    }
+
+    .letter-body p.poem-lines {
+      padding-left: 14px;
+      border-left: 2px solid rgba(216, 139, 86, 0.45);
+      color: var(--ink-soft);
+    }
+
+    .english-verse {
+      display: block;
+      margin-top: 8px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-style: italic;
+      color: var(--ink-soft);
+      font-size: 15px;
+    }
+
+    /* 备忘录折叠卡片（对应“躺在备忘录里许久的信”） */
+    .memo-card {
+      margin: 24px 0 26px;
+      border-radius: 14px;
+      background: #fffdf8;
+      border: 1px solid rgba(214, 178, 120, 0.45);
+      box-shadow: 0 8px 22px -8px rgba(120, 90, 50, 0.14);
+      overflow: hidden;
+    }
+
+    .memo-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: linear-gradient(90deg, rgba(244, 214, 152, 0.28), rgba(244, 214, 152, 0.12));
+      border-bottom: 1px solid rgba(214, 178, 120, 0.28);
+      cursor: pointer;
+    }
+
+    .memo-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12.5px;
+      font-weight: 500;
+      color: #8c6334;
+    }
+
+    .memo-action {
+      font-size: 11.5px;
+      color: #a47944;
+    }
+
+    .memo-content {
+      padding: 18px 18px 20px;
+      font-family: var(--serif);
+      font-size: 15px;
+      line-height: 1.95;
+      color: #5a4638;
+      font-style: italic;
+      display: none;
+    }
+
+    .memo-card.open .memo-content {
+      display: block;
+      animation: fadeSlideIn 0.35s ease;
+    }
+
+    .letter-sign {
+      margin-top: 30px;
+      text-align: right;
+      font-family: var(--serif);
+      font-size: 15.5px;
+      color: var(--ink-soft);
+      line-height: 1.9;
+    }
+
+    /* ==========================================================
+       第四幕：底部快门互动卡片
+       ========================================================== */
+    .shutter-card {
+      padding: 30px 22px;
+      border-radius: 18px;
+      background: rgba(251, 247, 241, 0.74);
+      border: 1px solid var(--border-soft);
+      text-align: center;
+      box-shadow: var(--shadow-warm);
+    }
+
+    .shutter-whisper {
+      min-height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--serif);
+      font-size: 15px;
+      color: var(--ink-main);
+      margin-bottom: 18px;
+      line-height: 1.8;
+      transition: opacity 0.35s ease;
+    }
+
+    .shutter-count {
+      margin-top: 12px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--ink-muted);
+      letter-spacing: 0.1em;
+    }
+
+    .footer-note {
+      margin-top: 34px;
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 10.5px;
+      letter-spacing: 0.16em;
+      color: var(--ink-muted);
     }
   </style>
 </head>
 <body>
-  <canvas id="starfield"></canvas>
+  <!-- 光学暖色炫光与胶片颗粒叠加层 -->
+  <div class="flare-layer" aria-hidden="true">
+    <div class="flare-orb flare-1"></div>
+    <div class="flare-orb flare-2"></div>
+    <div class="flare-orb flare-3"></div>
+  </div>
+  <div class="film-grain" aria-hidden="true"></div>
+  <div class="shutter-flash" id="shutterFlash" aria-hidden="true"></div>
 
-  <main class="stage">
-    <div class="orb-wrap" id="orbBtn" role="button" aria-label="点亮星光">
-      <div class="orb-halo"></div>
-      <div class="orb-core">19</div>
-    </div>
+  <div class="page-wrap">
+    <!-- 顶部 CCD 相机取景栏 -->
+    <header class="ccd-hud">
+      <div class="hud-left">
+        <span class="rec-dot"></span>
+        <span>CCD-19 · ROLL #01</span>
+      </div>
+      <button class="hud-toggle" id="globalCcdBtn" type="button">
+        <span>◎ CCD 柔焦: 标准</span>
+      </button>
+    </header>
 
-    <div class="badge">To Jiayi · Lv.19</div>
-    <h1 class="headline">你来了。</h1>
-    <p class="subtitle">
-      在这个页面停留的每一秒，<br />
-      都像被我轻轻抱了一下。<br />
-      正在为你布置属于 19 岁的秘密空间……
-    </p>
+    <!-- 第一幕：序幕与核心主题 -->
+    <section class="hero-card">
+      <span class="vf-corner vf-tl"></span>
+      <span class="vf-corner vf-tr"></span>
+      <span class="vf-corner vf-bl"></span>
+      <span class="vf-corner vf-br"></span>
+      <div class="hero-flare"></div>
 
-    <button class="pill" id="hugBtn" type="button">轻触收集一颗星光</button>
-    <p class="whisper" id="whisperText"></p>
-  </main>
+      <div class="hero-tag">To Jiayi · 19th Birthday Film</div>
+      <h1 class="hero-title">想和你一起去很多地方</h1>
 
-  <footer class="footer-sign">13.8 BILLION YEARS IN THE MAKING</footer>
+      <div class="hero-hug">
+        “你来了。在这个页面停留的每一秒，都像被我轻轻抱了一下。”
+      </div>
+
+      <p class="hero-lead">
+        把还没来得及亲口说完的心事，和想要拉着你走过的远方，<br />
+        先洗进这一卷带着暖色炫光与轻微模糊感的 19 岁底片里。
+      </p>
+
+      <div class="hero-actions">
+        <a href="#places" class="btn-warm">🎞️ 翻看这卷远方胶片</a>
+        <a href="#letter" class="btn-ghost" id="jumpLetterBtn">✉️ 拆开给你的信</a>
+      </div>
+    </section>
+
+    <!-- 第二幕：6 张双人剪影风格化远方胶片 -->
+    <section id="places">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">Destinations &amp; Silhouettes</div>
+          <h2 class="section-title">想和你去的地方 · 六帧底片</h2>
+        </div>
+        <div class="section-hint">轻触相片可切换对焦或翻看背面</div>
+      </div>
+
+      <div class="film-grid" id="filmGrid">
+        <!-- 01 -->
+        <article class="film-card">
+          <div class="photo-frame" data-index="0">
+            <img class="photo-img" src="assets/place-01.jpg" alt="雪山与高原湖畔的两个人影" loading="eager" />
+            <div class="photo-flare"></div>
+            <div class="photo-vignette"></div>
+            <span class="focus-chip">SOFT CCD</span>
+            <span class="ccd-stamp">'26 11 19</span>
+            <div class="photo-note-overlay">
+              <p class="note-quote">“答应自己要去的地方，无论多远，我都想站在你身旁一起看见雪山与倒影。”</p>
+              <span class="note-ref">FRAME #01 · 高原湖畔</span>
+            </div>
+          </div>
+          <div class="card-caption">
+            <div class="caption-top">
+              <h3 class="place-name">雪山与高原湖畔</h3>
+              <span class="place-code">NO.01 / PLATEAU</span>
+            </div>
+            <p class="place-desc">坐在清晨微凉的木栏杆上看云雾漫过山脊，风再大，靠在一起就不冷了。</p>
+            <div class="card-tools">
+              <button class="mini-btn js-focus-btn" type="button">对焦 / 虚焦</button>
+              <button class="mini-btn js-note-btn" type="button">背面注脚</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 02 -->
+        <article class="film-card">
+          <div class="photo-frame" data-index="1">
+            <img class="photo-img" src="assets/place-02.jpg" alt="暮色海湾甲板上的两个人影" loading="lazy" />
+            <div class="photo-flare"></div>
+            <div class="photo-vignette"></div>
+            <span class="focus-chip">SOFT CCD</span>
+            <span class="ccd-stamp">'26 11 19</span>
+            <div class="photo-note-overlay">
+              <p class="note-quote">“天在将黑未黑时最美，而你在我身边吹风的样子，比远处粉紫色的晚霞更动人。”</p>
+              <span class="note-ref">FRAME #02 · 暮色甲板</span>
+            </div>
+          </div>
+          <div class="card-caption">
+            <div class="caption-top">
+              <h3 class="place-name">北境暮色甲板</h3>
+              <span class="place-code">NO.02 / TWILIGHT SEA</span>
+            </div>
+            <p class="place-desc">在粉紫与蓝调交错的黄昏海面吹吹风，什么话也不用急着说，只是看远方的冰山。</p>
+            <div class="card-tools">
+              <button class="mini-btn js-focus-btn" type="button">对焦 / 虚焦</button>
+              <button class="mini-btn js-note-btn" type="button">背面注脚</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 03 -->
+        <article class="film-card">
+          <div class="photo-frame" data-index="2">
+            <img class="photo-img" src="assets/place-03.jpg" alt="落日海滩牵手的两个人影" loading="lazy" />
+            <div class="photo-flare"></div>
+            <div class="photo-vignette"></div>
+            <span class="focus-chip">SOFT CCD</span>
+            <span class="ccd-stamp">'26 11 19</span>
+            <div class="photo-note-overlay">
+              <p class="note-quote">“我们要散步，走很长很长的路——从八分钟走到整片落日海滩，十指相扣时生命线也会交错。”</p>
+              <span class="note-ref">FRAME #03 · 落日潮汐</span>
+            </div>
+          </div>
+          <div class="card-caption">
+            <div class="caption-top">
+              <h3 class="place-name">金色海岸与落日</h3>
+              <span class="place-code">NO.03 / GOLDEN SHORE</span>
+            </div>
+            <p class="place-desc">踩着松软的海沙慢慢走，等夕阳一点点沉进海平面，把我们的影子拉得很长。</p>
+            <div class="card-tools">
+              <button class="mini-btn js-focus-btn" type="button">对焦 / 虚焦</button>
+              <button class="mini-btn js-note-btn" type="button">背面注脚</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 04 -->
+        <article class="film-card">
+          <div class="photo-frame" data-index="3">
+            <img class="photo-img" src="assets/place-04.jpg" alt="山湖黄昏车窗前的两个人影" loading="lazy" />
+            <div class="photo-flare"></div>
+            <div class="photo-vignette"></div>
+            <span class="focus-chip">SOFT CCD</span>
+            <span class="ccd-stamp">'26 11 19</span>
+            <div class="photo-note-overlay">
+              <p class="note-quote">“车窗就是流动的取景器。只要你靠在肩头，经过的每一片山湖都是只放给我们看的电影。”</p>
+              <span class="note-ref">FRAME #04 · 落日列车</span>
+            </div>
+          </div>
+          <div class="card-caption">
+            <div class="caption-top">
+              <h3 class="place-name">开往黄昏的山湖列车</h3>
+              <span class="place-code">NO.04 / DUSK WINDOW</span>
+            </div>
+            <p class="place-desc">坐在摇摇晃晃的车厢里共享一副耳机，窗外是落日熔金，窗内是刚好的体温。</p>
+            <div class="card-tools">
+              <button class="mini-btn js-focus-btn" type="button">对焦 / 虚焦</button>
+              <button class="mini-btn js-note-btn" type="button">背面注脚</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 05 -->
+        <article class="film-card">
+          <div class="photo-frame" data-index="4">
+            <img class="photo-img" src="assets/place-05.jpg" alt="窗前并肩看烟火的两个人影" loading="lazy" />
+            <div class="photo-flare"></div>
+            <div class="photo-vignette"></div>
+            <span class="focus-chip">SOFT CCD</span>
+            <span class="ccd-stamp">'26 11 19</span>
+            <div class="photo-note-overlay">
+              <p class="note-quote">“镜头失焦的时候光斑会变成温柔的圆，就像那天站在窗前看烟火时，你转头看我的眼睛。”</p>
+              <span class="note-ref">FRAME #05 · 港湾夜色</span>
+            </div>
+          </div>
+          <div class="card-caption">
+            <div class="caption-top">
+              <h3 class="place-name">落地窗前的失焦烟火</h3>
+              <span class="place-code">NO.05 / HARBOR SPARK</span>
+            </div>
+            <p class="place-desc">把城市的喧嚣留在玻璃外面，安静地并肩站一会儿，看整片夜空为你亮起来。</p>
+            <div class="card-tools">
+              <button class="mini-btn js-focus-btn" type="button">对焦 / 虚焦</button>
+              <button class="mini-btn js-note-btn" type="button">背面注脚</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 06 -->
+        <article class="film-card">
+          <div class="photo-frame" data-index="5">
+            <img class="photo-img" src="assets/place-06.jpg" alt="路灯与秋日余晖下牵手散步的两个人影" loading="lazy" />
+            <div class="photo-flare"></div>
+            <div class="photo-vignette"></div>
+            <span class="focus-chip">SOFT CCD</span>
+            <span class="ccd-stamp">'26 11 19</span>
+            <div class="photo-note-overlay">
+              <p class="note-quote">“在傍晚、晚风、余晖和路灯下，在你飘动的发丝间——和你一起浪费时间，是我能想到最美妙的事。”</p>
+              <span class="note-ref">FRAME #06 · 老派散步</span>
+            </div>
+          </div>
+          <div class="card-caption">
+            <div class="caption-top">
+              <h3 class="place-name">路灯、晚风与散步</h3>
+              <span class="place-code">NO.06 / OLD STREET</span>
+            </div>
+            <p class="place-desc">不用赶去什么特别的景点，在任何一个城市的秋天傍晚，牵着手沿着路灯走下去就很好。</p>
+            <div class="card-tools">
+              <button class="mini-btn js-focus-btn" type="button">对焦 / 虚焦</button>
+              <button class="mini-btn js-note-btn" type="button">背面注脚</button>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 第三幕：写给 19 岁嘉怡的长信 -->
+    <section class="letter-section" id="letter">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">Letter For Your 19th</div>
+          <h2 class="section-title">给嘉怡的一封信</h2>
+        </div>
+        <div class="section-hint">见字如面</div>
+      </div>
+
+      <!-- 信封封面 -->
+      <div class="envelope-box" id="envelopeBox" role="button" tabindex="0" aria-label="点击拆开信封">
+        <div class="wax-seal">19</div>
+        <h3 class="envelope-title">致十九岁的嘉怡 · 见信好</h3>
+        <p class="envelope-sub">里面有一封躺在备忘录里很久的话，也有写给未来的约定。</p>
+        <span class="envelope-cta">轻触拆开这封信 ✉️</span>
+      </div>
+
+      <!-- 展开后的信纸内容 -->
+      <article class="letter-paper" id="letterPaper">
+        <div class="letter-header">
+          <div class="letter-salutation">展信佳：</div>
+          <div class="letter-date">TO JIAYI · LV.19</div>
+        </div>
+
+        <div class="letter-body">
+          <p>该从哪里落笔呢，你的十九岁。</p>
+
+          <p>总觉得日子不该走得这样快。冬意一深，我恍惚间还以为又到了高三快要“一诊”的时候——按理说，这会儿我本该正坐在家里的台灯下，对着淘宝屏幕，借口挑我喜欢的款式，偷偷给你选着文具。其实哪是什么顺手呢，不过是那时的想念太满，迫切地需要一点具体的安置。大概就是从那句说笑般的生日礼物起，某种微妙的秩序在我心里悄然重写——那是沦陷最初的预兆。</p>
+
+          <p>有人说，命运的职责在两个人初遇的那一刻便已经完尽了。可到了我们这里，它好像总有些放心不下，偏要在暗中多推一把——它不动声色地拨动了 xpy 的换座位软件，穿过教室里扬起的粉笔灰，给了我再一次靠近你、重新认识你的机会。</p>
+
+          <p>前些天我做了一个梦。梦见清晨的第一抹阳光斜斜地切进窗户，你就站在光里，在我眼前。醒来时心里空落落的，甚至有些孩子气地想：为什么人不能永远留在高中呢？如果可以重来一次，我宁愿再忍受一遍当时所有的枯燥与煎熬。可转念一想，记忆里那段如黄金般闪耀的日子，又哪是上天白白赐予的呢？分明是因为我遇见了那样一群鲜活滚烫的人，是因为我遇见了你。是你，才让原本苦涩漫长的跋涉，变成了落日后久久不肯散去的余晖。</p>
+
+          <p>那些散落在时光里的切片，至今仍在反复发光：<br />
+          是你捧着我的相机，抬起头真诚夸赞我照片的那个瞬间——镜头原本是没有感情的，只是拍照的人用了心，我不是在按快门，是在借着取景框偷偷留住有你的时间；<br />
+          是你递过一颗纸糖果、眉眼弯弯逗我发笑的瞬间——那种喜欢悬在舌尖，像咬开一颗青提，酸涩的皮破开后，清清凉凉的甜意便漫了上来；<br />
+          也是你用长长的信笺，一笔一划回溯我们初识的那天；是分别多时后，耳机里猝不及防响起某首歌的那一刻……<br />
+          这些零碎的瞬间在心里轻轻一碰，便拼出了你在我青春里的全部重量。原来，让人目光变得匆促的心动叫做喜欢；而心里那块被你装满、像半个米缸终于溢出了缸沿般的踏实，叫做爱。</p>
+
+          <p>只是，与轰轰烈烈的青春冲动相反，那时的我太擅长把汹涌的感情藏进沉默里。一个人没有那么喜欢谁的时候，总觉得自己足够理性、足够洒脱；可一旦真正把你放进心里，以前所有关于自己的判断就统统失效了。我像走在夜路上的盲人，小心翼翼地试探着你的方向，鼓起全部勇气把你约出来，却又在临门一脚时咽下了正式的告白。我既怕错过你，更怕彻底失去你；而你又藏得那样好，好到我不敢生出一分一毫的笃定。</p>
+
+          <p>直到那段时光轻轻合上，我写给你的信，依然安静地躺在手机备忘录里，像一页未曾投递的折角书签，平静而沉默。</p>
+
+          <p>今天是你十九岁的起点，我想把那封躺在备忘录里许久的信，原原本本地摊开在你面前：</p>
+
+          <!-- 内嵌备忘录卡片 -->
+          <div class="memo-card open" id="memoCard">
+            <div class="memo-top" id="memoToggle">
+              <span class="memo-label">📝 备忘录 · 未递出的那一页</span>
+              <span class="memo-action">点击收起 / 展开</span>
+            </div>
+            <div class="memo-content">
+              “嗯，我不知道，我相信你也一样——这一切到底是如何发生的，未来又会如何变化，我不知道。玫瑰花到底能不能盛开呢？遥望未来太累了，我只想过好眼前的这一刻，像小时候一样：在傍晚、晚风、余晖和路灯下，在你飘动的发丝间，在你的眼眸里，在我跳跃无常的思绪里。在某年某日的某个瞬间，我的思绪跳入了你的宇宙，于是我决定停留。我喜欢你，像受命运指引一般，并且，我已经做好了爱你的准备。”
+            </div>
+          </div>
+
+          <p class="poem-lines">
+            嘴上写着“做好了准备”，可真到了看见你迟疑和纠结的那一刻，我还是慌了神，好像一下子承住了万千重量。<br />
+            爱一个人，到底是怎样的感觉呢？<br />
+            它应当是一个深思熟虑的判断吗？是冲动，还是勇气？<br />
+            我想，它大概是我漫长而平凡的生活里，鲜有的浪涛与波澜起伏吧。<br />
+            你会爱我吗？
+            <span class="english-verse">Is it a crime to be unsure?<br />In time we'll find if we're suitable.</span>
+          </p>
+
+          <p>没关系的，给时间一点时间。爱情本就是一场属于勇敢者的游戏，真正读懂一个人或许需要穷尽一生的时间，而我们都在参与这场温柔的赌局——赌我们在看清彼此全部的脆弱与棱角之后，依然愿意坚定地爱下去。爱，从来都是勇敢者的奖励。</p>
+
+          <p>你看过《奥本海默》吗？我脑海里关于未来的样子，就像电影里的主角和他的妻子那样：无论往后岁月里有多少磨难与争吵，无论前一秒争执得多么面红耳赤、不可开交，只要下一秒我转过身，向你伸出手，你仍然愿意把手放进我掌心，握紧我，共同继续走下去。</p>
+
+          <p>被人深爱给予我力量，而深爱一个人赋予我勇气。</p>
+
+          <p>十九岁生日快乐，嘉怡。世界终于要见到我早就见到过的、那个熠熠生辉的你了；如果把《喜欢你》做成一本书，你是一部诗的终点，而这句“我爱你”，只是序言。</p>
+        </div>
+
+        <div class="letter-sign">
+          祝你今天愉快，你明天的愉快留着我明天再祝。<br />
+          —— 永远愿意把路灯下的路走得很长的人
+        </div>
+      </article>
+    </section>
+
+    <!-- 第四幕：互动快门收集余晖 -->
+    <section class="shutter-card">
+      <div class="section-kicker" style="margin-bottom: 10px;">Shutter &amp; Afterglow</div>
+      <div class="shutter-whisper" id="shutterWhisper">
+        “我不是在拍照，是在帮我们留住时间。”
+      </div>
+      <button class="btn-warm" id="shutterBtn" type="button">📷 按下快门 · 收藏这一刻</button>
+      <div class="shutter-count" id="shutterCount">EXP 01 / 36 · 35MM WARM FILM</div>
+    </section>
+
+    <footer class="footer-note">
+      JIAYI 19TH · 13.8 BILLION YEARS IN THE MAKING
+    </footer>
+  </div>
 
   <script>
-    // 绘制柔和闪烁与漂浮星光背景
-    const canvas = document.getElementById("starfield");
-    const ctx = canvas.getContext("2d");
-    let width = 0;
-    let height = 0;
-    const stars = [];
-    const ripples = [];
+    // ==========================================================
+    // 1. 全局 CCD 柔和虚焦模式切换
+    // ==========================================================
+    const globalCcdBtn = document.getElementById("globalCcdBtn");
+    let dreamyMode = false;
 
-    function resize() {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      width = window.innerWidth;
-      height = window.innerHeight;
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    }
+    globalCcdBtn.addEventListener("click", () => {
+      dreamyMode = !dreamyMode;
+      document.body.classList.toggle("dreamy-ccd", dreamyMode);
+      globalCcdBtn.querySelector("span").textContent = dreamyMode
+        ? "◎ CCD 柔焦: 梦境"
+        : "◎ CCD 柔焦: 标准";
 
-    function initStars() {
-      stars.length = 0;
-      const count = Math.min(95, Math.floor((width * height) / 4800));
-      for (let i = 0; i < count; i++) {
-        stars.push({
-          x: Math.random() * width,
-          y: Math.random() * height,
-          r: Math.random() * 1.4 + 0.4,
-          alpha: Math.random() * 0.65 + 0.15,
-          phase: Math.random() * Math.PI * 2,
-          speed: Math.random() * 0.015 + 0.006,
-          vy: -(Math.random() * 0.14 + 0.03)
-        });
-      }
-    }
-
-    function spawnRipple(x, y) {
-      ripples.push({ x, y, r: 10, maxR: 130, alpha: 0.6 });
-    }
-
-    function animate() {
-      ctx.clearRect(0, 0, width, height);
-
-      for (const s of stars) {
-        s.phase += s.speed;
-        s.y += s.vy;
-        if (s.y < -4) {
-          s.y = height + 4;
-          s.x = Math.random() * width;
-        }
-        const twinkle = s.alpha * (0.65 + 0.35 * Math.sin(s.phase));
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(245, 234, 214, ${twinkle.toFixed(3)})`;
-        ctx.fill();
-      }
-
-      for (let i = ripples.length - 1; i >= 0; i--) {
-        const rp = ripples[i];
-        rp.r += 2.2;
-        rp.alpha *= 0.96;
-        ctx.beginPath();
-        ctx.arc(rp.x, rp.y, rp.r, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(232, 207, 164, ${rp.alpha.toFixed(3)})`;
-        ctx.lineWidth = 1.2;
-        ctx.stroke();
-        if (rp.alpha < 0.02 || rp.r > rp.maxR) {
-          ripples.splice(i, 1);
-        }
-      }
-
-      requestAnimationFrame(animate);
-    }
-
-    window.addEventListener("resize", () => {
-      resize();
-      initStars();
+      // 重置单张照片的手动锁定状态，让全局模式生效
+      document.querySelectorAll(".photo-frame").forEach((frame) => {
+        frame.classList.remove("is-focused", "is-hazy");
+        const chip = frame.querySelector(".focus-chip");
+        if (chip) chip.textContent = dreamyMode ? "CCD HAZE" : "SOFT CCD";
+      });
     });
 
-    resize();
-    initStars();
-    animate();
+    // ==========================================================
+    // 2. 单张胶片对焦 / 虚焦切换 & 翻看背面注脚
+    // ==========================================================
+    document.querySelectorAll(".film-card").forEach((card) => {
+      const frame = card.querySelector(".photo-frame");
+      const chip = card.querySelector(".focus-chip");
+      const focusBtn = card.querySelector(".js-focus-btn");
+      const noteBtn = card.querySelector(".js-note-btn");
 
-    // 点击星光时的温柔回应句库
-    const whispers = [
-      "严格地说，138 亿年前咱俩就见过了。",
-      "世界终于要见到我早就见到过的那个熠熠生辉的你了。",
-      "希望你 19 岁的每一天，都像咬开青提那样清凉又甜。",
-      "在没有见面的日子里，我的想念都需要一点具体的安置。",
-      "19 岁生日快乐，惊喜正片很快就会在这里亮起。"
-    ];
-    let idx = 0;
-    const whisperEl = document.getElementById("whisperText");
-    const orbBtn = document.getElementById("orbBtn");
-    const hugBtn = document.getElementById("hugBtn");
+      function toggleFocus() {
+        // 如果当前正显示背面文字，先回到画面
+        if (frame.classList.contains("show-note")) {
+          frame.classList.remove("show-note");
+          noteBtn.classList.remove("active");
+          return;
+        }
+        const isCurrentlyFocused = frame.classList.contains("is-focused");
+        frame.classList.remove("is-focused", "is-hazy");
+        if (isCurrentlyFocused) {
+          frame.classList.add("is-hazy");
+          chip.textContent = "CCD HAZE";
+          focusBtn.classList.remove("active");
+        } else {
+          frame.classList.add("is-focused");
+          chip.textContent = "AF LOCKED";
+          focusBtn.classList.add("active");
+        }
+      }
 
-    function triggerSpark(e) {
-      const rect = orbBtn.getBoundingClientRect();
-      const cx = (e && e.clientX) || rect.left + rect.width / 2;
-      const cy = (e && e.clientY) || rect.top + rect.height / 2;
-      spawnRipple(cx, cy);
-      whisperEl.classList.remove("show");
-      setTimeout(() => {
-        whisperEl.textContent = whispers[idx % whispers.length];
-        idx += 1;
-        whisperEl.classList.add("show");
-      }, 160);
+      function toggleNote() {
+        const show = !frame.classList.contains("show-note");
+        frame.classList.toggle("show-note", show);
+        noteBtn.classList.toggle("active", show);
+      }
+
+      // 点击相框直接翻看或收起背面寄语
+      frame.addEventListener("click", toggleNote);
+      focusBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleFocus();
+      });
+      noteBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleNote();
+      });
+    });
+
+    // ==========================================================
+    // 3. 信封拆开与备忘录折叠交互
+    // ==========================================================
+    const envelopeBox = document.getElementById("envelopeBox");
+    const letterPaper = document.getElementById("letterPaper");
+    const jumpLetterBtn = document.getElementById("jumpLetterBtn");
+
+    function openLetter() {
+      envelopeBox.classList.add("is-hidden");
+      letterPaper.classList.add("is-open");
     }
 
-    orbBtn.addEventListener("click", triggerSpark);
-    hugBtn.addEventListener("click", triggerSpark);
+    envelopeBox.addEventListener("click", openLetter);
+    envelopeBox.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        openLetter();
+      }
+    });
+
+    jumpLetterBtn.addEventListener("click", () => {
+      setTimeout(openLetter, 250);
+    });
+
+    const memoCard = document.getElementById("memoCard");
+    const memoToggle = document.getElementById("memoToggle");
+    memoToggle.addEventListener("click", () => {
+      memoCard.classList.toggle("open");
+    });
+
+    // ==========================================================
+    // 4. 底部“按下快门”闪光灯 + 随机胶片情话
+    // ==========================================================
+    const shutterFlash = document.getElementById("shutterFlash");
+    const shutterBtn = document.getElementById("shutterBtn");
+    const shutterWhisper = document.getElementById("shutterWhisper");
+    const shutterCount = document.getElementById("shutterCount");
+
+    const lines = [
+      "“我不是在拍照，是在帮我们留住时间。”",
+      "“严格地说，138 亿年前，咱俩就见过了。”",
+      "“想和你在傍晚、晚风、余晖和路灯下，把八分钟的路走得很长。”",
+      "“世界终于要见到我早就见到过的、那个熠熠生辉的你了。”",
+      "“是我的想念太满，才迫切地需要一点具体的安置。”",
+      "“被人深爱给予我力量，而深爱一个人赋予我勇气。”"
+    ];
+    let shotNum = 1;
+
+    shutterBtn.addEventListener("click", () => {
+      shutterFlash.classList.add("active");
+      setTimeout(() => shutterFlash.classList.remove("active"), 90);
+
+      shotNum += 1;
+      const padded = String(Math.min(shotNum, 36)).padStart(2, "0");
+      shutterCount.textContent = `EXP ${padded} / 36 · 35MM WARM FILM`;
+
+      shutterWhisper.style.opacity = "0";
+      setTimeout(() => {
+        shutterWhisper.textContent = lines[(shotNum - 1) % lines.length];
+        shutterWhisper.style.opacity = "1";
+      }, 220);
+    });
   </script>
 </body>
 </html>
