@@ -3,26 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>想和你一起去很多地方 · To Jiayi 19th</title>
+  <title>夕阳下的十九岁课桌 · To Jiayi</title>
   <style>
     /* ==========================================================
-       配色系统：温和奶油羊皮纸 + 落日琥珀暖调 + 复古胶片茶褐
+       全局设计变量：落日琥珀 + 胶片怀旧暖调 + 极简拟物质感
        ========================================================== */
     :root {
-      --bg-paper: #f6efe6;
-      --bg-paper-deep: #ede1d1;
-      --card-paper: #fbf7f1;
-      --ink-main: #433227;
-      --ink-soft: #6e5849;
-      --ink-muted: #9a8272;
-      --amber: #d88b56;
-      --amber-glow: rgba(232, 165, 110, 0.34);
-      --peach-flare: rgba(244, 190, 148, 0.38);
-      --stamp-red: #d96b43;
-      --border-soft: rgba(120, 92, 72, 0.14);
-      --shadow-warm: 0 18px 44px -14px rgba(74, 52, 36, 0.16), 0 4px 12px rgba(74, 52, 36, 0.06);
-      --serif: "Songti SC", "STSong", "Noto Serif SC", "Source Han Serif SC", Georgia, serif;
-      --sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      --bg-room: #1d1612;
+      --paper-cream: #f8f1e6;
+      --paper-grid: rgba(120, 102, 86, 0.13);
+      --ink-dark: #33251d;
+      --ink-soft: #634e40;
+      --ink-muted: #987e6b;
+      --sunset-gold: #e6a15c;
+      --sunset-amber: #d47a45;
+      --cobalt-blue: #1858a8;
+      --watch-black: #17181b;
+      --serif: "Songti SC", "STSong", "Noto Serif SC", Georgia, serif;
+      --sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", sans-serif;
       --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
     }
 
@@ -33,1256 +31,1873 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    html {
-      scroll-behavior: smooth;
-      background-color: var(--bg-paper);
-    }
-
-    body {
-      min-height: 100vh;
-      background:
-        radial-gradient(circle at 15% 12%, rgba(245, 196, 152, 0.34) 0%, transparent 45%),
-        radial-gradient(circle at 86% 32%, rgba(236, 174, 148, 0.25) 0%, transparent 42%),
-        radial-gradient(circle at 25% 78%, rgba(226, 188, 144, 0.24) 0%, transparent 48%),
-        linear-gradient(180deg, #f7f1e8 0%, #f3e9dc 52%, #efe3d2 100%);
-      color: var(--ink-main);
+    html, body {
+      width: 100%;
+      height: 100%;
+      min-height: 100dvh;
+      background-color: var(--bg-room);
+      color: var(--paper-cream);
       font-family: var(--sans);
-      line-height: 1.75;
-      overflow-x: hidden;
-      position: relative;
+      overflow: hidden;
+      user-select: none;
     }
 
     /* ==========================================================
-       35mm 胶片颗粒与光学暖色炫光层（固定铺满屏幕，不遮挡点击）
+       环境背景层（为桌面端大屏提供同源落日虚化氛围）
        ========================================================== */
+    .ambient-backdrop {
+      position: fixed;
+      inset: -8%;
+      background: url("assets/desk-sunset.jpg") center / cover no-repeat;
+      filter: blur(36px) brightness(0.36) saturate(1.1);
+      transform: scale(1.1);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* 全屏 35mm 胶片噪点纹理 */
     .film-grain {
       position: fixed;
       inset: -10%;
       width: 120%;
       height: 120%;
       pointer-events: none;
-      z-index: 50;
-      opacity: 0.06;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-      animation: grainShift 0.36s steps(2) infinite;
+      z-index: 80;
+      opacity: 0.055;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      animation: grainAnim 0.4s steps(2) infinite;
     }
 
-    @keyframes grainShift {
+    @keyframes grainAnim {
       0% { transform: translate(0, 0); }
-      25% { transform: translate(-1.5%, 1%); }
-      50% { transform: translate(1.2%, -1.5%); }
-      75% { transform: translate(-1%, -1%); }
-      100% { transform: translate(0.8%, 1.2%); }
+      33% { transform: translate(-1%, 1%); }
+      66% { transform: translate(1%, -1%); }
+      100% { transform: translate(0.5%, 0.5%); }
     }
 
-    /* 暖橘炫光光晕漂移背景 */
-    .flare-layer {
+    /* 阳光漂浮灰尘粒子画布（教室粉笔灰夕阳丁达尔效果） */
+    #dustCanvas {
       position: fixed;
       inset: 0;
+      width: 100%;
+      height: 100%;
       pointer-events: none;
-      z-index: 0;
-      overflow: hidden;
-    }
-
-    .flare-orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(55px);
-      will-change: transform;
-      opacity: 0.65;
-    }
-
-    .flare-1 {
-      width: 340px;
-      height: 340px;
-      top: -80px;
-      right: -90px;
-      background: radial-gradient(circle, rgba(242, 178, 126, 0.55) 0%, rgba(242, 178, 126, 0) 70%);
-      animation: floatSlow 14s ease-in-out infinite alternate;
-    }
-
-    .flare-2 {
-      width: 300px;
-      height: 300px;
-      top: 42%;
-      left: -110px;
-      background: radial-gradient(circle, rgba(235, 168, 152, 0.42) 0%, rgba(235, 168, 152, 0) 70%);
-      animation: floatSlow 18s ease-in-out infinite alternate-reverse;
-    }
-
-    .flare-3 {
-      width: 280px;
-      height: 280px;
-      bottom: -60px;
-      right: 5%;
-      background: radial-gradient(circle, rgba(226, 175, 118, 0.45) 0%, rgba(226, 175, 118, 0) 72%);
-      animation: floatSlow 16s ease-in-out infinite alternate;
-    }
-
-    @keyframes floatSlow {
-      0% { transform: translate3d(0, 0, 0) scale(1); }
-      100% { transform: translate3d(24px, -28px, 0) scale(1.1); }
-    }
-
-    /* 柔和快门闪光遮罩 */
-    .shutter-flash {
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(circle at center, #fffaf2 0%, #f9e7cf 100%);
-      opacity: 0;
-      pointer-events: none;
-      z-index: 90;
-      transition: opacity 0.55s ease-out;
-    }
-
-    .shutter-flash.active {
-      opacity: 0.78;
-      transition: opacity 0.06s ease-in;
+      z-index: 40;
     }
 
     /* ==========================================================
-       主内容容器
+       主视觉舞台：9:12（3:4）精准适配高中课桌俯视图
        ========================================================== */
-    .page-wrap {
+    .viewport-shell {
       position: relative;
       z-index: 2;
-      max-width: 820px;
-      margin: 0 auto;
-      padding: 20px 18px 80px;
+      width: 100%;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: env(safe-area-inset-top, 10px) 10px env(safe-area-inset-bottom, 12px);
     }
 
-    /* ==========================================================
-       顶部 CCD 相机取景器 HUD 状态栏
-       ========================================================== */
-    .ccd-hud {
+    /* 顶部极简电影信息条 */
+    .top-hud {
+      width: 100%;
+      max-width: 520px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px 16px;
-      margin-bottom: 26px;
-      border-radius: 14px;
-      background: rgba(251, 247, 241, 0.62);
-      border: 1px solid var(--border-soft);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      padding: 6px 8px 10px;
       font-family: var(--mono);
       font-size: 11px;
-      color: var(--ink-soft);
-      letter-spacing: 0.08em;
+      letter-spacing: 0.1em;
+      color: rgba(248, 241, 230, 0.78);
+      opacity: 0;
+      transform: translateY(-6px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
     }
 
-    .hud-left {
+    body.is-awake .top-hud {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .hud-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .hud-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--sunset-gold);
+      box-shadow: 0 0 8px var(--sunset-gold);
+    }
+
+    .hud-controls {
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    .rec-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--stamp-red);
-      box-shadow: 0 0 8px rgba(217, 107, 67, 0.65);
-      animation: recBlink 2.2s ease-in-out infinite;
-    }
-
-    @keyframes recBlink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.25; }
-    }
-
-    .hud-toggle {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 5px 10px;
+    .hud-pill {
+      padding: 4px 10px;
       border-radius: 999px;
-      border: 1px solid rgba(120, 92, 72, 0.22);
-      background: rgba(255, 252, 247, 0.7);
-      font-family: var(--mono);
-      font-size: 10.5px;
-      color: var(--ink-main);
+      background: rgba(255, 248, 238, 0.1);
+      border: 1px solid rgba(255, 240, 220, 0.2);
+      color: rgba(248, 241, 230, 0.9);
+      font-family: var(--sans);
+      font-size: 11px;
       cursor: pointer;
-      transition: all 0.25s ease;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      transition: background 0.2s ease;
     }
 
-    .hud-toggle:active {
+    .hud-pill:active {
+      transform: scale(0.95);
+    }
+
+    /* 课桌 3:4 电影画框（保持比例以确保所有物品热区 100% 对齐） */
+    .desk-stage {
+      position: relative;
+      width: min(94vw, calc((100dvh - 118px) * 0.746));
+      aspect-ratio: 1200 / 1607;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow:
+        0 28px 70px rgba(0, 0, 0, 0.65),
+        0 0 0 1px rgba(255, 240, 220, 0.12);
+      background: #2b211a;
+    }
+
+    /* 实拍课桌底图层：支持开场失焦 -> 醒来对焦 -> 弹窗时退后景深虚化 */
+    .desk-photo-layer {
+      position: absolute;
+      inset: 0;
+      background: url("assets/desk-sunset.jpg") center / 100% 100% no-repeat;
+      /* 初始处于柔和的梦境失焦状态 */
+      filter: blur(18px) brightness(0.72) saturate(0.95);
+      transform: scale(1.09);
+      transition:
+        filter 1.25s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 1.25s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: filter, transform;
+    }
+
+    body.is-awake .desk-photo-layer {
+      filter: blur(0px) brightness(1) saturate(1);
+      transform: scale(1);
+    }
+
+    body.modal-open .desk-photo-layer {
+      filter: blur(9px) brightness(0.72) saturate(0.92);
+      transform: scale(1.05);
+    }
+
+    /* 边缘落日暖色漏光炫光层（柔和呼吸） */
+    .desk-lens-flare {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 88% 12%, rgba(255, 192, 118, 0.32) 0%, rgba(255, 192, 118, 0) 48%),
+        radial-gradient(circle at 14% 85%, rgba(236, 152, 98, 0.14) 0%, rgba(236, 152, 98, 0) 40%);
+      mix-blend-mode: screen;
+      animation: flareBreath 7s ease-in-out infinite alternate;
+    }
+
+    @keyframes flareBreath {
+      0% { opacity: 0.72; }
+      100% { opacity: 1; }
+    }
+
+    /* ==========================================================
+       桌面可点击热区（精准锚定在画框内的 6 件实物上）
+       ========================================================== */
+    .hotspots-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.9s ease 0.4s;
+    }
+
+    body.is-awake .hotspots-layer {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .hotspot {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+
+    /* 隐形点击区域大小按实物占比分配 */
+    .hs-pencil  { left: 28%; top: 28%; width: 38%; height: 25%; }
+    .hs-candy   { left: 40%; top: 39%; width: 14%; height: 11%; }
+    .hs-photos  { left: 71%; top: 36%; width: 31%; height: 22%; }
+    .hs-notebook{ left: 34%; top: 66%; width: 35%; height: 30%; }
+    .hs-watch   { left: 69%; top: 66%; width: 28%; height: 32%; }
+    .hs-sticker { left: 15.5%; top: 84%; width: 12%; height: 12%; }
+
+    /* 极克制的呼吸取景光环（像相机对焦点） */
+    .hs-ring {
+      position: relative;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(255, 245, 228, 0.22);
+      border: 1.5px solid rgba(255, 245, 228, 0.85);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.28);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.25s ease, background 0.25s ease;
+    }
+
+    .hs-ring::before {
+      content: "";
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 232, 198, 0.55);
+      animation: ringPulse 2.8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+    }
+
+    .hs-ring::after {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #fff8ed;
+    }
+
+    .hotspot.is-visited .hs-ring {
+      border-color: rgba(230, 161, 92, 0.9);
+      background: rgba(230, 161, 92, 0.28);
+    }
+
+    @keyframes ringPulse {
+      0% { transform: scale(0.85); opacity: 0.9; }
+      100% { transform: scale(1.65); opacity: 0; }
+    }
+
+    .hs-label {
+      margin-top: 6px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: rgba(28, 21, 17, 0.68);
+      border: 1px solid rgba(255, 235, 205, 0.22);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      font-size: 11px;
+      color: #fbf4ea;
+      white-space: nowrap;
+      letter-spacing: 0.04em;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    body.hide-labels .hs-label {
+      opacity: 0;
+      transform: translateY(-2px);
+    }
+
+    .hotspot:active .hs-ring {
+      transform: scale(0.88);
+    }
+
+    /* 底部快捷物品栏（方便小屏或探索全部彩蛋） */
+    .bottom-dock {
+      width: 100%;
+      max-width: 520px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 4px 2px;
+      overflow-x: auto;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.8s ease 0.2s, transform 0.8s ease 0.2s;
+    }
+
+    body.is-awake .bottom-dock {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .dock-chip {
+      flex: 0 0 auto;
+      padding: 6px 11px;
+      border-radius: 999px;
+      background: rgba(255, 248, 238, 0.08);
+      border: 1px solid rgba(255, 240, 220, 0.16);
+      color: rgba(248, 241, 230, 0.88);
+      font-size: 11.5px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .dock-chip.visited {
+      border-color: rgba(230, 161, 92, 0.48);
+      color: #f6cfa4;
+    }
+
+    .dock-chip:active {
       transform: scale(0.95);
     }
 
     /* ==========================================================
-       第一幕：序言 Hero 卡片（复古取景框）
+       第一幕：开场生日祝福遮罩（电影感序幕 -> 平滑对焦切入课桌）
        ========================================================== */
-    .hero-card {
-      position: relative;
-      padding: 40px 26px 36px;
-      border-radius: 22px;
-      background: linear-gradient(155deg, rgba(253, 250, 245, 0.88) 0%, rgba(246, 236, 223, 0.82) 100%);
-      border: 1px solid rgba(154, 130, 114, 0.2);
-      box-shadow: var(--shadow-warm);
-      overflow: hidden;
+    .intro-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 24px;
       text-align: center;
-      margin-bottom: 42px;
+      background: radial-gradient(circle at 50% 42%, rgba(56, 36, 24, 0.42) 0%, rgba(19, 13, 10, 0.72) 100%);
+      transition: opacity 1s ease, visibility 1s ease;
     }
 
-    /* 四角相机对焦框线 */
-    .vf-corner {
-      position: absolute;
-      width: 16px;
-      height: 16px;
-      border-color: rgba(154, 130, 114, 0.42);
-      border-style: solid;
-      pointer-events: none;
-    }
-    .vf-tl { top: 14px; left: 14px; border-width: 1.5px 0 0 1.5px; }
-    .vf-tr { top: 14px; right: 14px; border-width: 1.5px 1.5px 0 0; }
-    .vf-bl { bottom: 14px; left: 14px; border-width: 0 0 1.5px 1.5px; }
-    .vf-br { bottom: 14px; right: 14px; border-width: 0 1.5px 1.5px 0; }
-
-    /* 模拟右上角柔光漏光 */
-    .hero-flare {
-      position: absolute;
-      top: -60px;
-      right: -50px;
-      width: 220px;
-      height: 220px;
-      background: radial-gradient(circle, rgba(238, 162, 102, 0.34) 0%, rgba(238, 162, 102, 0) 70%);
+    body.is-awake .intro-overlay {
+      opacity: 0;
+      visibility: hidden;
       pointer-events: none;
     }
 
-    .hero-tag {
-      display: inline-block;
+    .intro-kicker {
       font-family: var(--mono);
       font-size: 11px;
-      letter-spacing: 0.22em;
-      color: var(--amber);
-      text-transform: uppercase;
-      margin-bottom: 14px;
-    }
-
-    .hero-title {
-      font-family: var(--serif);
-      font-size: clamp(26px, 6.2vw, 34px);
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      line-height: 1.4;
-      color: var(--ink-main);
+      letter-spacing: 0.28em;
+      color: var(--sunset-gold);
       margin-bottom: 18px;
+      animation: fadeUp 0.9s ease forwards;
     }
 
-    .hero-hug {
-      display: inline-block;
-      padding: 10px 18px;
-      border-radius: 12px;
-      background: rgba(216, 139, 86, 0.09);
-      border: 1px dashed rgba(216, 139, 86, 0.32);
-      font-size: 14.5px;
-      color: var(--ink-soft);
-      line-height: 1.8;
+    .intro-title {
+      font-family: var(--serif);
+      font-size: clamp(23px, 5.8vw, 32px);
+      font-weight: 500;
+      line-height: 1.55;
+      letter-spacing: 0.06em;
+      color: #fcf6ed;
+      max-width: 440px;
+      margin-bottom: 18px;
+      text-shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
+      animation: fadeUp 1.1s ease forwards;
+    }
+
+    .intro-hug {
+      max-width: 360px;
+      padding: 11px 18px;
+      border-radius: 14px;
+      background: rgba(255, 245, 232, 0.08);
+      border: 1px solid rgba(255, 224, 186, 0.22);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      font-size: 13.8px;
+      line-height: 1.85;
+      color: rgba(252, 242, 228, 0.88);
+      margin-bottom: 32px;
+      animation: fadeUp 1.3s ease forwards;
+    }
+
+    .intro-btn {
+      padding: 13px 28px;
+      border-radius: 999px;
+      border: 1px solid rgba(246, 207, 164, 0.55);
+      background: linear-gradient(135deg, rgba(224, 146, 86, 0.92), rgba(196, 108, 62, 0.92));
+      color: #fffaf3;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35), 0 0 24px rgba(230, 161, 92, 0.35);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      animation: fadeUp 1.5s ease forwards;
+    }
+
+    .intro-btn:active {
+      transform: scale(0.95);
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ==========================================================
+       通用物品特写模态容器（支持背景电影级虚化退后）
+       ========================================================== */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 70;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px 14px;
+      background: rgba(16, 11, 8, 0.55);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      animation: modalFade 0.28s ease forwards;
+    }
+
+    .modal-backdrop.active {
+      display: flex;
+    }
+
+    @keyframes modalFade {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal-close-bar {
+      position: absolute;
+      top: max(14px, env(safe-area-inset-top, 14px));
+      right: 16px;
+      z-index: 75;
+    }
+
+    .close-btn {
+      padding: 7px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 244, 228, 0.28);
+      background: rgba(24, 18, 14, 0.72);
+      color: #faf2e6;
+      font-size: 12.5px;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    .close-btn:active {
+      transform: scale(0.94);
+    }
+
+    .modal-panel {
+      display: none;
+      width: 100%;
+      max-width: 620px;
+      max-height: 86dvh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      border-radius: 20px;
+      animation: panelPop 0.36s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    .modal-panel.active {
+      display: block;
+    }
+
+    @keyframes panelPop {
+      from { opacity: 0; transform: translateY(16px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* ==========================================================
+       物品 1：Maruman Mnemosyne 178 黑色方格本（长信载体）
+       ========================================================== */
+    .mnemosyne-book {
+      background: #1a1918;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 28px 65px rgba(0, 0, 0, 0.6);
+      overflow: hidden;
+    }
+
+    .mnemosyne-cover {
+      padding: 22px 24px 18px;
+      background: linear-gradient(155deg, #242321 0%, #141312 100%);
+      border-bottom: 3px solid #2b2926;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+
+    .mnemo-brand {
+      font-family: Georgia, serif;
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      color: #c5a87a;
+    }
+
+    .mnemo-spec {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      color: rgba(255, 255, 255, 0.45);
+    }
+
+    /* 5mm 浅灰方格内页 */
+    .grid-paper {
+      padding: 28px 22px 34px;
+      background-color: #fbfaf6;
+      background-image:
+        linear-gradient(to right, var(--paper-grid) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--paper-grid) 1px, transparent 1px);
+      background-size: 20px 20px;
+      color: var(--ink-dark);
+    }
+
+    @media (min-width: 560px) {
+      .grid-paper {
+        padding: 36px 38px 42px;
+      }
+    }
+
+    .grid-paper-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
       margin-bottom: 20px;
+      border-bottom: 1px solid rgba(51, 37, 29, 0.14);
+      font-family: var(--mono);
+      font-size: 10.5px;
+      color: var(--ink-muted);
     }
 
-    .hero-lead {
-      max-width: 500px;
-      margin: 0 auto 26px;
+    .letter-salutation {
+      font-family: var(--serif);
+      font-size: 19px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--ink-dark);
+    }
+
+    .letter-body p {
+      font-family: var(--serif);
+      font-size: 15.2px;
+      line-height: 2;
+      color: #36281f;
+      margin-bottom: 16px;
+      letter-spacing: 0.02em;
+    }
+
+    .letter-body p.poem-quote {
+      padding-left: 14px;
+      border-left: 2px solid rgba(212, 122, 69, 0.5);
+      color: #5c483b;
+    }
+
+    .en-lyrics {
+      display: block;
+      margin-top: 8px;
+      font-family: Georgia, serif;
+      font-style: italic;
       font-size: 14.5px;
+      color: #6b5547;
+    }
+
+    .memo-insert {
+      margin: 22px 0;
+      border-radius: 12px;
+      background: #fffdf5;
+      border: 1px solid rgba(214, 178, 114, 0.52);
+      box-shadow: 0 6px 18px rgba(90, 68, 34, 0.1);
+      overflow: hidden;
+    }
+
+    .memo-insert-bar {
+      padding: 10px 14px;
+      background: rgba(244, 214, 148, 0.28);
+      border-bottom: 1px solid rgba(214, 178, 114, 0.28);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 500;
+      color: #825b2d;
+      cursor: pointer;
+    }
+
+    .memo-insert-body {
+      padding: 15px 16px;
+      font-family: var(--serif);
+      font-size: 14.5px;
+      line-height: 1.9;
+      color: #554233;
+      font-style: italic;
+      display: none;
+    }
+
+    .memo-insert.open .memo-insert-body {
+      display: block;
+    }
+
+    .letter-sign {
+      margin-top: 26px;
+      text-align: right;
+      font-family: var(--serif);
+      font-size: 14.8px;
       color: var(--ink-soft);
       line-height: 1.9;
     }
 
-    .hero-actions {
+    /* ==========================================================
+       物品 2：老款黑色 Apple Watch（替代 iPod · 可交互表盘/音乐/回忆）
+       ========================================================== */
+    .watch-modal-wrap {
       display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 12px;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px 0 18px;
     }
 
-    .btn-warm {
-      display: inline-flex;
+    .watch-band-top, .watch-band-bottom {
+      width: 146px;
+      height: 54px;
+      background: linear-gradient(90deg, #1b1c20 0%, #2b2d33 50%, #1b1c20 100%);
+      border-left: 1px solid rgba(255, 255, 255, 0.08);
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: inset 0 6px 14px rgba(0, 0, 0, 0.6);
+    }
+
+    .watch-band-top {
+      border-radius: 16px 16px 0 0;
+    }
+
+    .watch-band-bottom {
+      border-radius: 0 0 16px 16px;
+    }
+
+    .watch-chassis {
+      position: relative;
+      width: 274px;
+      height: 330px;
+      padding: 18px 16px;
+      border-radius: 52px;
+      background: linear-gradient(145deg, #2c2e34 0%, #16171a 48%, #0d0e10 100%);
+      box-shadow:
+        0 26px 60px rgba(0, 0, 0, 0.72),
+        inset 0 2px 4px rgba(255, 255, 255, 0.22),
+        inset 0 -3px 8px rgba(0, 0, 0, 0.7);
+      display: flex;
       align-items: center;
-      gap: 7px;
-      padding: 11px 22px;
-      border-radius: 999px;
-      border: none;
-      background: linear-gradient(135deg, #d88b56 0%, #c87642 100%);
-      color: #fffaf3;
+      justify-content: center;
+    }
+
+    /* 右侧实体数码表冠 Digital Crown 与侧边按键 */
+    .watch-crown {
+      position: absolute;
+      right: -13px;
+      top: 72px;
+      width: 15px;
+      height: 46px;
+      border-radius: 6px;
+      background: repeating-linear-gradient(
+        to bottom,
+        #3a3c42 0px,
+        #3a3c42 3px,
+        #18191c 3px,
+        #18191c 5px
+      );
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.5);
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+
+    .watch-crown:active {
+      transform: translateX(-2px);
+    }
+
+    .watch-side-btn {
+      position: absolute;
+      right: -7px;
+      top: 146px;
+      width: 8px;
+      height: 62px;
+      border-radius: 4px;
+      background: #24262b;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+    }
+
+    /* Watch OLED 显示屏 */
+    .watch-screen {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 38px;
+      background: radial-gradient(circle at 50% 25%, #1c1714 0%, #060607 100%);
+      border: 2px solid #09090b;
+      overflow: hidden;
+      padding: 18px 16px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      color: #f7efe5;
+      box-shadow: inset 0 0 24px rgba(230, 161, 92, 0.08);
+    }
+
+    /* 屏幕玻璃弧面反光 */
+    .watch-glass-gloss {
+      position: absolute;
+      top: -30%;
+      left: -20%;
+      width: 140%;
+      height: 60%;
+      background: linear-gradient(170deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0) 65%);
+      transform: rotate(-10deg);
+      pointer-events: none;
+    }
+
+    .watch-status {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: rgba(230, 161, 92, 0.85);
+      letter-spacing: 0.06em;
+    }
+
+    .watch-view {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      text-align: center;
+      padding: 6px 0;
+    }
+
+    .watch-view.active {
+      display: flex;
+      animation: modalFade 0.25s ease;
+    }
+
+    .watch-time-big {
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 52px;
+      font-weight: 300;
+      letter-spacing: -1px;
+      line-height: 1;
+      color: #f9e1c2;
+      margin-bottom: 6px;
+    }
+
+    .watch-date-sub {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: rgba(247, 239, 229, 0.65);
+      margin-bottom: 16px;
+    }
+
+    .watch-quote-mini {
+      font-family: var(--serif);
+      font-size: 12.5px;
+      line-height: 1.7;
+      color: rgba(247, 239, 229, 0.86);
+      padding: 8px 10px;
+      border-radius: 12px;
+      background: rgba(255, 240, 220, 0.06);
+      border: 1px solid rgba(230, 161, 92, 0.2);
+    }
+
+    /* Watch 音乐播放器界面 */
+    .watch-album-disc {
+      width: 82px;
+      height: 82px;
+      border-radius: 50%;
+      background: url("assets/place-04.jpg") center / cover no-repeat;
+      border: 2px solid rgba(230, 161, 92, 0.55);
+      box-shadow: 0 0 22px rgba(230, 161, 92, 0.25);
+      margin-bottom: 10px;
+      animation: spinSlow 14s linear infinite;
+      animation-play-state: paused;
+    }
+
+    .watch-album-disc.playing {
+      animation-play-state: running;
+    }
+
+    @keyframes spinSlow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .watch-track-title {
       font-size: 13.5px;
       font-weight: 500;
-      letter-spacing: 0.05em;
-      text-decoration: none;
-      cursor: pointer;
-      box-shadow: 0 8px 20px -6px rgba(200, 118, 66, 0.45);
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      color: #fbf3e8;
+      margin-bottom: 2px;
     }
 
-    .btn-warm:active {
-      transform: scale(0.96);
+    .watch-track-artist {
+      font-size: 11px;
+      color: var(--sunset-gold);
+      margin-bottom: 12px;
     }
 
-    .btn-ghost {
-      display: inline-flex;
+    .watch-audio-controls {
+      display: flex;
       align-items: center;
-      gap: 6px;
-      padding: 11px 20px;
-      border-radius: 999px;
-      border: 1px solid rgba(120, 92, 72, 0.24);
-      background: rgba(255, 252, 247, 0.68);
-      color: var(--ink-main);
-      font-size: 13.5px;
-      text-decoration: none;
-      cursor: pointer;
-      transition: background 0.25s ease, transform 0.25s ease;
+      gap: 16px;
     }
 
-    .btn-ghost:active {
-      transform: scale(0.96);
+    .w-ctrl-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 240, 220, 0.2);
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .w-play-btn {
+      width: 44px;
+      height: 44px;
+      background: var(--sunset-gold);
+      color: #1f140d;
+      border: none;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    /* Watch 底部点阵指示器与切换按键 */
+    .watch-dots {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      padding-top: 6px;
+    }
+
+    .w-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.24);
+      cursor: pointer;
+    }
+
+    .w-dot.active {
+      background: var(--sunset-gold);
+    }
+
+    .watch-hint-bar {
+      margin-top: 14px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      background: rgba(24, 18, 14, 0.72);
+      border: 1px solid rgba(255, 240, 220, 0.16);
+      font-size: 12px;
+      color: rgba(248, 241, 230, 0.84);
+      text-align: center;
     }
 
     /* ==========================================================
-       第二幕：想去很多地方 · 6张风格化胶片与 CCD 相纸画廊
+       物品 3：蓝色白拉链笔袋（文具回忆弹窗）
        ========================================================== */
-    .section-head {
+    .pouch-card {
+      background: linear-gradient(170deg, #1b59a8 0%, #154586 100%);
+      border-radius: 20px;
+      padding: 6px;
+      box-shadow: 0 26px 60px rgba(0, 0, 0, 0.55);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+    }
+
+    .pouch-zipper {
+      height: 16px;
+      margin: 4px 10px 8px;
+      border-radius: 999px;
+      background: repeating-linear-gradient(
+        90deg,
+        #f7f5f0 0px,
+        #f7f5f0 6px,
+        #cbd2db 6px,
+        #cbd2db 9px
+      );
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.25);
+    }
+
+    .pouch-inner {
+      background: var(--paper-cream);
+      color: var(--ink-dark);
+      border-radius: 15px;
+      padding: 26px 22px 28px;
+    }
+
+    .pouch-title {
+      font-family: var(--serif);
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #16407a;
+    }
+
+    .pouch-text {
+      font-family: var(--serif);
+      font-size: 15px;
+      line-height: 1.9;
+      color: var(--ink-soft);
+      margin-bottom: 18px;
+    }
+
+    .stationery-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .st-tag {
+      padding: 6px 12px;
+      border-radius: 10px;
+      background: #fff;
+      border: 1px solid rgba(24, 88, 168, 0.18);
+      font-size: 12.5px;
+      color: var(--ink-dark);
+    }
+
+    /* ==========================================================
+       物品 4：右上角 6 张风格化双人剪影胶片画廊弹窗
+       ========================================================== */
+    .gallery-card {
+      background: #f5ede1;
+      color: var(--ink-dark);
+      border-radius: 20px;
+      padding: 24px 18px 28px;
+      box-shadow: 0 28px 70px rgba(0, 0, 0, 0.58);
+    }
+
+    .gallery-head {
       display: flex;
       align-items: flex-end;
       justify-content: space-between;
-      gap: 12px;
-      margin: 0 4px 20px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--border-soft);
+      margin-bottom: 18px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(80, 58, 42, 0.14);
     }
 
-    .section-kicker {
-      font-family: var(--mono);
-      font-size: 10.5px;
-      letter-spacing: 0.2em;
-      color: var(--amber);
-      text-transform: uppercase;
-      margin-bottom: 4px;
-    }
-
-    .section-title {
+    .gallery-title {
       font-family: var(--serif);
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 600;
-      letter-spacing: 0.04em;
-      color: var(--ink-main);
     }
 
-    .section-hint {
-      font-size: 12px;
+    .gallery-sub {
+      font-size: 11.5px;
       color: var(--ink-muted);
-      text-align: right;
     }
 
     .film-grid {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 28px;
-      margin-bottom: 54px;
+      gap: 20px;
     }
 
-    @media (min-width: 680px) {
+    @media (min-width: 560px) {
       .film-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 28px 24px;
-      }
-      .film-card:nth-child(even) {
-        transform: translateY(18px);
       }
     }
 
-    /* 单张胶片拍立得卡片 */
-    .film-card {
-      position: relative;
-      background: var(--card-paper);
-      padding: 13px 13px 20px;
-      border-radius: 14px;
-      border: 1px solid rgba(130, 102, 82, 0.14);
-      box-shadow: var(--shadow-warm);
-      transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.45s ease;
+    .polaroid {
+      background: #fcf8f2;
+      padding: 10px 10px 15px;
+      border-radius: 12px;
+      border: 1px solid rgba(110, 86, 68, 0.16);
+      box-shadow: 0 10px 26px rgba(60, 42, 28, 0.12);
     }
 
-    .film-card:hover {
-      box-shadow: 0 22px 48px -14px rgba(74, 52, 36, 0.22);
-    }
-
-    /* 胶片画面视窗 */
-    .photo-frame {
+    .polaroid-frame {
       position: relative;
       width: 100%;
       aspect-ratio: 3 / 4;
-      border-radius: 8px;
+      border-radius: 7px;
       overflow: hidden;
-      background: #e5d8c8;
       cursor: pointer;
+      background: #e2d4c2;
     }
 
-    .photo-img {
+    .polaroid-img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
-      /* 默认带着一点温和复古的 CCD 柔和晕影与轻微失焦梦境感 */
-      filter: blur(0.6px) saturate(0.94) contrast(0.93) sepia(0.08);
-      transform: scale(1.015);
-      transition: filter 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s ease;
+      filter: blur(0.6px) saturate(0.95) contrast(0.94);
+      transition: filter 0.55s ease, transform 0.55s ease;
     }
 
-    /* 全局开启强化 CCD 模糊模式，或单张点击进入深朦胧回忆感 */
-    body.dreamy-ccd .photo-img,
-    .photo-frame.is-hazy .photo-img {
-      filter: blur(2.6px) saturate(0.88) contrast(0.88) brightness(1.03) sepia(0.14);
-      transform: scale(1.045);
+    .polaroid-frame.is-hazy .polaroid-img {
+      filter: blur(2.5px) saturate(0.88) brightness(1.03);
+      transform: scale(1.04);
     }
 
-    .photo-frame.is-focused .photo-img {
-      filter: blur(0px) saturate(0.98) contrast(0.96) sepia(0.05);
+    .polaroid-frame.is-sharp .polaroid-img {
+      filter: blur(0px) saturate(1);
       transform: scale(1);
     }
 
-    /* 每张照片内部叠加动态暖色炫光与胶片漏光光斑 */
-    .photo-flare {
+    .polaroid-stamp {
       position: absolute;
-      inset: 0;
-      pointer-events: none;
-      background:
-        radial-gradient(circle at 86% 14%, rgba(255, 198, 134, 0.36) 0%, rgba(255, 198, 134, 0) 44%),
-        radial-gradient(circle at 12% 88%, rgba(242, 152, 118, 0.22) 0%, rgba(242, 152, 118, 0) 42%);
-      mix-blend-mode: screen;
-      transition: opacity 0.5s ease;
-    }
-
-    /* 轻微暗角与纸质相纸边缘柔化 */
-    .photo-vignette {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      box-shadow: inset 0 0 38px rgba(42, 26, 16, 0.26);
-    }
-
-    /* 复古相机橙红色液晶日期戳 */
-    .ccd-stamp {
-      position: absolute;
-      right: 12px;
-      bottom: 10px;
+      right: 10px;
+      bottom: 8px;
       font-family: var(--mono);
-      font-size: 11px;
+      font-size: 10.5px;
       font-weight: 600;
-      letter-spacing: 0.14em;
-      color: rgba(255, 146, 86, 0.88);
-      text-shadow: 0 0 8px rgba(255, 122, 56, 0.65), 0 1px 2px rgba(0, 0, 0, 0.4);
-      pointer-events: none;
+      color: rgba(255, 146, 86, 0.9);
+      text-shadow: 0 0 6px rgba(255, 120, 50, 0.65);
     }
 
-    /* 取景器 AF 聚焦状态徽章 */
-    .focus-chip {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      padding: 3px 8px;
-      border-radius: 6px;
-      background: rgba(34, 24, 18, 0.42);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      font-family: var(--mono);
-      font-size: 10px;
-      color: rgba(255, 244, 230, 0.9);
-      letter-spacing: 0.08em;
-      pointer-events: none;
-    }
-
-    /* 背面翻面寄语层（覆盖在画面上方，轻柔毛玻璃卡片） */
-    .photo-note-overlay {
+    .polaroid-back {
       position: absolute;
       inset: 0;
-      padding: 24px 20px;
-      background: rgba(249, 243, 234, 0.92);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      padding: 18px 16px;
+      background: rgba(250, 244, 235, 0.93);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       text-align: center;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.4s ease;
+      transition: opacity 0.35s ease;
     }
 
-    .photo-frame.show-note .photo-note-overlay {
+    .polaroid-frame.show-back .polaroid-back {
       opacity: 1;
       pointer-events: auto;
     }
 
-    .note-quote {
+    .polaroid-back p {
       font-family: var(--serif);
-      font-size: 15.5px;
-      line-height: 1.9;
-      color: var(--ink-main);
-      margin-bottom: 14px;
+      font-size: 14px;
+      line-height: 1.85;
+      color: var(--ink-dark);
     }
 
-    .note-ref {
-      font-size: 11.5px;
-      color: var(--ink-muted);
-      letter-spacing: 0.06em;
-    }
-
-    /* 卡片底部配文区 */
-    .card-caption {
-      padding: 14px 4px 2px;
-    }
-
-    .caption-top {
+    .polaroid-meta {
+      padding: 10px 4px 2px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 6px;
     }
 
-    .place-name {
+    .polaroid-name {
       font-family: var(--serif);
-      font-size: 17px;
+      font-size: 14.5px;
       font-weight: 600;
-      color: var(--ink-main);
-      letter-spacing: 0.04em;
     }
 
-    .place-code {
-      font-family: var(--mono);
-      font-size: 10.5px;
-      color: var(--ink-muted);
-      letter-spacing: 0.08em;
+    .polaroid-actions {
+      display: flex;
+      gap: 6px;
     }
 
-    .place-desc {
-      font-size: 13.5px;
+    .p-btn {
+      padding: 3px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(110, 86, 68, 0.24);
+      background: rgba(246, 239, 230, 0.8);
+      font-size: 11px;
       color: var(--ink-soft);
-      line-height: 1.75;
+      cursor: pointer;
+    }
+
+    /* ==========================================================
+       物品 5 & 6：纸糖果 & 19号课桌贴纸小彩蛋卡片
+       ========================================================== */
+    .note-modal-card {
+      background: #fbf5eb;
+      color: var(--ink-dark);
+      border-radius: 18px;
+      padding: 28px 24px 30px;
+      border: 1px solid rgba(154, 130, 114, 0.26);
+      box-shadow: 0 26px 60px rgba(0, 0, 0, 0.55);
+      text-align: center;
+    }
+
+    .note-emoji-icon {
+      font-size: 36px;
       margin-bottom: 12px;
     }
 
-    .card-tools {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .mini-btn {
-      padding: 5px 11px;
-      border-radius: 999px;
-      border: 1px solid rgba(120, 92, 72, 0.2);
-      background: rgba(246, 239, 230, 0.7);
-      font-size: 11.5px;
-      color: var(--ink-soft);
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .mini-btn:active {
-      transform: scale(0.95);
-    }
-
-    .mini-btn.active {
-      background: rgba(216, 139, 86, 0.16);
-      border-color: rgba(216, 139, 86, 0.45);
-      color: var(--ink-main);
-    }
-
-    /* ==========================================================
-       第三幕：致十九岁的嘉怡 · 见信好（信封 + 复古棉纸信笺）
-       ========================================================== */
-    .letter-section {
-      margin-bottom: 48px;
-    }
-
-    /* 信封封面（点击拆开） */
-    .envelope-box {
-      position: relative;
-      padding: 36px 24px;
-      border-radius: 20px;
-      background: linear-gradient(160deg, #f3e6d5 0%, #ead7c0 100%);
-      border: 1px solid rgba(145, 114, 90, 0.24);
-      box-shadow: var(--shadow-warm);
-      text-align: center;
-      cursor: pointer;
-      transition: transform 0.35s ease, opacity 0.35s ease;
-    }
-
-    .envelope-box:active {
-      transform: scale(0.985);
-    }
-
-    .envelope-box.is-hidden {
-      display: none;
-    }
-
-    .wax-seal {
-      width: 62px;
-      height: 62px;
-      margin: 0 auto 18px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 35% 30%, #e07c56 0%, #b84f32 70%, #8f3922 100%);
-      box-shadow: 0 8px 18px rgba(143, 57, 34, 0.32), inset 0 2px 6px rgba(255, 220, 200, 0.45);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .note-modal-title {
       font-family: var(--serif);
       font-size: 20px;
       font-weight: 600;
-      color: #fbeee2;
-      letter-spacing: 1px;
+      margin-bottom: 12px;
     }
 
-    .envelope-title {
-      font-family: var(--serif);
-      font-size: 21px;
-      color: var(--ink-main);
-      margin-bottom: 8px;
-    }
-
-    .envelope-sub {
-      font-size: 13.5px;
-      color: var(--ink-soft);
-      margin-bottom: 16px;
-    }
-
-    .envelope-cta {
-      display: inline-block;
-      padding: 7px 16px;
-      border-radius: 999px;
-      background: rgba(255, 250, 244, 0.72);
-      border: 1px solid rgba(145, 114, 90, 0.24);
-      font-size: 12.5px;
-      color: var(--ink-main);
-    }
-
-    /* 展开后的棉纸信笺 */
-    .letter-paper {
-      display: none;
-      position: relative;
-      padding: 36px 24px 40px;
-      border-radius: 18px;
-      background:
-        repeating-linear-gradient(
-          to bottom,
-          transparent 0px,
-          transparent 33px,
-          rgba(154, 130, 114, 0.08) 34px
-        ),
-        linear-gradient(180deg, #fcf8f2 0%, #f8f0e4 100%);
-      border: 1px solid rgba(154, 130, 114, 0.2);
-      box-shadow: var(--shadow-warm);
-      animation: fadeSlideIn 0.6s ease forwards;
-    }
-
-    @media (min-width: 640px) {
-      .letter-paper {
-        padding: 48px 44px 52px;
-      }
-    }
-
-    .letter-paper.is-open {
-      display: block;
-    }
-
-    @keyframes fadeSlideIn {
-      from { opacity: 0; transform: translateY(14px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .letter-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
-      padding-bottom: 14px;
-      border-bottom: 1px dashed rgba(154, 130, 114, 0.28);
-    }
-
-    .letter-salutation {
-      font-family: var(--serif);
-      font-size: 20px;
-      font-weight: 600;
-      color: var(--ink-main);
-    }
-
-    .letter-date {
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--ink-muted);
-      letter-spacing: 0.08em;
-    }
-
-    .letter-body p {
-      font-family: var(--serif);
-      font-size: 15.8px;
-      line-height: 2.05;
-      color: var(--ink-main);
-      margin-bottom: 18px;
-      letter-spacing: 0.02em;
-    }
-
-    .letter-body p.poem-lines {
-      padding-left: 14px;
-      border-left: 2px solid rgba(216, 139, 86, 0.45);
-      color: var(--ink-soft);
-    }
-
-    .english-verse {
-      display: block;
-      margin-top: 8px;
-      font-family: Georgia, "Times New Roman", serif;
-      font-style: italic;
-      color: var(--ink-soft);
-      font-size: 15px;
-    }
-
-    /* 备忘录折叠卡片（对应“躺在备忘录里许久的信”） */
-    .memo-card {
-      margin: 24px 0 26px;
-      border-radius: 14px;
-      background: #fffdf8;
-      border: 1px solid rgba(214, 178, 120, 0.45);
-      box-shadow: 0 8px 22px -8px rgba(120, 90, 50, 0.14);
-      overflow: hidden;
-    }
-
-    .memo-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 16px;
-      background: linear-gradient(90deg, rgba(244, 214, 152, 0.28), rgba(244, 214, 152, 0.12));
-      border-bottom: 1px solid rgba(214, 178, 120, 0.28);
-      cursor: pointer;
-    }
-
-    .memo-label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12.5px;
-      font-weight: 500;
-      color: #8c6334;
-    }
-
-    .memo-action {
-      font-size: 11.5px;
-      color: #a47944;
-    }
-
-    .memo-content {
-      padding: 18px 18px 20px;
+    .note-modal-text {
       font-family: var(--serif);
       font-size: 15px;
       line-height: 1.95;
-      color: #5a4638;
-      font-style: italic;
-      display: none;
-    }
-
-    .memo-card.open .memo-content {
-      display: block;
-      animation: fadeSlideIn 0.35s ease;
-    }
-
-    .letter-sign {
-      margin-top: 30px;
-      text-align: right;
-      font-family: var(--serif);
-      font-size: 15.5px;
       color: var(--ink-soft);
-      line-height: 1.9;
+      margin-bottom: 20px;
     }
 
-    /* ==========================================================
-       第四幕：底部快门互动卡片
-       ========================================================== */
-    .shutter-card {
-      padding: 30px 22px;
-      border-radius: 18px;
-      background: rgba(251, 247, 241, 0.74);
-      border: 1px solid var(--border-soft);
-      text-align: center;
-      box-shadow: var(--shadow-warm);
+    .coupon-box {
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: rgba(230, 161, 92, 0.12);
+      border: 1.5px dashed rgba(212, 122, 69, 0.45);
+      margin-bottom: 16px;
     }
 
-    .shutter-whisper {
-      min-height: 52px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--serif);
-      font-size: 15px;
-      color: var(--ink-main);
-      margin-bottom: 18px;
-      line-height: 1.8;
-      transition: opacity 0.35s ease;
+    .coupon-box strong {
+      display: block;
+      font-size: 14px;
+      color: var(--sunset-amber);
+      margin-bottom: 4px;
     }
 
-    .shutter-count {
-      margin-top: 12px;
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--ink-muted);
-      letter-spacing: 0.1em;
+    .coupon-box span {
+      font-size: 12.5px;
+      color: var(--ink-soft);
     }
 
-    .footer-note {
-      margin-top: 34px;
-      text-align: center;
-      font-family: var(--mono);
-      font-size: 10.5px;
-      letter-spacing: 0.16em;
-      color: var(--ink-muted);
+    .claim-btn {
+      padding: 9px 22px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, #d88b56, #c6723e);
+      color: #fff;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .claim-btn.claimed {
+      background: #6f8b6c;
     }
   </style>
 </head>
 <body>
-  <!-- 光学暖色炫光与胶片颗粒叠加层 -->
-  <div class="flare-layer" aria-hidden="true">
-    <div class="flare-orb flare-1"></div>
-    <div class="flare-orb flare-2"></div>
-    <div class="flare-orb flare-3"></div>
-  </div>
+  <!-- 虚化环境光背板 & 阳光尘埃粒子 & 胶片噪点 -->
+  <div class="ambient-backdrop" aria-hidden="true"></div>
+  <canvas id="dustCanvas" aria-hidden="true"></canvas>
   <div class="film-grain" aria-hidden="true"></div>
-  <div class="shutter-flash" id="shutterFlash" aria-hidden="true"></div>
 
-  <div class="page-wrap">
-    <!-- 顶部 CCD 相机取景栏 -->
-    <header class="ccd-hud">
-      <div class="hud-left">
-        <span class="rec-dot"></span>
-        <span>CCD-19 · ROLL #01</span>
+  <!-- ==========================================================
+       第一幕：落日失焦开场生日祝福
+       ========================================================== -->
+  <section class="intro-overlay" id="introOverlay">
+    <div class="intro-kicker">TO JIAYI · 19TH BIRTHDAY</div>
+    <h1 class="intro-title">
+      如果能把十九岁这一天，<br />
+      搬回落日余晖不断的高中课桌前
+    </h1>
+    <div class="intro-hug">
+      “你来了。在这个页面停留的每一秒，都像被我轻轻抱了一下。”
+    </div>
+    <button class="intro-btn" id="wakeBtn" type="button">
+      ☀️ 靠近课桌 · 对焦此刻
+    </button>
+  </section>
+
+  <!-- ==========================================================
+       第二幕：高中课桌俯视视角主舞台
+       ========================================================== -->
+  <main class="viewport-shell">
+    <header class="top-hud">
+      <div class="hud-badge">
+        <span class="hud-dot"></span>
+        <span>DESK #19 · GOLDEN HOUR</span>
       </div>
-      <button class="hud-toggle" id="globalCcdBtn" type="button">
-        <span>◎ CCD 柔焦: 标准</span>
-      </button>
+      <div class="hud-controls">
+        <span id="progressText">0 / 6</span>
+        <button class="hud-pill" id="toggleLabelsBtn" type="button">隐藏标签</button>
+      </div>
     </header>
 
-    <!-- 第一幕：序幕与核心主题 -->
-    <section class="hero-card">
-      <span class="vf-corner vf-tl"></span>
-      <span class="vf-corner vf-tr"></span>
-      <span class="vf-corner vf-bl"></span>
-      <span class="vf-corner vf-br"></span>
-      <div class="hero-flare"></div>
+    <!-- 3:4 课桌实景交互画框 -->
+    <div class="desk-stage" id="deskStage">
+      <div class="desk-photo-layer"></div>
+      <div class="desk-lens-flare"></div>
 
-      <div class="hero-tag">To Jiayi · 19th Birthday Film</div>
-      <h1 class="hero-title">想和你一起去很多地方</h1>
+      <div class="hotspots-layer" id="hotspotsLayer">
+        <!-- 1. 蓝色白色拉链笔袋 -->
+        <button class="hotspot hs-pencil" data-modal="modalPencil" data-key="pencil" type="button" aria-label="打开蓝色笔袋">
+          <span class="hs-ring"></span>
+          <span class="hs-label">蓝色笔袋</span>
+        </button>
 
-      <div class="hero-hug">
-        “你来了。在这个页面停留的每一秒，都像被我轻轻抱了一下。”
+        <!-- 2. 银色纸糖果 -->
+        <button class="hotspot hs-candy" data-modal="modalCandy" data-key="candy" type="button" aria-label="拆开纸糖果">
+          <span class="hs-ring"></span>
+          <span class="hs-label">纸糖果</span>
+        </button>
+
+        <!-- 3. 右上角拍立得相片叠 -->
+        <button class="hotspot hs-photos" data-modal="modalPhotos" data-key="photos" type="button" aria-label="翻看远方胶片">
+          <span class="hs-ring"></span>
+          <span class="hs-label">远方胶片 (6)</span>
+        </button>
+
+        <!-- 4. Maruman Mnemosyne 178 黑色小笔记本 -->
+        <button class="hotspot hs-notebook" data-modal="modalNotebook" data-key="notebook" type="button" aria-label="翻开 Mnemosyne 笔记本">
+          <span class="hs-ring"></span>
+          <span class="hs-label">Mnemosyne 笔记本 · 信</span>
+        </button>
+
+        <!-- 5. 老款黑色 Apple Watch -->
+        <button class="hotspot hs-watch" data-modal="modalWatch" data-key="watch" type="button" aria-label="点亮 Apple Watch">
+          <span class="hs-ring"></span>
+          <span class="hs-label">Apple Watch</span>
+        </button>
+
+        <!-- 6. 桌角 19 号贴纸 -->
+        <button class="hotspot hs-sticker" data-modal="modalSticker" data-key="sticker" type="button" aria-label="查看 19 号桌贴">
+          <span class="hs-ring"></span>
+          <span class="hs-label">19号桌贴</span>
+        </button>
       </div>
+    </div>
 
-      <p class="hero-lead">
-        把还没来得及亲口说完的心事，和想要拉着你走过的远方，<br />
-        先洗进这一卷带着暖色炫光与轻微模糊感的 19 岁底片里。
-      </p>
+    <!-- 底部快捷物品栏 -->
+    <nav class="bottom-dock" aria-label="课桌物品快捷栏">
+      <button class="dock-chip" data-modal="modalNotebook" data-key="notebook" type="button">📓 笔记本长信</button>
+      <button class="dock-chip" data-modal="modalWatch" data-key="watch" type="button">⌚ Apple Watch</button>
+      <button class="dock-chip" data-modal="modalPhotos" data-key="photos" type="button">🎞️ 远方胶片</button>
+      <button class="dock-chip" data-modal="modalPencil" data-key="pencil" type="button">✏️ 蓝色笔袋</button>
+      <button class="dock-chip" data-modal="modalCandy" data-key="candy" type="button">🍬 纸糖果</button>
+      <button class="dock-chip" data-modal="modalSticker" data-key="sticker" type="button">🏷️ 19号贴纸</button>
+    </nav>
+  </main>
 
-      <div class="hero-actions">
-        <a href="#places" class="btn-warm">🎞️ 翻看这卷远方胶片</a>
-        <a href="#letter" class="btn-ghost" id="jumpLetterBtn">✉️ 拆开给你的信</a>
-      </div>
-    </section>
+  <!-- ==========================================================
+       物品交互弹窗合集
+       ========================================================== -->
+  <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true">
+    <div class="modal-close-bar">
+      <button class="close-btn" id="closeModalBtn" type="button">✕ 放回课桌</button>
+    </div>
 
-    <!-- 第二幕：6 张双人剪影风格化远方胶片 -->
-    <section id="places">
-      <div class="section-head">
-        <div>
-          <div class="section-kicker">Destinations &amp; Silhouettes</div>
-          <h2 class="section-title">想和你去的地方 · 六帧底片</h2>
+    <!-- 1. Mnemosyne 178 黑色方格笔记本（完整 19 岁生日信） -->
+    <div class="modal-panel" id="modalNotebook">
+      <div class="mnemosyne-book">
+        <div class="mnemosyne-cover">
+          <span class="mnemo-brand">178 | Mnemosyne</span>
+          <span class="mnemo-spec">B7 · 5MM GRID · TO JIAYI</span>
         </div>
-        <div class="section-hint">轻触相片可切换对焦或翻看背面</div>
-      </div>
-
-      <div class="film-grid" id="filmGrid">
-        <!-- 01 -->
-        <article class="film-card">
-          <div class="photo-frame" data-index="0">
-            <img class="photo-img" src="assets/place-01.jpg" alt="雪山与高原湖畔的两个人影" loading="eager" />
-            <div class="photo-flare"></div>
-            <div class="photo-vignette"></div>
-            <span class="focus-chip">SOFT CCD</span>
-            <span class="ccd-stamp">'26 11 19</span>
-            <div class="photo-note-overlay">
-              <p class="note-quote">“答应自己要去的地方，无论多远，我都想站在你身旁一起看见雪山与倒影。”</p>
-              <span class="note-ref">FRAME #01 · 高原湖畔</span>
-            </div>
+        <div class="grid-paper">
+          <div class="grid-paper-head">
+            <span>DATE: NOV. 19TH</span>
+            <span>NO. 19</span>
           </div>
-          <div class="card-caption">
-            <div class="caption-top">
-              <h3 class="place-name">雪山与高原湖畔</h3>
-              <span class="place-code">NO.01 / PLATEAU</span>
-            </div>
-            <p class="place-desc">坐在清晨微凉的木栏杆上看云雾漫过山脊，风再大，靠在一起就不冷了。</p>
-            <div class="card-tools">
-              <button class="mini-btn js-focus-btn" type="button">对焦 / 虚焦</button>
-              <button class="mini-btn js-note-btn" type="button">背面注脚</button>
-            </div>
-          </div>
-        </article>
-
-        <!-- 02 -->
-        <article class="film-card">
-          <div class="photo-frame" data-index="1">
-            <img class="photo-img" src="assets/place-02.jpg" alt="暮色海湾甲板上的两个人影" loading="lazy" />
-            <div class="photo-flare"></div>
-            <div class="photo-vignette"></div>
-            <span class="focus-chip">SOFT CCD</span>
-            <span class="ccd-stamp">'26 11 19</span>
-            <div class="photo-note-overlay">
-              <p class="note-quote">“天在将黑未黑时最美，而你在我身边吹风的样子，比远处粉紫色的晚霞更动人。”</p>
-              <span class="note-ref">FRAME #02 · 暮色甲板</span>
-            </div>
-          </div>
-          <div class="card-caption">
-            <div class="caption-top">
-              <h3 class="place-name">北境暮色甲板</h3>
-              <span class="place-code">NO.02 / TWILIGHT SEA</span>
-            </div>
-            <p class="place-desc">在粉紫与蓝调交错的黄昏海面吹吹风，什么话也不用急着说，只是看远方的冰山。</p>
-            <div class="card-tools">
-              <button class="mini-btn js-focus-btn" type="button">对焦 / 虚焦</button>
-              <button class="mini-btn js-note-btn" type="button">背面注脚</button>
-            </div>
-          </div>
-        </article>
-
-        <!-- 03 -->
-        <article class="film-card">
-          <div class="photo-frame" data-index="2">
-            <img class="photo-img" src="assets/place-03.jpg" alt="落日海滩牵手的两个人影" loading="lazy" />
-            <div class="photo-flare"></div>
-            <div class="photo-vignette"></div>
-            <span class="focus-chip">SOFT CCD</span>
-            <span class="ccd-stamp">'26 11 19</span>
-            <div class="photo-note-overlay">
-              <p class="note-quote">“我们要散步，走很长很长的路——从八分钟走到整片落日海滩，十指相扣时生命线也会交错。”</p>
-              <span class="note-ref">FRAME #03 · 落日潮汐</span>
-            </div>
-          </div>
-          <div class="card-caption">
-            <div class="caption-top">
-              <h3 class="place-name">金色海岸与落日</h3>
-              <span class="place-code">NO.03 / GOLDEN SHORE</span>
-            </div>
-            <p class="place-desc">踩着松软的海沙慢慢走，等夕阳一点点沉进海平面，把我们的影子拉得很长。</p>
-            <div class="card-tools">
-              <button class="mini-btn js-focus-btn" type="button">对焦 / 虚焦</button>
-              <button class="mini-btn js-note-btn" type="button">背面注脚</button>
-            </div>
-          </div>
-        </article>
-
-        <!-- 04 -->
-        <article class="film-card">
-          <div class="photo-frame" data-index="3">
-            <img class="photo-img" src="assets/place-04.jpg" alt="山湖黄昏车窗前的两个人影" loading="lazy" />
-            <div class="photo-flare"></div>
-            <div class="photo-vignette"></div>
-            <span class="focus-chip">SOFT CCD</span>
-            <span class="ccd-stamp">'26 11 19</span>
-            <div class="photo-note-overlay">
-              <p class="note-quote">“车窗就是流动的取景器。只要你靠在肩头，经过的每一片山湖都是只放给我们看的电影。”</p>
-              <span class="note-ref">FRAME #04 · 落日列车</span>
-            </div>
-          </div>
-          <div class="card-caption">
-            <div class="caption-top">
-              <h3 class="place-name">开往黄昏的山湖列车</h3>
-              <span class="place-code">NO.04 / DUSK WINDOW</span>
-            </div>
-            <p class="place-desc">坐在摇摇晃晃的车厢里共享一副耳机，窗外是落日熔金，窗内是刚好的体温。</p>
-            <div class="card-tools">
-              <button class="mini-btn js-focus-btn" type="button">对焦 / 虚焦</button>
-              <button class="mini-btn js-note-btn" type="button">背面注脚</button>
-            </div>
-          </div>
-        </article>
-
-        <!-- 05 -->
-        <article class="film-card">
-          <div class="photo-frame" data-index="4">
-            <img class="photo-img" src="assets/place-05.jpg" alt="窗前并肩看烟火的两个人影" loading="lazy" />
-            <div class="photo-flare"></div>
-            <div class="photo-vignette"></div>
-            <span class="focus-chip">SOFT CCD</span>
-            <span class="ccd-stamp">'26 11 19</span>
-            <div class="photo-note-overlay">
-              <p class="note-quote">“镜头失焦的时候光斑会变成温柔的圆，就像那天站在窗前看烟火时，你转头看我的眼睛。”</p>
-              <span class="note-ref">FRAME #05 · 港湾夜色</span>
-            </div>
-          </div>
-          <div class="card-caption">
-            <div class="caption-top">
-              <h3 class="place-name">落地窗前的失焦烟火</h3>
-              <span class="place-code">NO.05 / HARBOR SPARK</span>
-            </div>
-            <p class="place-desc">把城市的喧嚣留在玻璃外面，安静地并肩站一会儿，看整片夜空为你亮起来。</p>
-            <div class="card-tools">
-              <button class="mini-btn js-focus-btn" type="button">对焦 / 虚焦</button>
-              <button class="mini-btn js-note-btn" type="button">背面注脚</button>
-            </div>
-          </div>
-        </article>
-
-        <!-- 06 -->
-        <article class="film-card">
-          <div class="photo-frame" data-index="5">
-            <img class="photo-img" src="assets/place-06.jpg" alt="路灯与秋日余晖下牵手散步的两个人影" loading="lazy" />
-            <div class="photo-flare"></div>
-            <div class="photo-vignette"></div>
-            <span class="focus-chip">SOFT CCD</span>
-            <span class="ccd-stamp">'26 11 19</span>
-            <div class="photo-note-overlay">
-              <p class="note-quote">“在傍晚、晚风、余晖和路灯下，在你飘动的发丝间——和你一起浪费时间，是我能想到最美妙的事。”</p>
-              <span class="note-ref">FRAME #06 · 老派散步</span>
-            </div>
-          </div>
-          <div class="card-caption">
-            <div class="caption-top">
-              <h3 class="place-name">路灯、晚风与散步</h3>
-              <span class="place-code">NO.06 / OLD STREET</span>
-            </div>
-            <p class="place-desc">不用赶去什么特别的景点，在任何一个城市的秋天傍晚，牵着手沿着路灯走下去就很好。</p>
-            <div class="card-tools">
-              <button class="mini-btn js-focus-btn" type="button">对焦 / 虚焦</button>
-              <button class="mini-btn js-note-btn" type="button">背面注脚</button>
-            </div>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <!-- 第三幕：写给 19 岁嘉怡的长信 -->
-    <section class="letter-section" id="letter">
-      <div class="section-head">
-        <div>
-          <div class="section-kicker">Letter For Your 19th</div>
-          <h2 class="section-title">给嘉怡的一封信</h2>
-        </div>
-        <div class="section-hint">见字如面</div>
-      </div>
-
-      <!-- 信封封面 -->
-      <div class="envelope-box" id="envelopeBox" role="button" tabindex="0" aria-label="点击拆开信封">
-        <div class="wax-seal">19</div>
-        <h3 class="envelope-title">致十九岁的嘉怡 · 见信好</h3>
-        <p class="envelope-sub">里面有一封躺在备忘录里很久的话，也有写给未来的约定。</p>
-        <span class="envelope-cta">轻触拆开这封信 ✉️</span>
-      </div>
-
-      <!-- 展开后的信纸内容 -->
-      <article class="letter-paper" id="letterPaper">
-        <div class="letter-header">
           <div class="letter-salutation">展信佳：</div>
-          <div class="letter-date">TO JIAYI · LV.19</div>
-        </div>
+          <div class="letter-body">
+            <p>该从哪里落笔呢，你的十九岁。</p>
 
-        <div class="letter-body">
-          <p>该从哪里落笔呢，你的十九岁。</p>
+            <p>总觉得日子不该走得这样快。冬意一深，我恍惚间还以为又到了高三快要“一诊”的时候——按理说，这会儿我本该正坐在家里的台灯下，对着淘宝屏幕，借口挑我喜欢的款式，偷偷给你选着文具。其实哪是什么顺手呢，不过是那时的想念太满，迫切地需要一点具体的安置。大概就是从那句说笑般的生日礼物起，某种微妙的秩序在我心里悄然重写——那是沦陷最初的预兆。</p>
 
-          <p>总觉得日子不该走得这样快。冬意一深，我恍惚间还以为又到了高三快要“一诊”的时候——按理说，这会儿我本该正坐在家里的台灯下，对着淘宝屏幕，借口挑我喜欢的款式，偷偷给你选着文具。其实哪是什么顺手呢，不过是那时的想念太满，迫切地需要一点具体的安置。大概就是从那句说笑般的生日礼物起，某种微妙的秩序在我心里悄然重写——那是沦陷最初的预兆。</p>
+            <p>有人说，命运的职责在两个人初遇的那一刻便已经完尽了。可到了我们这里，它好像总有些放心不下，偏要在暗中多推一把——它不动声色地拨动了 xpy 的换座位软件，穿过教室里扬起的粉笔灰，给了我再一次靠近你、重新认识你的机会。</p>
 
-          <p>有人说，命运的职责在两个人初遇的那一刻便已经完尽了。可到了我们这里，它好像总有些放心不下，偏要在暗中多推一把——它不动声色地拨动了 xpy 的换座位软件，穿过教室里扬起的粉笔灰，给了我再一次靠近你、重新认识你的机会。</p>
+            <p>前些天我做了一个梦。梦见清晨的第一抹阳光斜斜地切进窗户，你就站在光里，在我眼前。醒来时心里空落落的，甚至有些孩子气地想：为什么人不能永远留在高中呢？如果可以重来一次，我宁愿再忍受一遍当时所有的枯燥与煎熬。可转念一想，记忆里那段如黄金般闪耀的日子，又哪是上天白白赐予的呢？分明是因为我遇见了那样一群鲜活滚烫的人，是因为我遇见了你。是你，才让原本苦涩漫长的跋涉，变成了落日后久久不肯散去的余晖。</p>
 
-          <p>前些天我做了一个梦。梦见清晨的第一抹阳光斜斜地切进窗户，你就站在光里，在我眼前。醒来时心里空落落的，甚至有些孩子气地想：为什么人不能永远留在高中呢？如果可以重来一次，我宁愿再忍受一遍当时所有的枯燥与煎熬。可转念一想，记忆里那段如黄金般闪耀的日子，又哪是上天白白赐予的呢？分明是因为我遇见了那样一群鲜活滚烫的人，是因为我遇见了你。是你，才让原本苦涩漫长的跋涉，变成了落日后久久不肯散去的余晖。</p>
+            <p>那些散落在时光里的切片，至今仍在反复发光：<br />
+            是你捧着我的相机，抬起头真诚夸赞我照片的那个瞬间——镜头原本是没有感情的，只是拍照的人用了心，我不是在按快门，是在借着取景框偷偷留住有你的时间；<br />
+            是你递过一颗纸糖果、眉眼弯弯逗我发笑的瞬间——那种喜欢悬在舌尖，像咬开一颗青提，酸涩的皮破开后，清清凉凉的甜意便漫了上来；<br />
+            也是你用长长的信笺，一笔一划回溯我们初识的那天；是分别多时后，耳机里猝不及防响起某首歌的那一刻……<br />
+            这些零碎的瞬间在心里轻轻一碰，便拼出了你在我青春里的全部重量。原来，让人目光变得匆促的心动叫做喜欢；而心里那块被你装满、像半个米缸终于溢出了缸沿般的踏实，叫做爱。</p>
 
-          <p>那些散落在时光里的切片，至今仍在反复发光：<br />
-          是你捧着我的相机，抬起头真诚夸赞我照片的那个瞬间——镜头原本是没有感情的，只是拍照的人用了心，我不是在按快门，是在借着取景框偷偷留住有你的时间；<br />
-          是你递过一颗纸糖果、眉眼弯弯逗我发笑的瞬间——那种喜欢悬在舌尖，像咬开一颗青提，酸涩的皮破开后，清清凉凉的甜意便漫了上来；<br />
-          也是你用长长的信笺，一笔一划回溯我们初识的那天；是分别多时后，耳机里猝不及防响起某首歌的那一刻……<br />
-          这些零碎的瞬间在心里轻轻一碰，便拼出了你在我青春里的全部重量。原来，让人目光变得匆促的心动叫做喜欢；而心里那块被你装满、像半个米缸终于溢出了缸沿般的踏实，叫做爱。</p>
+            <p>只是，与轰轰烈烈的青春冲动相反，那时的我太擅长把汹涌的感情藏进沉默里。一个人没有那么喜欢谁的时候，总觉得自己足够理性、足够洒脱；可一旦真正把你放进心里，以前所有关于自己的判断就统统失效了。我像走在夜路上的盲人，小心翼翼地试探着你的方向，鼓起全部勇气把你约出来，却又在临门一脚时咽下了正式的告白。我既怕错过你，更怕彻底失去你；而你又藏得那样好，好到我不敢生出一分一毫的笃定。</p>
 
-          <p>只是，与轰轰烈烈的青春冲动相反，那时的我太擅长把汹涌的感情藏进沉默里。一个人没有那么喜欢谁的时候，总觉得自己足够理性、足够洒脱；可一旦真正把你放进心里，以前所有关于自己的判断就统统失效了。我像走在夜路上的盲人，小心翼翼地试探着你的方向，鼓起全部勇气把你约出来，却又在临门一脚时咽下了正式的告白。我既怕错过你，更怕彻底失去你；而你又藏得那样好，好到我不敢生出一分一毫的笃定。</p>
+            <p>直到那段时光轻轻合上，我写给你的信，依然安静地躺在手机备忘录里，像一页未曾投递的折角书签，平静而沉默。</p>
 
-          <p>直到那段时光轻轻合上，我写给你的信，依然安静地躺在手机备忘录里，像一页未曾投递的折角书签，平静而沉默。</p>
+            <p>今天是你十九岁的起点，我想把那封躺在备忘录里许久的信，原原本本地摊开在你面前：</p>
 
-          <p>今天是你十九岁的起点，我想把那封躺在备忘录里许久的信，原原本本地摊开在你面前：</p>
-
-          <!-- 内嵌备忘录卡片 -->
-          <div class="memo-card open" id="memoCard">
-            <div class="memo-top" id="memoToggle">
-              <span class="memo-label">📝 备忘录 · 未递出的那一页</span>
-              <span class="memo-action">点击收起 / 展开</span>
+            <div class="memo-insert open" id="memoInsert">
+              <div class="memo-insert-bar" id="memoToggleBtn">
+                <span>📝 备忘录 · 未递出的那一页</span>
+                <span>收起 / 展开</span>
+              </div>
+              <div class="memo-insert-body">
+                “嗯，我不知道，我相信你也一样——这一切到底是如何发生的，未来又会如何变化，我不知道。玫瑰花到底能不能盛开呢？遥望未来太累了，我只想过好眼前的这一刻，像小时候一样：在傍晚、晚风、余晖和路灯下，在你飘动的发丝间，在你的眼眸里，在我跳跃无常的思绪里。在某年某日的某个瞬间，我的思绪跳入了你的宇宙，于是我决定停留。我喜欢你，像受命运指引一般，并且，我已经做好了爱你的准备。”
+              </div>
             </div>
-            <div class="memo-content">
-              “嗯，我不知道，我相信你也一样——这一切到底是如何发生的，未来又会如何变化，我不知道。玫瑰花到底能不能盛开呢？遥望未来太累了，我只想过好眼前的这一刻，像小时候一样：在傍晚、晚风、余晖和路灯下，在你飘动的发丝间，在你的眼眸里，在我跳跃无常的思绪里。在某年某日的某个瞬间，我的思绪跳入了你的宇宙，于是我决定停留。我喜欢你，像受命运指引一般，并且，我已经做好了爱你的准备。”
+
+            <p class="poem-quote">
+              嘴上写着“做好了准备”，可真到了看见你迟疑和纠结的那一刻，我还是慌了神，好像一下子承住了万千重量。<br />
+              爱一个人，到底是怎样的感觉呢？<br />
+              它应当是一个深思熟虑的判断吗？是冲动，还是勇气？<br />
+              我想，它大概是我漫长而平凡的生活里，鲜有的浪涛与波澜起伏吧。<br />
+              你会爱我吗？
+              <span class="en-lyrics">Is it a crime to be unsure?<br />In time we'll find if we're suitable.</span>
+            </p>
+
+            <p>没关系的，给时间一点时间。爱情本就是一场属于勇敢者的游戏，真正读懂一个人或许需要穷尽一生的时间，而我们都在参与这场温柔的赌局——赌我们在看清彼此全部的脆弱与棱角之后，依然愿意坚定地爱下去。爱，从来都是勇敢者的奖励。</p>
+
+            <p>你看过《奥本海默》吗？我脑海里关于未来的样子，就像电影里的主角和他的妻子那样：无论往后岁月里有多少磨难与争吵，无论前一秒争执得多么面红耳赤、不可开交，只要下一秒我转过身，向你伸出手，你仍然愿意把手放进我掌心，握紧我，共同继续走下去。</p>
+
+            <p>被人深爱给予我力量，而深爱一个人赋予我勇气。</p>
+
+            <p>十九岁生日快乐，嘉怡。世界终于要见到我早就见到过的、那个熠熠生辉的你了；如果把《喜欢你》做成一本书，你是一部诗的终点，而这句“我爱你”，只是序言。</p>
+          </div>
+          <div class="letter-sign">
+            祝你今天愉快，你明天的愉快留着我明天再祝。<br />
+            —— 永远愿意陪你把路灯下的路走得很长的人
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. 老款黑色 Apple Watch（替代 iPod） -->
+    <div class="modal-panel" id="modalWatch">
+      <div class="watch-modal-wrap">
+        <div class="watch-band-top"></div>
+        <div class="watch-chassis">
+          <!-- 数码表冠：点击切换表盘画面 -->
+          <button class="watch-crown" id="watchCrownBtn" type="button" title="旋转/按下表冠切换功能"></button>
+          <!-- 侧边按键：跳转远方相册 -->
+          <button class="watch-side-btn" id="watchSideBtn" type="button" title="打开远方胶片"></button>
+
+          <div class="watch-screen">
+            <div class="watch-glass-gloss"></div>
+            <div class="watch-status">
+              <span id="watchAppName">表盘</span>
+              <span>LV.19 ♥</span>
+            </div>
+
+            <!-- Watch View 0: 纪念时间表盘 -->
+            <div class="watch-view active" data-wview="0">
+              <div class="watch-time-big" id="watchClock">19:00</div>
+              <div class="watch-date-sub">JIAYI · 19TH BIRTHDAY</div>
+              <div class="watch-quote-mini">
+                “138 亿年前宇宙爆炸的星尘里，咱俩其实早就见过了。”
+              </div>
+            </div>
+
+            <!-- Watch View 1: 怀旧随身听播放器 -->
+            <div class="watch-view" data-wview="1">
+              <div class="watch-album-disc" id="watchDisc"></div>
+              <div class="watch-track-title" id="trackTitle">放学后的夕阳前奏</div>
+              <div class="watch-track-artist" id="trackDesc">轻柔电钢琴 · 桌前单曲</div>
+              <div class="watch-audio-controls">
+                <button class="w-ctrl-btn" id="prevTrackBtn" type="button">⏮</button>
+                <button class="w-ctrl-btn w-play-btn" id="playPauseBtn" type="button">▶</button>
+                <button class="w-ctrl-btn" id="nextTrackBtn" type="button">⏭</button>
+              </div>
+            </div>
+
+            <!-- Watch View 2: 远方胶片表盘入口 -->
+            <div class="watch-view" data-wview="2">
+              <div style="width:94px;height:112px;border-radius:12px;overflow:hidden;border:2px solid rgba(230,161,92,0.5);margin-bottom:10px;">
+                <img src="assets/place-06.jpg" alt="胶片预览" style="width:100%;height:100%;object-fit:cover;" />
+              </div>
+              <div class="watch-track-title">想和你去很多地方</div>
+              <div class="watch-track-artist" style="margin-bottom:10px;">6 帧胶片底片已就绪</div>
+              <button class="hud-pill" id="watchOpenGalleryBtn" type="button" style="background:rgba(230,161,92,0.22);border-color:rgba(230,161,92,0.5);">
+                打开全部相片 →
+              </button>
+            </div>
+
+            <div class="watch-dots">
+              <span class="w-dot active" data-wdot="0"></span>
+              <span class="w-dot" data-wdot="1"></span>
+              <span class="w-dot" data-wdot="2"></span>
             </div>
           </div>
-
-          <p class="poem-lines">
-            嘴上写着“做好了准备”，可真到了看见你迟疑和纠结的那一刻，我还是慌了神，好像一下子承住了万千重量。<br />
-            爱一个人，到底是怎样的感觉呢？<br />
-            它应当是一个深思熟虑的判断吗？是冲动，还是勇气？<br />
-            我想，它大概是我漫长而平凡的生活里，鲜有的浪涛与波澜起伏吧。<br />
-            你会爱我吗？
-            <span class="english-verse">Is it a crime to be unsure?<br />In time we'll find if we're suitable.</span>
-          </p>
-
-          <p>没关系的，给时间一点时间。爱情本就是一场属于勇敢者的游戏，真正读懂一个人或许需要穷尽一生的时间，而我们都在参与这场温柔的赌局——赌我们在看清彼此全部的脆弱与棱角之后，依然愿意坚定地爱下去。爱，从来都是勇敢者的奖励。</p>
-
-          <p>你看过《奥本海默》吗？我脑海里关于未来的样子，就像电影里的主角和他的妻子那样：无论往后岁月里有多少磨难与争吵，无论前一秒争执得多么面红耳赤、不可开交，只要下一秒我转过身，向你伸出手，你仍然愿意把手放进我掌心，握紧我，共同继续走下去。</p>
-
-          <p>被人深爱给予我力量，而深爱一个人赋予我勇气。</p>
-
-          <p>十九岁生日快乐，嘉怡。世界终于要见到我早就见到过的、那个熠熠生辉的你了；如果把《喜欢你》做成一本书，你是一部诗的终点，而这句“我爱你”，只是序言。</p>
         </div>
-
-        <div class="letter-sign">
-          祝你今天愉快，你明天的愉快留着我明天再祝。<br />
-          —— 永远愿意把路灯下的路走得很长的人
-        </div>
-      </article>
-    </section>
-
-    <!-- 第四幕：互动快门收集余晖 -->
-    <section class="shutter-card">
-      <div class="section-kicker" style="margin-bottom: 10px;">Shutter &amp; Afterglow</div>
-      <div class="shutter-whisper" id="shutterWhisper">
-        “我不是在拍照，是在帮我们留住时间。”
+        <div class="watch-band-bottom"></div>
+        <div class="watch-hint-bar">轻按右侧「表冠」或底部小圆点切换表盘与音乐</div>
       </div>
-      <button class="btn-warm" id="shutterBtn" type="button">📷 按下快门 · 收藏这一刻</button>
-      <div class="shutter-count" id="shutterCount">EXP 01 / 36 · 35MM WARM FILM</div>
-    </section>
+    </div>
 
-    <footer class="footer-note">
-      JIAYI 19TH · 13.8 BILLION YEARS IN THE MAKING
-    </footer>
+    <!-- 3. 蓝色白色拉链笔袋 -->
+    <div class="modal-panel" id="modalPencil">
+      <div class="pouch-card">
+        <div class="pouch-zipper"></div>
+        <div class="pouch-inner">
+          <h3 class="pouch-title">✏️ 蓝色大拉链笔袋里的秘密</h3>
+          <p class="pouch-text">
+            冬天一诊快到的时候，坐在家里对着淘宝屏幕给你挑我喜欢的文具。现在回过头看才发现，其实哪是什么顺手挑几支笔呢——不过是那时候的想念太满，迫切地需要一点具体的安置。
+          </p>
+          <div class="stationery-tags">
+            <span class="st-tag">📓 Mnemosyne 记忆女神 B7 方格本</span>
+            <span class="st-tag">🖊️ 借口顺便挑的顺滑中性笔</span>
+            <span class="st-tag">🖍️ 划重点用的橘蓝双色笔</span>
+            <span class="st-tag">☁️ 一张偷偷夹进去的小纸条</span>
+          </div>
+          <p class="pouch-text" style="margin-bottom:0;font-size:13.5px;color:#826b5a;">
+            “你可以大方地收下，别有压力——是我的想念，需要一点具体的安置。”
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. 右上角拍立得相片叠（6 张风格化双人剪影） -->
+    <div class="modal-panel" id="modalPhotos">
+      <div class="gallery-card">
+        <div class="gallery-head">
+          <div>
+            <h3 class="gallery-title">🎞️ 想和你一起去很多地方</h3>
+            <div class="gallery-sub">每张都是收藏匣灵感的纯剪影重绘 · 点击相片翻面</div>
+          </div>
+        </div>
+
+        <div class="film-grid">
+          <article class="polaroid">
+            <div class="polaroid-frame">
+              <img class="polaroid-img" src="assets/place-01.jpg" alt="雪山与高原湖畔的两个人影" />
+              <span class="polaroid-stamp">'26 11 19</span>
+              <div class="polaroid-back">
+                <p>“答应自己要去的地方，无论多远，我都想拉着你去看看雪山与倒影。”</p>
+              </div>
+            </div>
+            <div class="polaroid-meta">
+              <span class="polaroid-name">01 · 高原湖畔</span>
+              <div class="polaroid-actions">
+                <button class="p-btn js-pfocus" type="button">对焦</button>
+                <button class="p-btn js-pback" type="button">翻面</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="polaroid">
+            <div class="polaroid-frame">
+              <img class="polaroid-img" src="assets/place-02.jpg" alt="暮色海湾甲板上的两个人影" />
+              <span class="polaroid-stamp">'26 11 19</span>
+              <div class="polaroid-back">
+                <p>“天在将黑未黑时最美，你在我身边吹风的样子，比粉紫色的晚霞更动人。”</p>
+              </div>
+            </div>
+            <div class="polaroid-meta">
+              <span class="polaroid-name">02 · 暮色甲板</span>
+              <div class="polaroid-actions">
+                <button class="p-btn js-pfocus" type="button">对焦</button>
+                <button class="p-btn js-pback" type="button">翻面</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="polaroid">
+            <div class="polaroid-frame">
+              <img class="polaroid-img" src="assets/place-03.jpg" alt="金色海岸与落日剪影" />
+              <span class="polaroid-stamp">'26 11 19</span>
+              <div class="polaroid-back">
+                <p>“我们要散步，把八分钟的路绕成四十分钟，走到整片落日海岸线的尽头。”</p>
+              </div>
+            </div>
+            <div class="polaroid-meta">
+              <span class="polaroid-name">03 · 金色海岸</span>
+              <div class="polaroid-actions">
+                <button class="p-btn js-pfocus" type="button">对焦</button>
+                <button class="p-btn js-pback" type="button">翻面</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="polaroid">
+            <div class="polaroid-frame">
+              <img class="polaroid-img" src="assets/place-04.jpg" alt="落日列车车窗前的两个人影" />
+              <span class="polaroid-stamp">'26 11 19</span>
+              <div class="polaroid-back">
+                <p>“车窗是移动的取景器。只要你靠在肩头，经过的山湖都是只放给我们看的电影。”</p>
+              </div>
+            </div>
+            <div class="polaroid-meta">
+              <span class="polaroid-name">04 · 黄昏列车</span>
+              <div class="polaroid-actions">
+                <button class="p-btn js-pfocus" type="button">对焦</button>
+                <button class="p-btn js-pback" type="button">翻面</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="polaroid">
+            <div class="polaroid-frame">
+              <img class="polaroid-img" src="assets/place-05.jpg" alt="落地窗前看烟火的两个人影" />
+              <span class="polaroid-stamp">'26 11 19</span>
+              <div class="polaroid-back">
+                <p>“镜头失焦的时候光斑会变成温柔的圆，就像那天站在窗前看烟火时你的眼睛。”</p>
+              </div>
+            </div>
+            <div class="polaroid-meta">
+              <span class="polaroid-name">05 · 失焦烟火</span>
+              <div class="polaroid-actions">
+                <button class="p-btn js-pfocus" type="button">对焦</button>
+                <button class="p-btn js-pback" type="button">翻面</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="polaroid">
+            <div class="polaroid-frame">
+              <img class="polaroid-img" src="assets/place-06.jpg" alt="晚风路灯下牵手散步的两个人影" />
+              <span class="polaroid-stamp">'26 11 19</span>
+              <div class="polaroid-back">
+                <p>“在傍晚、晚风、余晖和路灯下，在你飘动的发丝间——和你一起浪费时间，是最美妙的事。”</p>
+              </div>
+            </div>
+            <div class="polaroid-meta">
+              <span class="polaroid-name">06 · 路灯晚风</span>
+              <div class="polaroid-actions">
+                <button class="p-btn js-pfocus" type="button">对焦</button>
+                <button class="p-btn js-pback" type="button">翻面</button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. 纸糖果彩蛋卡片 -->
+    <div class="modal-panel" id="modalCandy">
+      <div class="note-modal-card">
+        <div class="note-emoji-icon">🍬</div>
+        <h3 class="note-modal-title">一颗银色糖纸包着的糖</h3>
+        <p class="note-modal-text">
+          总想起你用纸糖果逗我笑的那一天。<br />
+          那种喜欢悬在舌尖，像咬开一颗青提——酸涩的皮破开后，清清凉凉的甜意便慢慢漫上来。
+        </p>
+        <div class="coupon-box">
+          <strong>🎟️ 19 岁生日专属愿望券</strong>
+          <span>可兑换：任意一场落日下的老派散步 + 我先把双手搓热后再抱紧你。</span>
+        </div>
+        <button class="claim-btn" id="claimCandyBtn" type="button">收下这颗糖果</button>
+      </div>
+    </div>
+
+    <!-- 6. 桌角 19 号贴纸彩蛋卡片 -->
+    <div class="modal-panel" id="modalSticker">
+      <div class="note-modal-card">
+        <div class="note-emoji-icon">🏫</div>
+        <h3 class="note-modal-title">课桌左下角 · 19 号座位贴</h3>
+        <p class="note-modal-text">
+          “有人说，命运的职责在两个人初遇的那一刻就已经完尽了。<br />
+          可到了我们这里，它好像总有些放心不下——偏要悄悄拨动 xpy 的换座位软件，穿过教室里扬起的粉笔灰，给了我再一次靠近你、重新认识你的机会。”
+        </p>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--ink-muted);">
+          SEAT NO.19 · JIAYI'S 19TH BIRTHDAY
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
     // ==========================================================
-    // 1. 全局 CCD 柔和虚焦模式切换
+    // 1. 教室夕阳飘浮光尘粒子（Canvas）
     // ==========================================================
-    const globalCcdBtn = document.getElementById("globalCcdBtn");
-    let dreamyMode = false;
+    const dustCanvas = document.getElementById("dustCanvas");
+    const dCtx = dustCanvas.getContext("2d");
+    const specks = [];
 
-    globalCcdBtn.addEventListener("click", () => {
-      dreamyMode = !dreamyMode;
-      document.body.classList.toggle("dreamy-ccd", dreamyMode);
-      globalCcdBtn.querySelector("span").textContent = dreamyMode
-        ? "◎ CCD 柔焦: 梦境"
-        : "◎ CCD 柔焦: 标准";
-
-      // 重置单张照片的手动锁定状态，让全局模式生效
-      document.querySelectorAll(".photo-frame").forEach((frame) => {
-        frame.classList.remove("is-focused", "is-hazy");
-        const chip = frame.querySelector(".focus-chip");
-        if (chip) chip.textContent = dreamyMode ? "CCD HAZE" : "SOFT CCD";
-      });
-    });
-
-    // ==========================================================
-    // 2. 单张胶片对焦 / 虚焦切换 & 翻看背面注脚
-    // ==========================================================
-    document.querySelectorAll(".film-card").forEach((card) => {
-      const frame = card.querySelector(".photo-frame");
-      const chip = card.querySelector(".focus-chip");
-      const focusBtn = card.querySelector(".js-focus-btn");
-      const noteBtn = card.querySelector(".js-note-btn");
-
-      function toggleFocus() {
-        // 如果当前正显示背面文字，先回到画面
-        if (frame.classList.contains("show-note")) {
-          frame.classList.remove("show-note");
-          noteBtn.classList.remove("active");
-          return;
-        }
-        const isCurrentlyFocused = frame.classList.contains("is-focused");
-        frame.classList.remove("is-focused", "is-hazy");
-        if (isCurrentlyFocused) {
-          frame.classList.add("is-hazy");
-          chip.textContent = "CCD HAZE";
-          focusBtn.classList.remove("active");
-        } else {
-          frame.classList.add("is-focused");
-          chip.textContent = "AF LOCKED";
-          focusBtn.classList.add("active");
-        }
+    function resizeDust() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      dustCanvas.width = window.innerWidth * dpr;
+      dustCanvas.height = window.innerHeight * dpr;
+      dCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      specks.length = 0;
+      const count = Math.min(48, Math.floor((window.innerWidth * window.innerHeight) / 14000));
+      for (let i = 0; i < count; i++) {
+        specks.push({
+          x: Math.random() * window.innerWidth,
+          y: Math.random() * window.innerHeight,
+          r: Math.random() * 1.6 + 0.5,
+          vx: (Math.random() - 0.5) * 0.16,
+          vy: -(Math.random() * 0.18 + 0.04),
+          alpha: Math.random() * 0.45 + 0.12,
+          phase: Math.random() * Math.PI * 2
+        });
       }
-
-      function toggleNote() {
-        const show = !frame.classList.contains("show-note");
-        frame.classList.toggle("show-note", show);
-        noteBtn.classList.toggle("active", show);
-      }
-
-      // 点击相框直接翻看或收起背面寄语
-      frame.addEventListener("click", toggleNote);
-      focusBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        toggleFocus();
-      });
-      noteBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        toggleNote();
-      });
-    });
-
-    // ==========================================================
-    // 3. 信封拆开与备忘录折叠交互
-    // ==========================================================
-    const envelopeBox = document.getElementById("envelopeBox");
-    const letterPaper = document.getElementById("letterPaper");
-    const jumpLetterBtn = document.getElementById("jumpLetterBtn");
-
-    function openLetter() {
-      envelopeBox.classList.add("is-hidden");
-      letterPaper.classList.add("is-open");
     }
 
-    envelopeBox.addEventListener("click", openLetter);
-    envelopeBox.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        openLetter();
+    function drawDust() {
+      dCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      for (const s of specks) {
+        s.x += s.vx;
+        s.y += s.vy;
+        s.phase += 0.015;
+        if (s.y < -8) {
+          s.y = window.innerHeight + 8;
+          s.x = Math.random() * window.innerWidth;
+        }
+        const a = s.alpha * (0.65 + 0.35 * Math.sin(s.phase));
+        dCtx.beginPath();
+        dCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        dCtx.fillStyle = `rgba(255, 226, 178, ${a.toFixed(3)})`;
+        dCtx.fill();
       }
-    });
+      requestAnimationFrame(drawDust);
+    }
 
-    jumpLetterBtn.addEventListener("click", () => {
-      setTimeout(openLetter, 250);
-    });
-
-    const memoCard = document.getElementById("memoCard");
-    const memoToggle = document.getElementById("memoToggle");
-    memoToggle.addEventListener("click", () => {
-      memoCard.classList.toggle("open");
-    });
+    window.addEventListener("resize", resizeDust);
+    resizeDust();
+    drawDust();
 
     // ==========================================================
-    // 4. 底部“按下快门”闪光灯 + 随机胶片情话
+    // 2. Web Audio 极简温柔复古旋律合成器（用于 Apple Watch 播放）
+    //    保证零外部 MP3 依赖在 iPhone Safari 上也能立即温暖发声
     // ==========================================================
-    const shutterFlash = document.getElementById("shutterFlash");
-    const shutterBtn = document.getElementById("shutterBtn");
-    const shutterWhisper = document.getElementById("shutterWhisper");
-    const shutterCount = document.getElementById("shutterCount");
-
-    const lines = [
-      "“我不是在拍照，是在帮我们留住时间。”",
-      "“严格地说，138 亿年前，咱俩就见过了。”",
-      "“想和你在傍晚、晚风、余晖和路灯下，把八分钟的路走得很长。”",
-      "“世界终于要见到我早就见到过的、那个熠熠生辉的你了。”",
-      "“是我的想念太满，才迫切地需要一点具体的安置。”",
-      "“被人深爱给予我力量，而深爱一个人赋予我勇气。”"
+    const tracks = [
+      {
+        title: "放学后的夕阳前奏",
+        desc: "温暖电钢琴 · 桌前单曲",
+        notes: [261.63, 329.63, 392.00, 493.88, 392.00, 329.63, 293.66, 349.23, 440.00, 523.25, 440.00, 349.23],
+        tempo: 680
+      },
+      {
+        title: "晚风里的八音盒",
+        desc: "老派散步 · 轻柔八音盒",
+        notes: [392.00, 493.88, 587.33, 659.25, 587.33, 493.88, 349.23, 440.00, 523.25, 587.33, 523.25, 440.00],
+        tempo: 580
+      },
+      {
+        title: "十九岁夜空的星尘",
+        desc: "138 亿年的余晖",
+        notes: [220.00, 261.63, 329.63, 392.00, 440.00, 392.00, 329.63, 261.63, 196.00, 246.94, 293.66, 392.00],
+        tempo: 740
+      }
     ];
-    let shotNum = 1;
 
-    shutterBtn.addEventListener("click", () => {
-      shutterFlash.classList.add("active");
-      setTimeout(() => shutterFlash.classList.remove("active"), 90);
+    let audioCtx = null;
+    let isPlaying = false;
+    let trackIdx = 0;
+    let noteStep = 0;
+    let playTimer = null;
 
-      shotNum += 1;
-      const padded = String(Math.min(shotNum, 36)).padStart(2, "0");
-      shutterCount.textContent = `EXP ${padded} / 36 · 35MM WARM FILM`;
+    function ensureAudio() {
+      if (!audioCtx) {
+        const Ctx = window.AudioContext || window.webkitAudioContext;
+        if (Ctx) audioCtx = new Ctx();
+      }
+      if (audioCtx && audioCtx.state === "suspended") {
+        audioCtx.resume();
+      }
+    }
 
-      shutterWhisper.style.opacity = "0";
-      setTimeout(() => {
-        shutterWhisper.textContent = lines[(shotNum - 1) % lines.length];
-        shutterWhisper.style.opacity = "1";
-      }, 220);
+    function playSoftTone(freq) {
+      if (!audioCtx) return;
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const sub = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      const filter = audioCtx.createBiquadFilter();
+
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(freq, now);
+      sub.type = "triangle";
+      sub.frequency.setValueAtTime(freq * 0.5, now);
+
+      filter.type = "lowpass";
+      filter.frequency.setValueAtTime(1100, now);
+
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(0.08, now + 0.06);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.35);
+
+      osc.connect(filter);
+      sub.connect(filter);
+      filter.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      osc.start(now);
+      sub.start(now);
+      osc.stop(now + 1.4);
+      sub.stop(now + 1.4);
+    }
+
+    function updatePlayerUI() {
+      const t = tracks[trackIdx];
+      document.getElementById("trackTitle").textContent = t.title;
+      document.getElementById("trackDesc").textContent = t.desc;
+      document.getElementById("playPauseBtn").textContent = isPlaying ? "❚❚" : "▶";
+      document.getElementById("watchDisc").classList.toggle("playing", isPlaying);
+    }
+
+    function startMusic() {
+      ensureAudio();
+      if (playTimer) clearInterval(playTimer);
+      isPlaying = true;
+      updatePlayerUI();
+      const runTick = () => {
+        if (!isPlaying) return;
+        const seq = tracks[trackIdx].notes;
+        playSoftTone(seq[noteStep % seq.length]);
+        noteStep += 1;
+      };
+      runTick();
+      playTimer = setInterval(runTick, tracks[trackIdx].tempo);
+    }
+
+    function pauseMusic() {
+      isPlaying = false;
+      if (playTimer) {
+        clearInterval(playTimer);
+        playTimer = null;
+      }
+      updatePlayerUI();
+    }
+
+    // ==========================================================
+    // 3. 开场唤醒逻辑（梦境失焦 -> 课桌显影）
+    // ==========================================================
+    document.getElementById("wakeBtn").addEventListener("click", () => {
+      document.body.classList.add("is-awake");
+      ensureAudio();
+      // 轻柔弹出一声温暖开场和弦
+      playSoftTone(329.63);
+      setTimeout(() => playSoftTone(440.00), 140);
+      setTimeout(() => playSoftTone(523.25), 280);
+    });
+
+    // 隐藏 / 显示桌面提示小标签
+    const toggleLabelsBtn = document.getElementById("toggleLabelsBtn");
+    toggleLabelsBtn.addEventListener("click", () => {
+      const hidden = document.body.classList.toggle("hide-labels");
+      toggleLabelsBtn.textContent = hidden ? "显示标签" : "隐藏标签";
+    });
+
+    // ==========================================================
+    // 4. 课桌物品弹窗管理与探索进度
+    // ==========================================================
+    const modalBackdrop = document.getElementById("modalBackdrop");
+    const closeModalBtn = document.getElementById("closeModalBtn");
+    const progressText = document.getElementById("progressText");
+    const visitedSet = new Set();
+
+    function openItemModal(modalId, key) {
+      document.querySelectorAll(".modal-panel").forEach((p) => p.classList.remove("active"));
+      const target = document.getElementById(modalId);
+      if (!target) return;
+      target.classList.add("active");
+      target.scrollTop = 0;
+      modalBackdrop.classList.add("active");
+      document.body.classList.add("modal-open");
+
+      if (key) {
+        visitedSet.add(key);
+        progressText.textContent = `${visitedSet.size} / 6`;
+        document.querySelectorAll(`[data-key="${key}"]`).forEach((el) => {
+          el.classList.add("is-visited", "visited");
+        });
+      }
+    }
+
+    function closeItemModal() {
+      modalBackdrop.classList.remove("active");
+      document.body.classList.remove("modal-open");
+      document.querySelectorAll(".modal-panel").forEach((p) => p.classList.remove("active"));
+    }
+
+    document.querySelectorAll("[data-modal]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        openItemModal(btn.dataset.modal, btn.dataset.key);
+      });
+    });
+
+    closeModalBtn.addEventListener("click", closeItemModal);
+    modalBackdrop.addEventListener("click", (e) => {
+      if (e.target === modalBackdrop) closeItemModal();
+    });
+
+    // 笔记本内嵌“备忘录”折叠开关
+    document.getElementById("memoToggleBtn").addEventListener("click", () => {
+      document.getElementById("memoInsert").classList.toggle("open");
+    });
+
+    // ==========================================================
+    // 5. 老款 Apple Watch 内部表盘切换 & 音乐控制
+    // ==========================================================
+    const watchViews = document.querySelectorAll(".watch-view");
+    const watchDots = document.querySelectorAll(".w-dot");
+    const watchAppNames = ["表盘", "随身听", "胶片"];
+    let watchScreenIdx = 0;
+
+    function switchWatchView(idx) {
+      watchScreenIdx = (idx + watchViews.length) % watchViews.length;
+      watchViews.forEach((v, i) => v.classList.toggle("active", i === watchScreenIdx));
+      watchDots.forEach((d, i) => d.classList.toggle("active", i === watchScreenIdx));
+      document.getElementById("watchAppName").textContent = watchAppNames[watchScreenIdx];
+    }
+
+    document.getElementById("watchCrownBtn").addEventListener("click", () => {
+      switchWatchView(watchScreenIdx + 1);
+    });
+
+    watchDots.forEach((dot) => {
+      dot.addEventListener("click", () => {
+        switchWatchView(Number(dot.dataset.wdot));
+      });
+    });
+
+    document.getElementById("watchSideBtn").addEventListener("click", () => {
+      openItemModal("modalPhotos", "photos");
+    });
+
+    document.getElementById("watchOpenGalleryBtn").addEventListener("click", () => {
+      openItemModal("modalPhotos", "photos");
+    });
+
+    document.getElementById("playPauseBtn").addEventListener("click", () => {
+      if (isPlaying) pauseMusic();
+      else startMusic();
+    });
+
+    document.getElementById("prevTrackBtn").addEventListener("click", () => {
+      trackIdx = (trackIdx - 1 + tracks.length) % tracks.length;
+      noteStep = 0;
+      startMusic();
+    });
+
+    document.getElementById("nextTrackBtn").addEventListener("click", () => {
+      trackIdx = (trackIdx + 1) % tracks.length;
+      noteStep = 0;
+      startMusic();
+    });
+
+    // ==========================================================
+    // 6. 拍立得画廊的对焦 & 翻面交互 + 糖果券收下交互
+    // ==========================================================
+    document.querySelectorAll(".polaroid").forEach((card) => {
+      const frame = card.querySelector(".polaroid-frame");
+      const focusBtn = card.querySelector(".js-pfocus");
+      const backBtn = card.querySelector(".js-pback");
+
+      function toggleBack() {
+        frame.classList.toggle("show-back");
+      }
+
+      frame.addEventListener("click", toggleBack);
+      backBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleBack();
+      });
+
+      focusBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        frame.classList.remove("show-back");
+        const isSharp = frame.classList.toggle("is-sharp");
+        frame.classList.toggle("is-hazy", !isSharp);
+        focusBtn.textContent = isSharp ? "虚焦" : "对焦";
+      });
+    });
+
+    const claimCandyBtn = document.getElementById("claimCandyBtn");
+    claimCandyBtn.addEventListener("click", () => {
+      claimCandyBtn.classList.add("claimed");
+      claimCandyBtn.textContent = "✓ 已放进口袋里";
     });
   </script>
 </body>
