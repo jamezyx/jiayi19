@@ -6,19 +6,17 @@
   <title>夕阳下的十九岁课桌 · To Jiayi</title>
   <style>
     /* ==========================================================
-       全局设计变量：落日琥珀 + 胶片怀旧暖调 + 极简拟物质感
+       全局设计变量：深暗落日明暗对比 + 35mm 复古胶片质感
        ========================================================== */
     :root {
-      --bg-room: #1d1612;
-      --paper-cream: #f8f1e6;
-      --paper-grid: rgba(120, 102, 86, 0.13);
-      --ink-dark: #33251d;
-      --ink-soft: #634e40;
-      --ink-muted: #987e6b;
+      --bg-room: #0d0a08;
+      --paper-cream: #f6eedf;
+      --paper-grid: rgba(110, 92, 74, 0.14);
+      --ink-dark: #30221a;
+      --ink-soft: #5f4a3c;
+      --ink-muted: #937864;
       --sunset-gold: #e6a15c;
       --sunset-amber: #d47a45;
-      --cobalt-blue: #1858a8;
-      --watch-black: #17181b;
       --serif: "Songti SC", "STSong", "Noto Serif SC", Georgia, serif;
       --sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", sans-serif;
       --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
@@ -42,20 +40,18 @@
       user-select: none;
     }
 
-    /* ==========================================================
-       环境背景层（为桌面端大屏提供同源落日虚化氛围）
-       ========================================================== */
+    /* 深暗教室环境光背板 */
     .ambient-backdrop {
       position: fixed;
       inset: -8%;
       background: url("assets/desk-sunset.jpg") center / cover no-repeat;
-      filter: blur(36px) brightness(0.36) saturate(1.1);
-      transform: scale(1.1);
+      filter: blur(44px) brightness(0.22) saturate(1.1);
+      transform: scale(1.12);
       z-index: 0;
       pointer-events: none;
     }
 
-    /* 全屏 35mm 胶片噪点纹理 */
+    /* 全屏 35mm 胶片噪点颗粒层 */
     .film-grain {
       position: fixed;
       inset: -10%;
@@ -63,7 +59,7 @@
       height: 120%;
       pointer-events: none;
       z-index: 80;
-      opacity: 0.055;
+      opacity: 0.065;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
       animation: grainAnim 0.4s steps(2) infinite;
     }
@@ -75,7 +71,7 @@
       100% { transform: translate(0.5%, 0.5%); }
     }
 
-    /* 阳光漂浮灰尘粒子画布（教室粉笔灰夕阳丁达尔效果） */
+    /* 阳光斜照下的飘浮光尘画布 */
     #dustCanvas {
       position: fixed;
       inset: 0;
@@ -86,7 +82,7 @@
     }
 
     /* ==========================================================
-       主视觉舞台：9:12（3:4）精准适配高中课桌俯视图
+       主视觉舞台：横版 4:3 高中课桌俯视画框
        ========================================================== */
     .viewport-shell {
       position: relative;
@@ -97,21 +93,19 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: env(safe-area-inset-top, 10px) 10px env(safe-area-inset-bottom, 12px);
+      padding: env(safe-area-inset-top, 10px) 12px env(safe-area-inset-bottom, 12px);
     }
 
-    /* 顶部极简电影信息条 */
     .top-hud {
-      width: 100%;
-      max-width: 520px;
+      width: min(94vw, calc((100dvh - 104px) * 1.3395));
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 6px 8px 10px;
+      padding: 4px 4px 10px;
       font-family: var(--mono);
       font-size: 11px;
-      letter-spacing: 0.1em;
-      color: rgba(248, 241, 230, 0.78);
+      letter-spacing: 0.12em;
+      color: rgba(246, 238, 223, 0.65);
       opacity: 0;
       transform: translateY(-6px);
       transition: opacity 0.8s ease, transform 0.8s ease;
@@ -133,54 +127,29 @@
       height: 6px;
       border-radius: 50%;
       background: var(--sunset-gold);
-      box-shadow: 0 0 8px var(--sunset-gold);
+      box-shadow: 0 0 10px var(--sunset-gold);
     }
 
-    .hud-controls {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .hud-pill {
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: rgba(255, 248, 238, 0.1);
-      border: 1px solid rgba(255, 240, 220, 0.2);
-      color: rgba(248, 241, 230, 0.9);
-      font-family: var(--sans);
-      font-size: 11px;
-      cursor: pointer;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      transition: background 0.2s ease;
-    }
-
-    .hud-pill:active {
-      transform: scale(0.95);
-    }
-
-    /* 课桌 3:4 电影画框（保持比例以确保所有物品热区 100% 对齐） */
+    /* 横版 4:3 课桌电影画框 */
     .desk-stage {
       position: relative;
-      width: min(94vw, calc((100dvh - 118px) * 0.746));
-      aspect-ratio: 1200 / 1607;
-      border-radius: 18px;
+      width: min(94vw, calc((100dvh - 104px) * 1.3395));
+      aspect-ratio: 1440 / 1075;
+      border-radius: 16px;
       overflow: hidden;
       box-shadow:
-        0 28px 70px rgba(0, 0, 0, 0.65),
-        0 0 0 1px rgba(255, 240, 220, 0.12);
-      background: #2b211a;
+        0 34px 90px rgba(0, 0, 0, 0.85),
+        0 0 0 1px rgba(255, 232, 200, 0.1);
+      background: #140f0c;
     }
 
-    /* 实拍课桌底图层：支持开场失焦 -> 醒来对焦 -> 弹窗时退后景深虚化 */
+    /* 实拍课桌底图层：开场柔和失焦 -> 醒来收实对焦 -> 弹窗时退后虚化 */
     .desk-photo-layer {
       position: absolute;
       inset: 0;
       background: url("assets/desk-sunset.jpg") center / 100% 100% no-repeat;
-      /* 初始处于柔和的梦境失焦状态 */
-      filter: blur(18px) brightness(0.72) saturate(0.95);
-      transform: scale(1.09);
+      filter: blur(18px) brightness(0.55) saturate(0.95);
+      transform: scale(1.08);
       transition:
         filter 1.25s cubic-bezier(0.22, 1, 0.36, 1),
         transform 1.25s cubic-bezier(0.22, 1, 0.36, 1);
@@ -188,34 +157,41 @@
     }
 
     body.is-awake .desk-photo-layer {
-      filter: blur(0px) brightness(1) saturate(1);
+      filter: blur(0px) brightness(0.96) contrast(1.04) saturate(1.02);
       transform: scale(1);
     }
 
     body.modal-open .desk-photo-layer {
-      filter: blur(9px) brightness(0.72) saturate(0.92);
+      filter: blur(10px) brightness(0.58) saturate(0.9);
       transform: scale(1.05);
     }
 
-    /* 边缘落日暖色漏光炫光层（柔和呼吸） */
+    /* 暗角压边与右上角落日强对比炫光 */
+    .desk-vignette {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at 56% 48%, transparent 52%, rgba(8, 5, 3, 0.56) 100%);
+    }
+
     .desk-lens-flare {
       position: absolute;
       inset: 0;
       pointer-events: none;
       background:
-        radial-gradient(circle at 88% 12%, rgba(255, 192, 118, 0.32) 0%, rgba(255, 192, 118, 0) 48%),
-        radial-gradient(circle at 14% 85%, rgba(236, 152, 98, 0.14) 0%, rgba(236, 152, 98, 0) 40%);
+        radial-gradient(circle at 86% 12%, rgba(255, 184, 102, 0.3) 0%, rgba(255, 184, 102, 0) 46%),
+        radial-gradient(circle at 18% 82%, rgba(226, 140, 86, 0.1) 0%, rgba(226, 140, 86, 0) 38%);
       mix-blend-mode: screen;
-      animation: flareBreath 7s ease-in-out infinite alternate;
+      animation: flareBreath 6.5s ease-in-out infinite alternate;
     }
 
     @keyframes flareBreath {
-      0% { opacity: 0.72; }
+      0% { opacity: 0.7; }
       100% { opacity: 1; }
     }
 
     /* ==========================================================
-       桌面可点击热区（精准锚定在画框内的 6 件实物上）
+       桌面可点击热区：纯洁小圆点（无任何文字标签遮挡）
        ========================================================== */
     .hotspots-layer {
       position: absolute;
@@ -223,7 +199,7 @@
       z-index: 10;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.9s ease 0.4s;
+      transition: opacity 0.9s ease 0.35s;
     }
 
     body.is-awake .hotspots-layer {
@@ -238,132 +214,71 @@
       background: transparent;
       cursor: pointer;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 0;
     }
 
-    /* 隐形点击区域大小按实物占比分配 */
-    .hs-pencil  { left: 28%; top: 28%; width: 38%; height: 25%; }
-    .hs-candy   { left: 40%; top: 39%; width: 14%; height: 11%; }
-    .hs-photos  { left: 71%; top: 36%; width: 31%; height: 22%; }
-    .hs-notebook{ left: 34%; top: 66%; width: 35%; height: 30%; }
-    .hs-watch   { left: 69%; top: 66%; width: 28%; height: 32%; }
-    .hs-sticker { left: 15.5%; top: 84%; width: 12%; height: 12%; }
+    /* 精准锚定在 4:3 横桌的 5 件物体上（已去除桌贴） */
+    .hs-pencil   { left: 28%;   top: 28%;   width: 28%; height: 24%; }
+    .hs-candy    { left: 47.5%; top: 34.5%; width: 11%; height: 11%; }
+    .hs-photos   { left: 74%;   top: 33%;   width: 24%; height: 24%; }
+    .hs-notebook { left: 33.5%; top: 62%;   width: 26%; height: 34%; }
+    .hs-watch    { left: 73.5%; top: 65%;   width: 24%; height: 34%; }
 
-    /* 极克制的呼吸取景光环（像相机对焦点） */
+    /* 极简微光小圆点 */
     .hs-ring {
       position: relative;
-      width: 24px;
-      height: 24px;
+      width: 14px;
+      height: 14px;
       border-radius: 50%;
-      background: rgba(255, 245, 228, 0.22);
-      border: 1.5px solid rgba(255, 245, 228, 0.85);
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.28);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.25s ease, background 0.25s ease;
+      background: rgba(255, 244, 224, 0.92);
+      border: 2px solid rgba(255, 255, 255, 0.95);
+      box-shadow: 0 0 12px rgba(255, 206, 146, 0.85), 0 2px 8px rgba(0, 0, 0, 0.45);
+      transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
     }
 
     .hs-ring::before {
       content: "";
       position: absolute;
-      inset: -6px;
+      inset: -7px;
       border-radius: 50%;
-      border: 1px solid rgba(255, 232, 198, 0.55);
-      animation: ringPulse 2.8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
-    }
-
-    .hs-ring::after {
-      content: "";
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: #fff8ed;
+      border: 1.5px solid rgba(255, 226, 184, 0.65);
+      animation: ringPulse 2.6s cubic-bezier(0.22, 1, 0.36, 1) infinite;
     }
 
     .hotspot.is-visited .hs-ring {
-      border-color: rgba(230, 161, 92, 0.9);
-      background: rgba(230, 161, 92, 0.28);
+      background: rgba(230, 161, 92, 0.95);
+      border-color: rgba(255, 232, 198, 0.9);
+      box-shadow: 0 0 10px rgba(230, 161, 92, 0.65);
     }
 
     @keyframes ringPulse {
-      0% { transform: scale(0.85); opacity: 0.9; }
-      100% { transform: scale(1.65); opacity: 0; }
-    }
-
-    .hs-label {
-      margin-top: 6px;
-      padding: 3px 9px;
-      border-radius: 999px;
-      background: rgba(28, 21, 17, 0.68);
-      border: 1px solid rgba(255, 235, 205, 0.22);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      font-size: 11px;
-      color: #fbf4ea;
-      white-space: nowrap;
-      letter-spacing: 0.04em;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-      transition: opacity 0.25s ease, transform 0.25s ease;
-    }
-
-    body.hide-labels .hs-label {
-      opacity: 0;
-      transform: translateY(-2px);
+      0% { transform: scale(0.8); opacity: 0.9; }
+      100% { transform: scale(1.9); opacity: 0; }
     }
 
     .hotspot:active .hs-ring {
-      transform: scale(0.88);
+      transform: scale(0.82);
     }
 
-    /* 底部快捷物品栏（方便小屏或探索全部彩蛋） */
-    .bottom-dock {
-      width: 100%;
-      max-width: 520px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 10px 4px 2px;
-      overflow-x: auto;
-      opacity: 0;
-      transform: translateY(8px);
-      transition: opacity 0.8s ease 0.2s, transform 0.8s ease 0.2s;
-    }
-
-    body.is-awake .bottom-dock {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .dock-chip {
-      flex: 0 0 auto;
-      padding: 6px 11px;
-      border-radius: 999px;
-      background: rgba(255, 248, 238, 0.08);
-      border: 1px solid rgba(255, 240, 220, 0.16);
-      color: rgba(248, 241, 230, 0.88);
+    /* 极淡的底部提示语 */
+    .bottom-hint {
+      margin-top: 12px;
       font-size: 11.5px;
-      cursor: pointer;
-      transition: all 0.2s ease;
+      letter-spacing: 0.08em;
+      color: rgba(246, 238, 223, 0.45);
+      text-align: center;
+      opacity: 0;
+      transition: opacity 0.8s ease 0.4s;
     }
 
-    .dock-chip.visited {
-      border-color: rgba(230, 161, 92, 0.48);
-      color: #f6cfa4;
-    }
-
-    .dock-chip:active {
-      transform: scale(0.95);
+    body.is-awake .bottom-hint {
+      opacity: 1;
     }
 
     /* ==========================================================
-       第一幕：开场生日祝福遮罩（电影感序幕 -> 平滑对焦切入课桌）
+       第一幕：暗调落日失焦开场生日祝福
        ========================================================== */
     .intro-overlay {
       position: fixed;
@@ -375,7 +290,7 @@
       justify-content: center;
       padding: 32px 24px;
       text-align: center;
-      background: radial-gradient(circle at 50% 42%, rgba(56, 36, 24, 0.42) 0%, rgba(19, 13, 10, 0.72) 100%);
+      background: radial-gradient(circle at 50% 44%, rgba(36, 22, 14, 0.5) 0%, rgba(10, 7, 5, 0.82) 100%);
       transition: opacity 1s ease, visibility 1s ease;
     }
 
@@ -396,14 +311,14 @@
 
     .intro-title {
       font-family: var(--serif);
-      font-size: clamp(23px, 5.8vw, 32px);
+      font-size: clamp(22px, 5.2vw, 31px);
       font-weight: 500;
       line-height: 1.55;
       letter-spacing: 0.06em;
-      color: #fcf6ed;
+      color: #fcf5ea;
       max-width: 440px;
       margin-bottom: 18px;
-      text-shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
+      text-shadow: 0 4px 24px rgba(0, 0, 0, 0.6);
       animation: fadeUp 1.1s ease forwards;
     }
 
@@ -411,13 +326,13 @@
       max-width: 360px;
       padding: 11px 18px;
       border-radius: 14px;
-      background: rgba(255, 245, 232, 0.08);
-      border: 1px solid rgba(255, 224, 186, 0.22);
+      background: rgba(255, 245, 232, 0.06);
+      border: 1px solid rgba(255, 220, 178, 0.18);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
-      font-size: 13.8px;
+      font-size: 13.5px;
       line-height: 1.85;
-      color: rgba(252, 242, 228, 0.88);
+      color: rgba(252, 242, 228, 0.84);
       margin-bottom: 32px;
       animation: fadeUp 1.3s ease forwards;
     }
@@ -425,15 +340,15 @@
     .intro-btn {
       padding: 13px 28px;
       border-radius: 999px;
-      border: 1px solid rgba(246, 207, 164, 0.55);
-      background: linear-gradient(135deg, rgba(224, 146, 86, 0.92), rgba(196, 108, 62, 0.92));
+      border: 1px solid rgba(246, 207, 164, 0.45);
+      background: linear-gradient(135deg, rgba(214, 134, 74, 0.9), rgba(182, 96, 52, 0.92));
       color: #fffaf3;
       font-size: 14px;
       font-weight: 500;
       letter-spacing: 0.08em;
       cursor: pointer;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35), 0 0 24px rgba(230, 161, 92, 0.35);
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.48), 0 0 24px rgba(230, 161, 92, 0.28);
+      transition: transform 0.25s ease;
       animation: fadeUp 1.5s ease forwards;
     }
 
@@ -447,7 +362,7 @@
     }
 
     /* ==========================================================
-       通用物品特写模态容器（支持背景电影级虚化退后）
+       物品特写模态容器
        ========================================================== */
     .modal-backdrop {
       position: fixed;
@@ -457,7 +372,7 @@
       align-items: center;
       justify-content: center;
       padding: 18px 14px;
-      background: rgba(16, 11, 8, 0.55);
+      background: rgba(10, 7, 5, 0.62);
       backdrop-filter: blur(6px);
       -webkit-backdrop-filter: blur(6px);
       animation: modalFade 0.28s ease forwards;
@@ -482,8 +397,8 @@
     .close-btn {
       padding: 7px 14px;
       border-radius: 999px;
-      border: 1px solid rgba(255, 244, 228, 0.28);
-      background: rgba(24, 18, 14, 0.72);
+      border: 1px solid rgba(255, 240, 220, 0.24);
+      background: rgba(20, 15, 12, 0.78);
       color: #faf2e6;
       font-size: 12.5px;
       cursor: pointer;
@@ -516,20 +431,22 @@
     }
 
     /* ==========================================================
-       物品 1：Maruman Mnemosyne 178 黑色方格本（长信载体）
+       1. 做旧 Mnemosyne 178 黑色方格本
        ========================================================== */
     .mnemosyne-book {
-      background: #1a1918;
+      background: #171615;
       border-radius: 16px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      box-shadow: 0 28px 65px rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      box-shadow: 0 28px 65px rgba(0, 0, 0, 0.72);
       overflow: hidden;
     }
 
     .mnemosyne-cover {
       padding: 22px 24px 18px;
-      background: linear-gradient(155deg, #242321 0%, #141312 100%);
-      border-bottom: 3px solid #2b2926;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.04) 0%, transparent 40%),
+        linear-gradient(155deg, #24221f 0%, #141311 100%);
+      border-bottom: 3px solid #2c2925;
       display: flex;
       align-items: flex-end;
       justify-content: space-between;
@@ -539,19 +456,18 @@
       font-family: Georgia, serif;
       font-size: 12px;
       letter-spacing: 0.14em;
-      color: #c5a87a;
+      color: #bfa070;
     }
 
     .mnemo-spec {
       font-family: var(--mono);
       font-size: 10.5px;
-      color: rgba(255, 255, 255, 0.45);
+      color: rgba(255, 255, 255, 0.38);
     }
 
-    /* 5mm 浅灰方格内页 */
     .grid-paper {
       padding: 28px 22px 34px;
-      background-color: #fbfaf6;
+      background-color: #f6efe2;
       background-image:
         linear-gradient(to right, var(--paper-grid) 1px, transparent 1px),
         linear-gradient(to bottom, var(--paper-grid) 1px, transparent 1px);
@@ -612,22 +528,22 @@
     .memo-insert {
       margin: 22px 0;
       border-radius: 12px;
-      background: #fffdf5;
-      border: 1px solid rgba(214, 178, 114, 0.52);
+      background: #fcf8eb;
+      border: 1px solid rgba(206, 168, 104, 0.5);
       box-shadow: 0 6px 18px rgba(90, 68, 34, 0.1);
       overflow: hidden;
     }
 
     .memo-insert-bar {
       padding: 10px 14px;
-      background: rgba(244, 214, 148, 0.28);
-      border-bottom: 1px solid rgba(214, 178, 114, 0.28);
+      background: rgba(238, 206, 140, 0.28);
+      border-bottom: 1px solid rgba(206, 168, 104, 0.28);
       display: flex;
       justify-content: space-between;
       align-items: center;
       font-size: 12px;
       font-weight: 500;
-      color: #825b2d;
+      color: #7c5628;
       cursor: pointer;
     }
 
@@ -655,7 +571,7 @@
     }
 
     /* ==========================================================
-       物品 2：老款黑色 Apple Watch（替代 iPod · 可交互表盘/音乐/回忆）
+       2. 老款黑色 Apple Watch
        ========================================================== */
     .watch-modal-wrap {
       display: flex;
@@ -667,19 +583,14 @@
     .watch-band-top, .watch-band-bottom {
       width: 146px;
       height: 54px;
-      background: linear-gradient(90deg, #1b1c20 0%, #2b2d33 50%, #1b1c20 100%);
+      background: linear-gradient(90deg, #17181b 0%, #27292e 50%, #17181b 100%);
       border-left: 1px solid rgba(255, 255, 255, 0.08);
       border-right: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: inset 0 6px 14px rgba(0, 0, 0, 0.6);
+      box-shadow: inset 0 6px 14px rgba(0, 0, 0, 0.65);
     }
 
-    .watch-band-top {
-      border-radius: 16px 16px 0 0;
-    }
-
-    .watch-band-bottom {
-      border-radius: 0 0 16px 16px;
-    }
+    .watch-band-top { border-radius: 16px 16px 0 0; }
+    .watch-band-bottom { border-radius: 0 0 16px 16px; }
 
     .watch-chassis {
       position: relative;
@@ -687,17 +598,16 @@
       height: 330px;
       padding: 18px 16px;
       border-radius: 52px;
-      background: linear-gradient(145deg, #2c2e34 0%, #16171a 48%, #0d0e10 100%);
+      background: linear-gradient(145deg, #2a2c32 0%, #141518 48%, #0b0c0e 100%);
       box-shadow:
-        0 26px 60px rgba(0, 0, 0, 0.72),
-        inset 0 2px 4px rgba(255, 255, 255, 0.22),
-        inset 0 -3px 8px rgba(0, 0, 0, 0.7);
+        0 28px 65px rgba(0, 0, 0, 0.8),
+        inset 0 2px 4px rgba(255, 255, 255, 0.2),
+        inset 0 -3px 8px rgba(0, 0, 0, 0.75);
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
-    /* 右侧实体数码表冠 Digital Crown 与侧边按键 */
     .watch-crown {
       position: absolute;
       right: -13px;
@@ -715,12 +625,9 @@
       border: 1px solid rgba(255, 255, 255, 0.16);
       box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.5);
       cursor: pointer;
-      transition: transform 0.15s ease;
     }
 
-    .watch-crown:active {
-      transform: translateX(-2px);
-    }
+    .watch-crown:active { transform: translateX(-2px); }
 
     .watch-side-btn {
       position: absolute;
@@ -729,18 +636,17 @@
       width: 8px;
       height: 62px;
       border-radius: 4px;
-      background: #24262b;
+      background: #222428;
       border: 1px solid rgba(255, 255, 255, 0.1);
       cursor: pointer;
     }
 
-    /* Watch OLED 显示屏 */
     .watch-screen {
       position: relative;
       width: 100%;
       height: 100%;
       border-radius: 38px;
-      background: radial-gradient(circle at 50% 25%, #1c1714 0%, #060607 100%);
+      background: radial-gradient(circle at 50% 25%, #191411 0%, #050506 100%);
       border: 2px solid #09090b;
       overflow: hidden;
       padding: 18px 16px 14px;
@@ -751,14 +657,13 @@
       box-shadow: inset 0 0 24px rgba(230, 161, 92, 0.08);
     }
 
-    /* 屏幕玻璃弧面反光 */
     .watch-glass-gloss {
       position: absolute;
       top: -30%;
       left: -20%;
       width: 140%;
       height: 60%;
-      background: linear-gradient(170deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0) 65%);
+      background: linear-gradient(170deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 65%);
       transform: rotate(-10deg);
       pointer-events: none;
     }
@@ -816,12 +721,11 @@
       border: 1px solid rgba(230, 161, 92, 0.2);
     }
 
-    /* Watch 音乐播放器界面 */
     .watch-album-disc {
       width: 82px;
       height: 82px;
       border-radius: 50%;
-      background: url("assets/place-04.jpg") center / cover no-repeat;
+      background: url("assets/place-03.jpg") center / cover no-repeat;
       border: 2px solid rgba(230, 161, 92, 0.55);
       box-shadow: 0 0 22px rgba(230, 161, 92, 0.25);
       margin-bottom: 10px;
@@ -881,7 +785,6 @@
       font-weight: 700;
     }
 
-    /* Watch 底部点阵指示器与切换按键 */
     .watch-dots {
       display: flex;
       justify-content: center;
@@ -905,7 +808,7 @@
       margin-top: 14px;
       padding: 8px 16px;
       border-radius: 999px;
-      background: rgba(24, 18, 14, 0.72);
+      background: rgba(20, 15, 12, 0.78);
       border: 1px solid rgba(255, 240, 220, 0.16);
       font-size: 12px;
       color: rgba(248, 241, 230, 0.84);
@@ -913,14 +816,14 @@
     }
 
     /* ==========================================================
-       物品 3：蓝色白拉链笔袋（文具回忆弹窗）
+       3. 蓝色白拉链笔袋弹窗
        ========================================================== */
     .pouch-card {
-      background: linear-gradient(170deg, #1b59a8 0%, #154586 100%);
+      background: linear-gradient(170deg, #16519d 0%, #103c77 100%);
       border-radius: 20px;
       padding: 6px;
-      box-shadow: 0 26px 60px rgba(0, 0, 0, 0.55);
-      border: 1px solid rgba(255, 255, 255, 0.16);
+      box-shadow: 0 26px 60px rgba(0, 0, 0, 0.68);
+      border: 1px solid rgba(255, 255, 255, 0.14);
     }
 
     .pouch-zipper {
@@ -977,14 +880,14 @@
     }
 
     /* ==========================================================
-       物品 4：右上角 6 张风格化双人剪影胶片画廊弹窗
+       4. 远方胶片画廊（6 张风格化双人剪影）
        ========================================================== */
     .gallery-card {
-      background: #f5ede1;
+      background: #f4ece0;
       color: var(--ink-dark);
       border-radius: 20px;
       padding: 24px 18px 28px;
-      box-shadow: 0 28px 70px rgba(0, 0, 0, 0.58);
+      box-shadow: 0 28px 70px rgba(0, 0, 0, 0.68);
     }
 
     .gallery-head {
@@ -1024,7 +927,7 @@
       padding: 10px 10px 15px;
       border-radius: 12px;
       border: 1px solid rgba(110, 86, 68, 0.16);
-      box-shadow: 0 10px 26px rgba(60, 42, 28, 0.12);
+      box-shadow: 0 10px 26px rgba(60, 42, 28, 0.14);
     }
 
     .polaroid-frame {
@@ -1125,7 +1028,7 @@
     }
 
     /* ==========================================================
-       物品 5 & 6：纸糖果 & 19号课桌贴纸小彩蛋卡片
+       5. 纸糖果彩蛋卡片
        ========================================================== */
     .note-modal-card {
       background: #fbf5eb;
@@ -1133,7 +1036,7 @@
       border-radius: 18px;
       padding: 28px 24px 30px;
       border: 1px solid rgba(154, 130, 114, 0.26);
-      box-shadow: 0 26px 60px rgba(0, 0, 0, 0.55);
+      box-shadow: 0 26px 60px rgba(0, 0, 0, 0.68);
       text-align: center;
     }
 
@@ -1190,16 +1093,25 @@
     .claim-btn.claimed {
       background: #6f8b6c;
     }
+
+    .hud-pill-watch {
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: rgba(230, 161, 92, 0.22);
+      border: 1px solid rgba(230, 161, 92, 0.5);
+      color: #f7efe5;
+      font-size: 11px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
-  <!-- 虚化环境光背板 & 阳光尘埃粒子 & 胶片噪点 -->
   <div class="ambient-backdrop" aria-hidden="true"></div>
   <canvas id="dustCanvas" aria-hidden="true"></canvas>
   <div class="film-grain" aria-hidden="true"></div>
 
   <!-- ==========================================================
-       第一幕：落日失焦开场生日祝福
+       第一幕：暗调落日失焦开场生日祝福
        ========================================================== -->
   <section class="intro-overlay" id="introOverlay">
     <div class="intro-kicker">TO JIAYI · 19TH BIRTHDAY</div>
@@ -1216,73 +1128,51 @@
   </section>
 
   <!-- ==========================================================
-       第二幕：高中课桌俯视视角主舞台
+       第二幕：横版 4:3 高中课桌俯视主舞台（桌上仅保留小圆点）
        ========================================================== -->
   <main class="viewport-shell">
     <header class="top-hud">
       <div class="hud-badge">
         <span class="hud-dot"></span>
-        <span>DESK #19 · GOLDEN HOUR</span>
+        <span>SUNSET DESK · LV.19</span>
       </div>
-      <div class="hud-controls">
-        <span id="progressText">0 / 6</span>
-        <button class="hud-pill" id="toggleLabelsBtn" type="button">隐藏标签</button>
-      </div>
+      <span id="progressText">0 / 5</span>
     </header>
 
-    <!-- 3:4 课桌实景交互画框 -->
     <div class="desk-stage" id="deskStage">
       <div class="desk-photo-layer"></div>
+      <div class="desk-vignette"></div>
       <div class="desk-lens-flare"></div>
 
       <div class="hotspots-layer" id="hotspotsLayer">
         <!-- 1. 蓝色白色拉链笔袋 -->
         <button class="hotspot hs-pencil" data-modal="modalPencil" data-key="pencil" type="button" aria-label="打开蓝色笔袋">
           <span class="hs-ring"></span>
-          <span class="hs-label">蓝色笔袋</span>
         </button>
 
         <!-- 2. 银色纸糖果 -->
         <button class="hotspot hs-candy" data-modal="modalCandy" data-key="candy" type="button" aria-label="拆开纸糖果">
           <span class="hs-ring"></span>
-          <span class="hs-label">纸糖果</span>
         </button>
 
         <!-- 3. 右上角拍立得相片叠 -->
         <button class="hotspot hs-photos" data-modal="modalPhotos" data-key="photos" type="button" aria-label="翻看远方胶片">
           <span class="hs-ring"></span>
-          <span class="hs-label">远方胶片 (6)</span>
         </button>
 
-        <!-- 4. Maruman Mnemosyne 178 黑色小笔记本 -->
+        <!-- 4. 做旧 Mnemosyne 178 黑色小笔记本 -->
         <button class="hotspot hs-notebook" data-modal="modalNotebook" data-key="notebook" type="button" aria-label="翻开 Mnemosyne 笔记本">
           <span class="hs-ring"></span>
-          <span class="hs-label">Mnemosyne 笔记本 · 信</span>
         </button>
 
         <!-- 5. 老款黑色 Apple Watch -->
         <button class="hotspot hs-watch" data-modal="modalWatch" data-key="watch" type="button" aria-label="点亮 Apple Watch">
           <span class="hs-ring"></span>
-          <span class="hs-label">Apple Watch</span>
-        </button>
-
-        <!-- 6. 桌角 19 号贴纸 -->
-        <button class="hotspot hs-sticker" data-modal="modalSticker" data-key="sticker" type="button" aria-label="查看 19 号桌贴">
-          <span class="hs-ring"></span>
-          <span class="hs-label">19号桌贴</span>
         </button>
       </div>
     </div>
 
-    <!-- 底部快捷物品栏 -->
-    <nav class="bottom-dock" aria-label="课桌物品快捷栏">
-      <button class="dock-chip" data-modal="modalNotebook" data-key="notebook" type="button">📓 笔记本长信</button>
-      <button class="dock-chip" data-modal="modalWatch" data-key="watch" type="button">⌚ Apple Watch</button>
-      <button class="dock-chip" data-modal="modalPhotos" data-key="photos" type="button">🎞️ 远方胶片</button>
-      <button class="dock-chip" data-modal="modalPencil" data-key="pencil" type="button">✏️ 蓝色笔袋</button>
-      <button class="dock-chip" data-modal="modalCandy" data-key="candy" type="button">🍬 纸糖果</button>
-      <button class="dock-chip" data-modal="modalSticker" data-key="sticker" type="button">🏷️ 19号贴纸</button>
-    </nav>
+    <div class="bottom-hint">轻触桌上的小圆点，翻看藏在光影里的东西</div>
   </main>
 
   <!-- ==========================================================
@@ -1293,7 +1183,7 @@
       <button class="close-btn" id="closeModalBtn" type="button">✕ 放回课桌</button>
     </div>
 
-    <!-- 1. Mnemosyne 178 黑色方格笔记本（完整 19 岁生日信） -->
+    <!-- 1. 做旧 Mnemosyne 178 黑色方格笔记本 -->
     <div class="modal-panel" id="modalNotebook">
       <div class="mnemosyne-book">
         <div class="mnemosyne-cover">
@@ -1362,14 +1252,12 @@
       </div>
     </div>
 
-    <!-- 2. 老款黑色 Apple Watch（替代 iPod） -->
+    <!-- 2. 老款黑色 Apple Watch -->
     <div class="modal-panel" id="modalWatch">
       <div class="watch-modal-wrap">
         <div class="watch-band-top"></div>
         <div class="watch-chassis">
-          <!-- 数码表冠：点击切换表盘画面 -->
           <button class="watch-crown" id="watchCrownBtn" type="button" title="旋转/按下表冠切换功能"></button>
-          <!-- 侧边按键：跳转远方相册 -->
           <button class="watch-side-btn" id="watchSideBtn" type="button" title="打开远方胶片"></button>
 
           <div class="watch-screen">
@@ -1379,16 +1267,14 @@
               <span>LV.19 ♥</span>
             </div>
 
-            <!-- Watch View 0: 纪念时间表盘 -->
             <div class="watch-view active" data-wview="0">
-              <div class="watch-time-big" id="watchClock">19:00</div>
+              <div class="watch-time-big">19:00</div>
               <div class="watch-date-sub">JIAYI · 19TH BIRTHDAY</div>
               <div class="watch-quote-mini">
                 “138 亿年前宇宙爆炸的星尘里，咱俩其实早就见过了。”
               </div>
             </div>
 
-            <!-- Watch View 1: 怀旧随身听播放器 -->
             <div class="watch-view" data-wview="1">
               <div class="watch-album-disc" id="watchDisc"></div>
               <div class="watch-track-title" id="trackTitle">放学后的夕阳前奏</div>
@@ -1400,14 +1286,13 @@
               </div>
             </div>
 
-            <!-- Watch View 2: 远方胶片表盘入口 -->
             <div class="watch-view" data-wview="2">
               <div style="width:94px;height:112px;border-radius:12px;overflow:hidden;border:2px solid rgba(230,161,92,0.5);margin-bottom:10px;">
                 <img src="assets/place-06.jpg" alt="胶片预览" style="width:100%;height:100%;object-fit:cover;" />
               </div>
               <div class="watch-track-title">想和你去很多地方</div>
               <div class="watch-track-artist" style="margin-bottom:10px;">6 帧胶片底片已就绪</div>
-              <button class="hud-pill" id="watchOpenGalleryBtn" type="button" style="background:rgba(230,161,92,0.22);border-color:rgba(230,161,92,0.5);">
+              <button class="hud-pill-watch" id="watchOpenGalleryBtn" type="button">
                 打开全部相片 →
               </button>
             </div>
@@ -1446,13 +1331,13 @@
       </div>
     </div>
 
-    <!-- 4. 右上角拍立得相片叠（6 张风格化双人剪影） -->
+    <!-- 4. 右上角拍立得相片叠 -->
     <div class="modal-panel" id="modalPhotos">
       <div class="gallery-card">
         <div class="gallery-head">
           <div>
             <h3 class="gallery-title">🎞️ 想和你一起去很多地方</h3>
-            <div class="gallery-sub">每张都是收藏匣灵感的纯剪影重绘 · 点击相片翻面</div>
+            <div class="gallery-sub">纯双人剪影重绘 · 点击相片翻看背面寄语</div>
           </div>
         </div>
 
@@ -1578,26 +1463,11 @@
         <button class="claim-btn" id="claimCandyBtn" type="button">收下这颗糖果</button>
       </div>
     </div>
-
-    <!-- 6. 桌角 19 号贴纸彩蛋卡片 -->
-    <div class="modal-panel" id="modalSticker">
-      <div class="note-modal-card">
-        <div class="note-emoji-icon">🏫</div>
-        <h3 class="note-modal-title">课桌左下角 · 19 号座位贴</h3>
-        <p class="note-modal-text">
-          “有人说，命运的职责在两个人初遇的那一刻就已经完尽了。<br />
-          可到了我们这里，它好像总有些放心不下——偏要悄悄拨动 xpy 的换座位软件，穿过教室里扬起的粉笔灰，给了我再一次靠近你、重新认识你的机会。”
-        </p>
-        <div style="font-family:var(--mono);font-size:11px;color:var(--ink-muted);">
-          SEAT NO.19 · JIAYI'S 19TH BIRTHDAY
-        </div>
-      </div>
-    </div>
   </div>
 
   <script>
     // ==========================================================
-    // 1. 教室夕阳飘浮光尘粒子（Canvas）
+    // 1. 教室夕阳飘浮光尘粒子
     // ==========================================================
     const dustCanvas = document.getElementById("dustCanvas");
     const dCtx = dustCanvas.getContext("2d");
@@ -1609,15 +1479,15 @@
       dustCanvas.height = window.innerHeight * dpr;
       dCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
       specks.length = 0;
-      const count = Math.min(48, Math.floor((window.innerWidth * window.innerHeight) / 14000));
+      const count = Math.min(46, Math.floor((window.innerWidth * window.innerHeight) / 14500));
       for (let i = 0; i < count; i++) {
         specks.push({
           x: Math.random() * window.innerWidth,
           y: Math.random() * window.innerHeight,
-          r: Math.random() * 1.6 + 0.5,
-          vx: (Math.random() - 0.5) * 0.16,
-          vy: -(Math.random() * 0.18 + 0.04),
-          alpha: Math.random() * 0.45 + 0.12,
+          r: Math.random() * 1.5 + 0.45,
+          vx: (Math.random() - 0.5) * 0.14,
+          vy: -(Math.random() * 0.16 + 0.04),
+          alpha: Math.random() * 0.42 + 0.1,
           phase: Math.random() * Math.PI * 2
         });
       }
@@ -1636,7 +1506,7 @@
         const a = s.alpha * (0.65 + 0.35 * Math.sin(s.phase));
         dCtx.beginPath();
         dCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-        dCtx.fillStyle = `rgba(255, 226, 178, ${a.toFixed(3)})`;
+        dCtx.fillStyle = `rgba(255, 222, 168, ${a.toFixed(3)})`;
         dCtx.fill();
       }
       requestAnimationFrame(drawDust);
@@ -1647,8 +1517,7 @@
     drawDust();
 
     // ==========================================================
-    // 2. Web Audio 极简温柔复古旋律合成器（用于 Apple Watch 播放）
-    //    保证零外部 MP3 依赖在 iPhone Safari 上也能立即温暖发声
+    // 2. Web Audio 温柔复古旋律合成器（用于 Apple Watch 播放）
     // ==========================================================
     const tracks = [
       {
@@ -1751,26 +1620,18 @@
     }
 
     // ==========================================================
-    // 3. 开场唤醒逻辑（梦境失焦 -> 课桌显影）
+    // 3. 开场唤醒逻辑
     // ==========================================================
     document.getElementById("wakeBtn").addEventListener("click", () => {
       document.body.classList.add("is-awake");
       ensureAudio();
-      // 轻柔弹出一声温暖开场和弦
       playSoftTone(329.63);
       setTimeout(() => playSoftTone(440.00), 140);
       setTimeout(() => playSoftTone(523.25), 280);
     });
 
-    // 隐藏 / 显示桌面提示小标签
-    const toggleLabelsBtn = document.getElementById("toggleLabelsBtn");
-    toggleLabelsBtn.addEventListener("click", () => {
-      const hidden = document.body.classList.toggle("hide-labels");
-      toggleLabelsBtn.textContent = hidden ? "显示标签" : "隐藏标签";
-    });
-
     // ==========================================================
-    // 4. 课桌物品弹窗管理与探索进度
+    // 4. 课桌物品弹窗管理与探索进度（5 件物品）
     // ==========================================================
     const modalBackdrop = document.getElementById("modalBackdrop");
     const closeModalBtn = document.getElementById("closeModalBtn");
@@ -1788,9 +1649,9 @@
 
       if (key) {
         visitedSet.add(key);
-        progressText.textContent = `${visitedSet.size} / 6`;
+        progressText.textContent = `${visitedSet.size} / 5`;
         document.querySelectorAll(`[data-key="${key}"]`).forEach((el) => {
-          el.classList.add("is-visited", "visited");
+          el.classList.add("is-visited");
         });
       }
     }
@@ -1812,7 +1673,6 @@
       if (e.target === modalBackdrop) closeItemModal();
     });
 
-    // 笔记本内嵌“备忘录”折叠开关
     document.getElementById("memoToggleBtn").addEventListener("click", () => {
       document.getElementById("memoInsert").classList.toggle("open");
     });
