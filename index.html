@@ -44,87 +44,17 @@
       user-select: none;
     }
 
-    /* 隐藏的 iOS Safari 真实触觉震动触发开关（iOS 17.4+ switch 机制） */
+    /* 隐藏但留在视口渲染树内的 iOS Safari 真实 Taptic Engine 触发开关（iOS 17.4+ switch 机制） */
     .haptic-proxy {
       position: fixed;
-      top: -200px;
-      left: -200px;
+      bottom: 0;
+      right: 0;
+      width: 2px;
+      height: 2px;
       opacity: 0.001;
       pointer-events: none;
-    }
-
-    /* ==========================================================
-       横屏强制引导提示层（竖屏时出现）
-       ========================================================== */
-    .rotate-guard {
-      position: fixed;
-      inset: 0;
-      z-index: 200;
-      background: radial-gradient(circle at 50% 45%, #1c140e 0%, #070504 100%);
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 32px;
-      text-align: center;
-    }
-
-    @media (orientation: portrait) and (max-width: 900px) {
-      body:not(.allow-portrait) .rotate-guard {
-        display: flex;
-      }
-    }
-
-    .rotate-phone-icon {
-      width: 44px;
-      height: 74px;
-      border: 2px solid rgba(230, 161, 92, 0.8);
-      border-radius: 9px;
-      position: relative;
-      margin-bottom: 24px;
-      animation: rotateHint 2.4s ease-in-out infinite;
-    }
-
-    .rotate-phone-icon::after {
-      content: "";
-      position: absolute;
-      bottom: 6px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 14px;
-      height: 2px;
-      border-radius: 2px;
-      background: rgba(230, 161, 92, 0.8);
-    }
-
-    @keyframes rotateHint {
-      0%, 20% { transform: rotate(0deg); }
-      55%, 80% { transform: rotate(-90deg); }
-      100% { transform: rotate(0deg); }
-    }
-
-    .rotate-title {
-      font-family: var(--serif);
-      font-size: 19px;
-      color: #f6efe4;
-      margin-bottom: 10px;
-      letter-spacing: 0.06em;
-    }
-
-    .rotate-sub {
-      font-size: 13px;
-      color: rgba(246, 239, 228, 0.6);
-      margin-bottom: 24px;
-    }
-
-    .rotate-bypass {
-      padding: 6px 14px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      background: transparent;
-      color: rgba(255, 255, 255, 0.45);
-      font-size: 11.5px;
-      cursor: pointer;
+      overflow: hidden;
+      z-index: 1;
     }
 
     /* ==========================================================
@@ -167,7 +97,7 @@
       width: 100vw;
       height: 100dvh;
       overflow: hidden;
-      background: #070504;
+      background: radial-gradient(circle at 68% 18%, #21150c 0%, #090604 68%, #040302 100%);
     }
 
     .desk-bg-img {
@@ -184,6 +114,13 @@
         transform 1.25s cubic-bezier(0.22, 1, 0.36, 1);
       will-change: filter, transform;
       pointer-events: none;
+    }
+
+    /* 宽屏桌面查看时完整呈现竖屏课桌不裁切，手机竖屏则 100% 全屏铺满 */
+    @media (min-aspect-ratio: 4/5) {
+      .desk-bg-img {
+        object-fit: contain;
+      }
     }
 
     body.is-awake .desk-bg-img {
@@ -237,11 +174,11 @@
       justify-content: center;
     }
 
-    /* 4 个物品在 16:9 图中的精确坐标 */
-    .hs-pencil   { left: 34.5%; top: 32.5%; width: 22%; height: 22%; }
-    .hs-photos   { left: 65.5%; top: 36.5%; width: 17%; height: 20%; }
-    .hs-notebook { left: 35.5%; top: 59%;   width: 20%; height: 28%; }
-    .hs-watch    { left: 70.2%; top: 57.5%; width: 14%; height: 18%; }
+    /* 4 个物品在 9:16 竖屏原图中的精确中心坐标 */
+    .hs-pencil   { left: 30%;   top: 34.5%; width: 34%; height: 18%; }
+    .hs-photos   { left: 74%;   top: 38.5%; width: 28%; height: 15%; }
+    .hs-notebook { left: 35.5%; top: 59.5%; width: 32%; height: 22%; }
+    .hs-watch    { left: 74%;   top: 60.5%; width: 22%; height: 14%; }
 
     /* 仅保留极简小圆点（无任何文字） */
     .hs-dot {
@@ -536,67 +473,87 @@
       to { opacity: 1; transform: scale(1); }
     }
 
-    /* --- Watch Screen A: 原版时钟表盘（大数字 + 复杂功能） --- */
-    .w-face-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 11px;
-      font-weight: 600;
-      color: #ff9f0a;
-      letter-spacing: 0.04em;
+    /* --- Watch Screen A: 1:1 复刻极简黑底指针表盘（日期十月二日 + 全动态复杂功能） --- */
+    .w-screen-dial {
+      padding: 0 !important;
+      background: #000000;
     }
 
-    .w-face-center {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+    .watch-dial-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      user-select: none;
     }
 
-    .w-face-clock {
-      font-size: 56px;
-      font-weight: 700;
-      line-height: 0.95;
-      letter-spacing: -2px;
-      font-variant-numeric: tabular-nums;
-      color: #ffffff;
-    }
-
-    .w-face-clock span {
-      color: #ff9f0a;
-    }
-
-    .w-face-date {
-      margin-top: 6px;
-      font-size: 11.5px;
-      font-weight: 500;
-      color: #ff453a;
-      letter-spacing: 0.06em;
-    }
-
-    .w-face-complications {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
-      padding-top: 4px;
-    }
-
-    .w-comp {
-      background: rgba(255, 255, 255, 0.09);
-      border-radius: 12px;
-      padding: 6px 4px;
-      text-align: center;
-      font-size: 9.5px;
-      color: rgba(255, 255, 255, 0.8);
+    .dial-tap-zone {
       cursor: pointer;
     }
 
-    .w-comp strong {
-      display: block;
-      font-size: 12px;
-      margin-bottom: 1px;
+    .dial-tap-zone:active {
+      opacity: 0.72;
+    }
+
+    /* 心电波形实时向右扫描脉动 */
+    @keyframes ecgDraw {
+      0% { stroke-dashoffset: 56; opacity: 0.35; }
+      35% { stroke-dashoffset: 0; opacity: 1; }
+      75% { stroke-dashoffset: 0; opacity: 1; }
+      100% { stroke-dashoffset: -56; opacity: 0.25; }
+    }
+
+    .ecg-trace-anim {
+      stroke-dasharray: 56;
+      animation: ecgDraw 2.2s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+    }
+
+    /* 右侧渐变运动/计时环连续旋转 */
+    @keyframes ringSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .dial-spin-ring {
+      transform-origin: 144px 132px;
+      animation: ringSpin 6s linear infinite;
+    }
+
+    /* 左下角空心爱心双连跳心跳 */
+    @keyframes heartLubDub {
+      0%, 100% { transform: scale(1); opacity: 0.88; }
+      14% { transform: scale(1.22); opacity: 1; }
+      28% { transform: scale(0.96); opacity: 0.9; }
+      42% { transform: scale(1.16); opacity: 1; }
+      62% { transform: scale(1); opacity: 0.88; }
+    }
+
+    .dial-heart-anim {
+      transform-origin: 42px 212px;
+      animation: heartLubDub 1.35s ease-in-out infinite;
+    }
+
+    /* 右上温度指示点微弱呼吸 */
+    @keyframes dotPulse {
+      0%, 100% { r: 2.3; opacity: 1; }
+      50% { r: 3.1; opacity: 0.75; }
+    }
+
+    .temp-dot-anim {
+      animation: dotPulse 2.4s ease-in-out infinite;
+    }
+
+    /* 61% 与 82% 进度弧线平滑填充呼吸 */
+    @keyframes arcBreathe {
+      0%, 100% { opacity: 0.92; }
+      50% { opacity: 1; filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.45)); }
+    }
+
+    .dial-arc-glow {
+      animation: arcBreathe 3.2s ease-in-out infinite;
+    }
+
+    .dial-arc-progress {
+      transition: stroke-dashoffset 1s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     /* --- Watch Screen B: 原版 watchOS 蜂窝/网格 App 选择界面 --- */
@@ -1196,6 +1153,15 @@
       position: relative;
     }
 
+    @media (orientation: portrait) {
+      .polaroid-theater {
+        height: min(620px, 84dvh);
+      }
+      .notebook-shell {
+        height: min(520px, 80dvh);
+      }
+    }
+
     .pol-bar {
       width: 100%;
       display: flex;
@@ -1393,18 +1359,10 @@
   </style>
 </head>
 <body>
-  <!-- iOS Safari 真实震动反馈隐藏开关 -->
-  <label class="haptic-proxy" for="hapticSwitch">
+  <!-- iOS Safari 真实震动反馈隐藏开关（位于视口渲染树内，靠 label 同步触发 Taptic Engine） -->
+  <label class="haptic-proxy" id="hapticLabel" for="hapticSwitch">
     <input type="checkbox" id="hapticSwitch" switch />
   </label>
-
-  <!-- 竖屏引导蒙层 -->
-  <div class="rotate-guard" id="rotateGuard">
-    <div class="rotate-phone-icon"></div>
-    <div class="rotate-title">请将手机横过来</div>
-    <div class="rotate-sub">坐到这张夕阳下的课桌前，看落日光影里的秘密</div>
-    <button class="rotate-bypass" id="bypassRotateBtn" type="button">仍以当前方向查看</button>
-  </div>
 
   <canvas id="dustCanvas" aria-hidden="true"></canvas>
   <div class="film-grain" aria-hidden="true"></div>
@@ -1470,21 +1428,122 @@
             <div class="watch-oled">
               <div class="watch-oled-gloss"></div>
 
-              <!-- Screen 0: 原版时钟表盘 -->
-              <div class="w-screen active" id="wScreenFace">
-                <div class="w-face-top">
-                  <span>TUE 17</span>
-                  <span>19% ♥</span>
-                </div>
-                <div class="w-face-center">
-                  <div class="w-face-clock" id="wClockText">19<span>:</span>00</div>
-                  <div class="w-face-date">JIAYI · 19TH</div>
-                </div>
-                <div class="w-face-complications">
-                  <div class="w-comp" data-open-wapp="wScreenPhotos"><strong>🖼️</strong>相册</div>
-                  <div class="w-comp" data-open-wapp="wScreenMusic"><strong>🎵</strong>Music</div>
-                  <div class="w-comp" data-open-wapp="wScreenWechat"><strong>💬</strong>微信</div>
-                </div>
+              <!-- Screen 0: 1:1 复刻极简黑底指针表盘（日期十月二日 + 全动态复杂功能 + 60fps扫秒） -->
+              <div class="w-screen w-screen-dial active" id="wScreenFace">
+                <svg class="watch-dial-svg" id="watchDialSvg" viewBox="0 0 214 262" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <!-- 右侧渐变旋转环渐变 -->
+                    <linearGradient id="spinRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95" />
+                      <stop offset="48%" stop-color="#c4c7ce" stop-opacity="0.55" />
+                      <stop offset="100%" stop-color="#555860" stop-opacity="0.06" />
+                    </linearGradient>
+
+                    <!-- 左上弧文字路径：十月二日 -->
+                    <path id="arcOctDate" d="M 20 88 A 96 96 0 0 1 70 42" />
+                    <!-- 右上弧文字路径：27° -->
+                    <path id="arcTempTop" d="M 145 43 A 96 96 0 0 1 196 92" />
+                    <!-- 右下弧文字路径（反方向保证文字正读）：82% -->
+                    <path id="arcBattText" d="M 134 224 A 96 96 0 0 0 191 174" />
+                  </defs>
+
+                  <!-- 1. 外圈 60 个分刻度 + 12 个加粗整点刻度（JS生成放入） -->
+                  <g id="dialTickRing"></g>
+
+                  <!-- 2. 左上角：十月二日 + 弧形三联日历胶囊 01 [02] 03 -->
+                  <text fill="#e4e5e9" font-size="10.2" font-weight="600" letter-spacing="0.8">
+                    <textPath href="#arcOctDate" startOffset="50%" text-anchor="middle">十月二日</textPath>
+                  </text>
+                  <g class="dial-tap-zone" data-open-wapp="wScreenPhotos">
+                    <!-- 01 -->
+                    <g transform="translate(40, 86) rotate(-57)">
+                      <rect x="-10" y="-7.2" width="20" height="14.4" rx="4.2" fill="rgba(255,255,255,0.16)" />
+                      <text x="0" y="3.5" text-anchor="middle" fill="#a8abb4" font-size="9.2" font-weight="600">01</text>
+                    </g>
+                    <!-- 02（今日反白高亮） -->
+                    <g transform="translate(52.5, 72.5) rotate(-43)">
+                      <rect x="-10.5" y="-7.5" width="21" height="15" rx="4.4" fill="#f5f6f8" />
+                      <text x="0" y="3.5" text-anchor="middle" fill="#09090b" font-size="9.6" font-weight="700">02</text>
+                    </g>
+                    <!-- 03 -->
+                    <g transform="translate(67.5, 61.5) rotate(-29)">
+                      <rect x="-10" y="-7.2" width="20" height="14.4" rx="4.2" fill="rgba(255,255,255,0.16)" />
+                      <text x="0" y="3.5" text-anchor="middle" fill="#a8abb4" font-size="9.2" font-weight="600">03</text>
+                    </g>
+                  </g>
+
+                  <!-- 3. 右上角：温度弧 16 —— 27° —— 27 + 动态呼吸小圆点 -->
+                  <text fill="#f2f3f5" font-size="13.5" font-weight="600" letter-spacing="0.5">
+                    <textPath href="#arcTempTop" startOffset="52%" text-anchor="middle">27°</textPath>
+                  </text>
+                  <text x="135.5" y="59.5" fill="#d0d2d8" font-size="8.6" font-weight="600" text-anchor="middle">16</text>
+                  <path d="M 144 59.5 A 80 80 0 0 1 178 93.5" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="5.2" stroke-linecap="round" />
+                  <path id="dialTempArc" class="dial-arc-progress" d="M 144 59.5 A 80 80 0 0 1 176 90" fill="none" stroke="#f4f5f7" stroke-width="5.2" stroke-linecap="round" stroke-dasharray="56" stroke-dashoffset="0" />
+                  <circle class="temp-dot-anim" cx="177.5" cy="92.5" r="2.4" fill="#ffffff" />
+                  <text x="183.5" y="103.5" fill="#d0d2d8" font-size="8.6" font-weight="600" text-anchor="middle">27</text>
+
+                  <!-- 4. 顶部 12 点下方纯白 Apple Logo -->
+                  <g transform="translate(99.5, 76.5) scale(0.62)">
+                    <path fill="#ffffff" d="M19.6 13.6c-.1-2.5 2-3.7 2.1-3.8-1.1-1.7-2.9-1.9-3.5-1.9-1.5-.2-2.9.9-3.6.9-.8 0-2-.9-3.2-.9-1.6 0-3.2 1-4 2.4-1.7 3-.4 7.4 1.2 9.8.8 1.2 1.8 2.5 3.1 2.4 1.2 0 1.7-.8 3.2-.8 1.5 0 1.9.8 3.2.8 1.3 0 2.2-1.2 3-2.4.9-1.4 1.3-2.7 1.3-2.8-.1 0-2.7-1-2.8-3.7zM17.2 6.3c.7-.8 1.1-2 1-3.1-1 .1-2.1.7-2.8 1.5-.6.7-1.1 1.9-1 3 1.1.1 2.2-.6 2.8-1.4z" />
+                  </g>
+
+                  <!-- 5. 表盘内左中圆形复杂功能：实时动态心电波形 ECG（轻点进相册） -->
+                  <g class="dial-tap-zone" data-open-wapp="wScreenPhotos">
+                    <circle cx="69" cy="131" r="20.5" fill="rgba(255,255,255,0.12)" />
+                    <path d="M 52.5 132 L 58.5 132 L 61.5 127.5 L 64.5 135 L 68.5 119 L 72.5 141.5 L 75.5 129.5 L 78.5 132 L 85.5 132" fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    <path class="ecg-trace-anim" d="M 52.5 132 L 58.5 132 L 61.5 127.5 L 64.5 135 L 68.5 119 L 72.5 141.5 L 75.5 129.5 L 78.5 132 L 85.5 132" fill="none" stroke="#f5f6f8" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" />
+                  </g>
+
+                  <!-- 6. 表盘内右中圆形复杂功能：旋转渐隐圆弧环（轻点进 Apple Music） -->
+                  <g class="dial-tap-zone" data-open-wapp="wScreenMusic">
+                    <circle cx="145" cy="131" r="20.5" fill="rgba(255,255,255,0.12)" />
+                    <g class="dial-spin-ring" style="transform-origin: 145px 131px;">
+                      <circle cx="145" cy="131" r="11.5" fill="none" stroke="url(#spinRingGrad)" stroke-width="4.4" stroke-linecap="round" stroke-dasharray="50 26" />
+                    </g>
+                  </g>
+
+                  <!-- 7. 表盘内下中圆形复杂功能：61% 动态圆环 -->
+                  <g class="dial-tap-zone" data-open-wapp="wScreenWechat">
+                    <circle cx="107" cy="169" r="19" fill="rgba(255,255,255,0.08)" />
+                    <circle cx="107" cy="169" r="15.8" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="3.4" />
+                    <circle id="dialRing61" class="dial-arc-progress dial-arc-glow" cx="107" cy="169" r="15.8" fill="none" stroke="#f4f5f7" stroke-width="3.4" stroke-linecap="round" stroke-dasharray="99.3" stroke-dashoffset="38.7" transform="rotate(-90 107 169)" />
+                    <text x="107" y="170.5" text-anchor="middle" fill="#ffffff" font-size="11.5" font-weight="600">61</text>
+                    <text x="107" y="179.5" text-anchor="middle" fill="#a8abb4" font-size="6.8" font-weight="600">%</text>
+                  </g>
+
+                  <!-- 8. 左下角：双连跳空心爱心按钮（轻点进微信） -->
+                  <g class="dial-tap-zone" data-open-wapp="wScreenWechat">
+                    <circle cx="40" cy="206" r="16.5" fill="rgba(255,255,255,0.11)" />
+                    <path d="M 32 220 A 16.5 16.5 0 0 0 49 219" fill="none" stroke="rgba(255,255,255,0.42)" stroke-width="1.4" stroke-linecap="round" />
+                    <g class="dial-heart-anim" style="transform-origin: 40px 206px;">
+                      <path d="M 40 212.2 C 40 212.2 33.2 207.8 33.2 203.8 C 33.2 201.6 34.9 200 37 200 C 38.4 200 39.4 200.7 40 201.7 C 40.6 200.7 41.6 200 43 200 C 45.1 200 46.8 201.6 46.8 203.8 C 46.8 207.8 40 212.2 40 212.2 Z" fill="none" stroke="#f5f6f8" stroke-width="1.65" stroke-linejoin="round" />
+                    </g>
+                  </g>
+
+                  <!-- 9. 右下角：82% 动态电量外弧 -->
+                  <path d="M 136 206 A 80 80 0 0 0 181 163" fill="none" stroke="rgba(255,255,255,0.16)" stroke-width="5.2" stroke-linecap="round" />
+                  <path id="dialBattArc" class="dial-arc-progress dial-arc-glow" d="M 136 206 A 80 80 0 0 0 176 172" fill="none" stroke="#f5f6f7" stroke-width="5.2" stroke-linecap="round" stroke-dasharray="56" stroke-dashoffset="0" />
+                  <text fill="#e4e5e9" font-size="13" font-weight="600" letter-spacing="0.4">
+                    <textPath href="#arcBattText" startOffset="50%" text-anchor="middle">82%</textPath>
+                  </text>
+
+                  <!-- 10. 真实走动的指针层（圆心 107, 131） -->
+                  <g id="dialHourHand" transform="rotate(300 107 131)">
+                    <line x1="107" y1="131" x2="107" y2="117" stroke="#ffffff" stroke-width="2.1" stroke-linecap="round" />
+                    <rect x="104.2" y="96" width="5.6" height="26" rx="2.8" fill="#ffffff" />
+                  </g>
+
+                  <g id="dialMinHand" transform="rotate(36 107 131)">
+                    <line x1="107" y1="131" x2="107" y2="114" stroke="#ffffff" stroke-width="2" stroke-linecap="round" />
+                    <rect x="104.6" y="75" width="4.8" height="44" rx="2.4" fill="#ffffff" />
+                  </g>
+
+                  <g id="dialSecHand" transform="rotate(120 107 131)">
+                    <line x1="107" y1="145" x2="107" y2="62" stroke="#d8dbe2" stroke-width="1.2" stroke-linecap="round" />
+                    <circle cx="107" cy="131" r="3.4" fill="#18191c" stroke="#d8dbe2" stroke-width="1.3" />
+                    <circle cx="107" cy="131" r="1.2" fill="#d8dbe2" />
+                  </g>
+                </svg>
               </div>
 
               <!-- Screen 1: 原版 App 选择界面（单击表冠进入，3个核心 App） -->
@@ -1836,8 +1895,9 @@
 
   <script>
     // ==========================================================
-    // 0. 震动反馈引擎（优先调用 iOS Safari <input switch> + Vibrate + 轻咔哒声）
+    // 0. 震动反馈引擎（iOS 17.4+ Safari <label for="hapticSwitch"> 原生 Taptic Engine + Android Vibrate + 轻机械声）
     // ==========================================================
+    const hapticLabel = document.getElementById("hapticLabel");
     const hapticSwitch = document.getElementById("hapticSwitch");
     let audioCtx = null;
 
@@ -1869,49 +1929,61 @@
     }
 
     function triggerHaptic(kind = "tick") {
-      // iOS 17.4+ Safari 原生 Taptic Engine 触发方式
+      // iOS 17.4+ / iOS 18 Safari 唯一可用的系统 Taptic Engine 通道：同步通过 label 触发 switch
       try {
-        if (hapticSwitch) hapticSwitch.click();
+        if (hapticLabel) {
+          hapticLabel.click();
+        } else if (hapticSwitch) {
+          hapticSwitch.click();
+        }
       } catch (_) {}
-      // Android / 支持 Web Vibration API 的浏览器
+      // Android Chrome / 支持 Web Vibration API 的浏览器
       if (navigator.vibrate) {
-        navigator.vibrate(kind === "heavy" ? 16 : 6);
+        navigator.vibrate(kind === "heavy" ? [14, 24, 18] : 7);
       }
-      // 辅助极轻机械阻尼声（只在音频已激活时轻声反馈）
+      // 极轻机械齿轮声辅助（在音频上下文激活后）
       if (audioCtx && audioCtx.state === "running") {
-        playMicroTick(kind === "heavy" ? 820 : 1450, 0.014, 0.018);
+        playMicroTick(kind === "heavy" ? 800 : 1480, 0.014, 0.02);
       }
     }
 
-    // 竖屏手动跳过按钮
-    document.getElementById("bypassRotateBtn").addEventListener("click", () => {
-      document.body.classList.add("allow-portrait");
-      syncHotspotsBox();
-    });
-
     // ==========================================================
-    // 1. 全屏背景图 object-fit: cover 后的热区精确映射
-    //    保证 100% 全屏铺满且 4 个小圆点永不错位
+    // 1. 全屏竖屏主舞台热区精确映射（手机竖屏 100% cover 全屏，桌面横屏 contain 完整展示）
     // ==========================================================
-    const IMG_RATIO = 1600 / 893;
+    const IMG_RATIO = 768 / 1376;
     const hotspotsBox = document.getElementById("hotspotsBox");
 
     function syncHotspotsBox() {
       const vw = window.innerWidth;
       const vh = window.innerHeight;
       const viewRatio = vw / vh;
+      const isContainMode = viewRatio >= 0.8;
       let renderW, renderH, offsetX, offsetY;
 
-      if (viewRatio > IMG_RATIO) {
-        renderW = vw;
-        renderH = vw / IMG_RATIO;
-        offsetX = 0;
-        offsetY = (vh - renderH) / 2;
+      if (isContainMode) {
+        if (viewRatio > IMG_RATIO) {
+          renderH = vh;
+          renderW = vh * IMG_RATIO;
+          offsetX = (vw - renderW) / 2;
+          offsetY = 0;
+        } else {
+          renderW = vw;
+          renderH = vw / IMG_RATIO;
+          offsetX = 0;
+          offsetY = (vh - renderH) / 2;
+        }
       } else {
-        renderH = vh;
-        renderW = vh * IMG_RATIO;
-        offsetX = (vw - renderW) / 2;
-        offsetY = 0;
+        if (viewRatio > IMG_RATIO) {
+          renderW = vw;
+          renderH = vw / IMG_RATIO;
+          offsetX = 0;
+          offsetY = (vh - renderH) / 2;
+        } else {
+          renderH = vh;
+          renderW = vh * IMG_RATIO;
+          offsetX = (vw - renderW) / 2;
+          offsetY = 0;
+        }
       }
 
       hotspotsBox.style.width = `${renderW}px`;
@@ -2100,6 +2172,8 @@
       }
       if (modalId === "modalPhotos") {
         runPolaroidIntroSequence();
+      } else if (modalId === "modalWatch" && currentWatchScreen === "wScreenFace") {
+        animateWatchComplications();
       }
     }
 
@@ -2131,26 +2205,76 @@
       document.querySelectorAll(".w-screen").forEach((s) => s.classList.remove("active"));
       const target = document.getElementById(screenId);
       if (target) target.classList.add("active");
+      if (screenId === "wScreenFace") animateWatchComplications();
       triggerHaptic("tick");
     }
 
-    // 更新时钟显示
-    function refreshWatchClock() {
-      const now = new Date();
-      const hh = String(now.getHours()).padStart(2, "0");
-      const mm = String(now.getMinutes()).padStart(2, "0");
-      document.getElementById("wClockText").innerHTML = `${hh}<span>:</span>${mm}`;
+    // 绘制极简表盘 60 刻度环与实时 60fps 指针扫秒 + 复杂功能进场充能动效
+    (function initAnalogWatchDial() {
+      const tickGroup = document.getElementById("dialTickRing");
+      if (!tickGroup) return;
+      const ns = "http://www.w3.org/2000/svg";
+      const cx = 107;
+      const cy = 131;
+      for (let i = 0; i < 60; i++) {
+        const angle = (i * 6 - 90) * (Math.PI / 180);
+        const isHour = i % 5 === 0;
+        const rOuter = 73.5;
+        const rInner = isHour ? 66.5 : 68.8;
+        const line = document.createElementNS(ns, "line");
+        line.setAttribute("x1", (cx + rInner * Math.cos(angle)).toFixed(2));
+        line.setAttribute("y1", (cy + rInner * Math.sin(angle)).toFixed(2));
+        line.setAttribute("x2", (cx + rOuter * Math.cos(angle)).toFixed(2));
+        line.setAttribute("y2", (cy + rOuter * Math.sin(angle)).toFixed(2));
+        line.setAttribute("stroke", isHour ? "#ffffff" : "rgba(255,255,255,0.48)");
+        line.setAttribute("stroke-width", isHour ? "1.8" : "0.95");
+        line.setAttribute("stroke-linecap", "round");
+        tickGroup.appendChild(line);
+      }
+    })();
+
+    const dialHourHand = document.getElementById("dialHourHand");
+    const dialMinHand = document.getElementById("dialMinHand");
+    const dialSecHand = document.getElementById("dialSecHand");
+    const dialRing61 = document.getElementById("dialRing61");
+    const dialBattArc = document.getElementById("dialBattArc");
+    const dialTempArc = document.getElementById("dialTempArc");
+
+    function animateWatchComplications() {
+      if (!dialRing61 || !dialBattArc || !dialTempArc) return;
+      dialRing61.style.strokeDashoffset = "99.3";
+      dialBattArc.style.strokeDashoffset = "56";
+      dialTempArc.style.strokeDashoffset = "56";
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          dialRing61.style.strokeDashoffset = "38.7";
+          dialBattArc.style.strokeDashoffset = "0";
+          dialTempArc.style.strokeDashoffset = "0";
+        });
+      });
     }
-    refreshWatchClock();
-    setInterval(refreshWatchClock, 15000);
+
+    function updateAnalogWatchHands() {
+      const now = new Date();
+      const ms = now.getMilliseconds();
+      const s = now.getSeconds() + ms / 1000;
+      const m = now.getMinutes() + s / 60;
+      const h = (now.getHours() % 12) + m / 60;
+      if (dialHourHand) dialHourHand.setAttribute("transform", `rotate(${(h * 30).toFixed(2)} 107 131)`);
+      if (dialMinHand) dialMinHand.setAttribute("transform", `rotate(${(m * 6).toFixed(2)} 107 131)`);
+      if (dialSecHand) dialSecHand.setAttribute("transform", `rotate(${(s * 6).toFixed(2)} 107 131)`);
+      requestAnimationFrame(updateAnalogWatchHands);
+    }
+    requestAnimationFrame(updateAnalogWatchHands);
+    animateWatchComplications();
 
     // 表盘底部 3 个快捷复杂功能 & 返回按键
     document.querySelectorAll("[data-open-wapp]").forEach((el) => {
-      el.addEventListener("click", () => showWatchScreen(el.dataset.openWapp));
+      el.addEventListener("click", () => showWatchScreen(el.getAttribute("data-open-wapp")));
     });
 
     document.querySelectorAll("[data-wback]").forEach((el) => {
-      el.addEventListener("click", () => showWatchScreen(el.dataset.wback));
+      el.addEventListener("click", () => showWatchScreen(el.getAttribute("data-wback")));
     });
 
     appBtns.forEach((btn) => {
@@ -2378,19 +2502,21 @@
       });
     }
 
-    // 阶段 2：像视频 00:01 一样花瓣般散开重叠
+    // 阶段 2：像视频 00:01 一样花瓣般散开重叠（按竖屏/横屏容器宽度自动缩放防越界）
     function scatterPolaroids() {
+      const w = polCanvas.clientWidth || 360;
+      const scale = Math.min(1, w / 420);
       const scatterMap = [
-        { x: -115, y: -62, r: -14 },
-        { x: 105,  y: -58, r: 12 },
-        { x: -135, y: 46,  r: 9 },
-        { x: 18,   y: -80, r: -4 },
-        { x: 130,  y: 52,  r: -11 },
-        { x: -12,  y: 74,  r: 6 }
+        { x: -115, y: -76, r: -14 },
+        { x: 105,  y: -72, r: 12 },
+        { x: -125, y: 52,  r: 9 },
+        { x: 16,   y: -96, r: -4 },
+        { x: 120,  y: 58,  r: -11 },
+        { x: -10,  y: 88,  r: 6 }
       ];
       polSlots.forEach((slot, i) => {
         const p = scatterMap[i];
-        slot.style.transform = `translate(calc(-50% + ${p.x}px), calc(-50% + ${p.y}px)) rotate(${p.r}deg) scale(0.98)`;
+        slot.style.transform = `translate(calc(-50% + ${(p.x * scale).toFixed(1)}px), calc(-50% + ${(p.y * scale).toFixed(1)}px)) rotate(${p.r}deg) scale(0.95)`;
       });
     }
 
