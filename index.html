@@ -3,22 +3,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>夕阳下的十九岁课桌 · To Jiayi</title>
+  <title>To Jiayi · 19th</title>
+  <!-- 轻量化中文手写字体（带国内加速节点及系统手写体兜底） -->
+  <link rel="preconnect" href="https://fonts.loli.net" crossorigin />
+  <link href="https://fonts.loli.net/css2?family=Long+Cang&family=Zhi+Mang+Xing&display=swap" rel="stylesheet" />
   <style>
     /* ==========================================================
-       全局设计变量：深暗落日明暗对比 + 35mm 复古胶片质感
+       全局设计变量与复位
        ========================================================== */
     :root {
-      --bg-room: #0d0a08;
-      --paper-cream: #f6eedf;
-      --paper-grid: rgba(110, 92, 74, 0.14);
-      --ink-dark: #30221a;
-      --ink-soft: #5f4a3c;
-      --ink-muted: #937864;
+      --bg-dark: #070504;
       --sunset-gold: #e6a15c;
-      --sunset-amber: #d47a45;
+      --paper-old: #efe5cf;
+      --grid-line: rgba(105, 88, 70, 0.16);
+      --ink-pen: #222633;
+      --ink-fade: #4c4640;
+      --watch-green: #30d158;
+      --watch-pink: #fa2d48;
       --serif: "Songti SC", "STSong", "Noto Serif SC", Georgia, serif;
-      --sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", sans-serif;
+      --hand: "Long Cang", "Kaiti SC", "STKaiti", "KaiTi", "PingFang SC", cursive;
+      --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", sans-serif;
       --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
     }
 
@@ -33,33 +37,107 @@
       width: 100%;
       height: 100%;
       min-height: 100dvh;
-      background-color: var(--bg-room);
-      color: var(--paper-cream);
+      background: var(--bg-dark);
+      color: #f6efe4;
       font-family: var(--sans);
       overflow: hidden;
       user-select: none;
     }
 
-    /* 深暗教室环境光背板 */
-    .ambient-backdrop {
+    /* 隐藏的 iOS Safari 真实触觉震动触发开关（iOS 17.4+ switch 机制） */
+    .haptic-proxy {
       position: fixed;
-      inset: -8%;
-      background: url("assets/desk-sunset.jpg") center / cover no-repeat;
-      filter: blur(44px) brightness(0.22) saturate(1.1);
-      transform: scale(1.12);
-      z-index: 0;
+      top: -200px;
+      left: -200px;
+      opacity: 0.001;
       pointer-events: none;
     }
 
-    /* 全屏 35mm 胶片噪点颗粒层 */
+    /* ==========================================================
+       横屏强制引导提示层（竖屏时出现）
+       ========================================================== */
+    .rotate-guard {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: radial-gradient(circle at 50% 45%, #1c140e 0%, #070504 100%);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+      text-align: center;
+    }
+
+    @media (orientation: portrait) and (max-width: 900px) {
+      body:not(.allow-portrait) .rotate-guard {
+        display: flex;
+      }
+    }
+
+    .rotate-phone-icon {
+      width: 44px;
+      height: 74px;
+      border: 2px solid rgba(230, 161, 92, 0.8);
+      border-radius: 9px;
+      position: relative;
+      margin-bottom: 24px;
+      animation: rotateHint 2.4s ease-in-out infinite;
+    }
+
+    .rotate-phone-icon::after {
+      content: "";
+      position: absolute;
+      bottom: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 14px;
+      height: 2px;
+      border-radius: 2px;
+      background: rgba(230, 161, 92, 0.8);
+    }
+
+    @keyframes rotateHint {
+      0%, 20% { transform: rotate(0deg); }
+      55%, 80% { transform: rotate(-90deg); }
+      100% { transform: rotate(0deg); }
+    }
+
+    .rotate-title {
+      font-family: var(--serif);
+      font-size: 19px;
+      color: #f6efe4;
+      margin-bottom: 10px;
+      letter-spacing: 0.06em;
+    }
+
+    .rotate-sub {
+      font-size: 13px;
+      color: rgba(246, 239, 228, 0.6);
+      margin-bottom: 24px;
+    }
+
+    .rotate-bypass {
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: transparent;
+      color: rgba(255, 255, 255, 0.45);
+      font-size: 11.5px;
+      cursor: pointer;
+    }
+
+    /* ==========================================================
+       全屏 35mm 胶片颗粒 + 飘浮落日浮尘
+       ========================================================== */
     .film-grain {
       position: fixed;
       inset: -10%;
       width: 120%;
       height: 120%;
       pointer-events: none;
-      z-index: 80;
-      opacity: 0.065;
+      z-index: 95;
+      opacity: 0.055;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
       animation: grainAnim 0.4s steps(2) infinite;
     }
@@ -71,7 +149,6 @@
       100% { transform: translate(0.5%, 0.5%); }
     }
 
-    /* 阳光斜照下的飘浮光尘画布 */
     #dustCanvas {
       position: fixed;
       inset: 0;
@@ -82,129 +159,71 @@
     }
 
     /* ==========================================================
-       主视觉舞台：横版 4:3 高中课桌俯视画框
+       主舞台：100% 全屏课桌（无上下模糊，无任何文字 HUD）
        ========================================================== */
-    .viewport-shell {
-      position: relative;
-      z-index: 2;
-      width: 100%;
+    .fullscreen-desk {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
       height: 100dvh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: env(safe-area-inset-top, 10px) 12px env(safe-area-inset-bottom, 12px);
-    }
-
-    .top-hud {
-      width: min(94vw, calc((100dvh - 104px) * 1.3395));
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 4px 4px 10px;
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 0.12em;
-      color: rgba(246, 238, 223, 0.65);
-      opacity: 0;
-      transform: translateY(-6px);
-      transition: opacity 0.8s ease, transform 0.8s ease;
-    }
-
-    body.is-awake .top-hud {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .hud-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-    }
-
-    .hud-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--sunset-gold);
-      box-shadow: 0 0 10px var(--sunset-gold);
-    }
-
-    /* 横版 4:3 课桌电影画框 */
-    .desk-stage {
-      position: relative;
-      width: min(94vw, calc((100dvh - 104px) * 1.3395));
-      aspect-ratio: 1440 / 1075;
-      border-radius: 16px;
       overflow: hidden;
-      box-shadow:
-        0 34px 90px rgba(0, 0, 0, 0.85),
-        0 0 0 1px rgba(255, 232, 200, 0.1);
-      background: #140f0c;
+      background: #070504;
     }
 
-    /* 实拍课桌底图层：开场柔和失焦 -> 醒来收实对焦 -> 弹窗时退后虚化 */
-    .desk-photo-layer {
+    .desk-bg-img {
       position: absolute;
       inset: 0;
-      background: url("assets/desk-sunset.jpg") center / 100% 100% no-repeat;
-      filter: blur(18px) brightness(0.55) saturate(0.95);
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center center;
+      filter: blur(18px) brightness(0.5) saturate(0.95);
       transform: scale(1.08);
       transition:
         filter 1.25s cubic-bezier(0.22, 1, 0.36, 1),
         transform 1.25s cubic-bezier(0.22, 1, 0.36, 1);
       will-change: filter, transform;
+      pointer-events: none;
     }
 
-    body.is-awake .desk-photo-layer {
-      filter: blur(0px) brightness(0.96) contrast(1.04) saturate(1.02);
+    body.is-awake .desk-bg-img {
+      filter: blur(0px) brightness(0.97) contrast(1.04) saturate(1.02);
       transform: scale(1);
     }
 
-    body.modal-open .desk-photo-layer {
-      filter: blur(10px) brightness(0.58) saturate(0.9);
+    body.modal-open .desk-bg-img {
+      filter: blur(10px) brightness(0.42) saturate(0.88);
       transform: scale(1.05);
     }
 
-    /* 暗角压边与右上角落日强对比炫光 */
-    .desk-vignette {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      background: radial-gradient(circle at 56% 48%, transparent 52%, rgba(8, 5, 3, 0.56) 100%);
-    }
-
-    .desk-lens-flare {
+    /* 落日斜照光学暖色炫光与暗角 */
+    .desk-flare {
       position: absolute;
       inset: 0;
       pointer-events: none;
       background:
-        radial-gradient(circle at 86% 12%, rgba(255, 184, 102, 0.3) 0%, rgba(255, 184, 102, 0) 46%),
-        radial-gradient(circle at 18% 82%, rgba(226, 140, 86, 0.1) 0%, rgba(226, 140, 86, 0) 38%);
+        radial-gradient(circle at 86% 12%, rgba(255, 184, 102, 0.28) 0%, rgba(255, 184, 102, 0) 44%),
+        radial-gradient(circle at 50% 50%, transparent 56%, rgba(5, 3, 2, 0.5) 100%);
       mix-blend-mode: screen;
-      animation: flareBreath 6.5s ease-in-out infinite alternate;
     }
 
-    @keyframes flareBreath {
-      0% { opacity: 0.7; }
-      100% { opacity: 1; }
-    }
-
-    /* ==========================================================
-       桌面可点击热区：纯洁小圆点（无任何文字标签遮挡）
-       ========================================================== */
-    .hotspots-layer {
+    /* 热区精准坐标容器（由 JS 按图片 cover 后的真实矩形自动对齐） */
+    .hotspots-box {
       position: absolute;
-      inset: 0;
-      z-index: 10;
+      z-index: 15;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.9s ease 0.35s;
+      transition: opacity 0.9s ease 0.3s;
     }
 
-    body.is-awake .hotspots-layer {
+    body.is-awake .hotspots-box {
       opacity: 1;
       pointer-events: auto;
+    }
+
+    body.modal-open .hotspots-box {
+      pointer-events: none;
+      opacity: 0.25;
     }
 
     .hotspot {
@@ -216,82 +235,64 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 0;
     }
 
-    /* 精准锚定在 4:3 横桌的 5 件物体上（已去除桌贴） */
-    .hs-pencil   { left: 28%;   top: 28%;   width: 28%; height: 24%; }
-    .hs-candy    { left: 47.5%; top: 34.5%; width: 11%; height: 11%; }
-    .hs-photos   { left: 74%;   top: 33%;   width: 24%; height: 24%; }
-    .hs-notebook { left: 33.5%; top: 62%;   width: 26%; height: 34%; }
-    .hs-watch    { left: 73.5%; top: 65%;   width: 24%; height: 34%; }
+    /* 4 个物品在 16:9 图中的精确坐标 */
+    .hs-pencil   { left: 34.5%; top: 32.5%; width: 22%; height: 22%; }
+    .hs-photos   { left: 65.5%; top: 36.5%; width: 17%; height: 20%; }
+    .hs-notebook { left: 35.5%; top: 59%;   width: 20%; height: 28%; }
+    .hs-watch    { left: 68.5%; top: 61.5%; width: 19%; height: 27%; }
 
-    /* 极简微光小圆点 */
-    .hs-ring {
+    /* 仅保留极简小圆点（无任何文字） */
+    .hs-dot {
       position: relative;
-      width: 14px;
-      height: 14px;
+      width: 13px;
+      height: 13px;
       border-radius: 50%;
-      background: rgba(255, 244, 224, 0.92);
-      border: 2px solid rgba(255, 255, 255, 0.95);
-      box-shadow: 0 0 12px rgba(255, 206, 146, 0.85), 0 2px 8px rgba(0, 0, 0, 0.45);
-      transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+      background: rgba(255, 246, 230, 0.94);
+      border: 1.5px solid #fff;
+      box-shadow: 0 0 12px rgba(255, 206, 146, 0.9), 0 2px 6px rgba(0, 0, 0, 0.45);
+      transition: transform 0.2s ease, background 0.25s ease;
     }
 
-    .hs-ring::before {
+    .hs-dot::before {
       content: "";
       position: absolute;
       inset: -7px;
       border-radius: 50%;
-      border: 1.5px solid rgba(255, 226, 184, 0.65);
-      animation: ringPulse 2.6s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+      border: 1.5px solid rgba(255, 228, 188, 0.65);
+      animation: dotPulse 2.5s cubic-bezier(0.22, 1, 0.36, 1) infinite;
     }
 
-    .hotspot.is-visited .hs-ring {
+    .hotspot.is-visited .hs-dot {
       background: rgba(230, 161, 92, 0.95);
-      border-color: rgba(255, 232, 198, 0.9);
-      box-shadow: 0 0 10px rgba(230, 161, 92, 0.65);
+      border-color: rgba(255, 236, 208, 0.95);
     }
 
-    @keyframes ringPulse {
-      0% { transform: scale(0.8); opacity: 0.9; }
-      100% { transform: scale(1.9); opacity: 0; }
+    @keyframes dotPulse {
+      0% { transform: scale(0.8); opacity: 0.92; }
+      100% { transform: scale(2); opacity: 0; }
     }
 
-    .hotspot:active .hs-ring {
-      transform: scale(0.82);
-    }
-
-    /* 极淡的底部提示语 */
-    .bottom-hint {
-      margin-top: 12px;
-      font-size: 11.5px;
-      letter-spacing: 0.08em;
-      color: rgba(246, 238, 223, 0.45);
-      text-align: center;
-      opacity: 0;
-      transition: opacity 0.8s ease 0.4s;
-    }
-
-    body.is-awake .bottom-hint {
-      opacity: 1;
+    .hotspot:active .hs-dot {
+      transform: scale(0.8);
     }
 
     /* ==========================================================
-       第一幕：暗调落日失焦开场生日祝福
+       开场生日祝福遮罩
        ========================================================== */
     .intro-overlay {
       position: fixed;
       inset: 0;
-      z-index: 60;
+      z-index: 70;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 32px 24px;
+      padding: 24px;
       text-align: center;
-      background: radial-gradient(circle at 50% 44%, rgba(36, 22, 14, 0.5) 0%, rgba(10, 7, 5, 0.82) 100%);
-      transition: opacity 1s ease, visibility 1s ease;
+      background: radial-gradient(circle at 50% 45%, rgba(28, 17, 11, 0.46) 0%, rgba(7, 5, 4, 0.84) 100%);
+      transition: opacity 0.95s ease, visibility 0.95s ease;
     }
 
     body.is-awake .intro-overlay {
@@ -305,813 +306,1116 @@
       font-size: 11px;
       letter-spacing: 0.28em;
       color: var(--sunset-gold);
-      margin-bottom: 18px;
-      animation: fadeUp 0.9s ease forwards;
+      margin-bottom: 14px;
     }
 
     .intro-title {
       font-family: var(--serif);
-      font-size: clamp(22px, 5.2vw, 31px);
+      font-size: clamp(20px, 3.6vw, 30px);
       font-weight: 500;
       line-height: 1.55;
       letter-spacing: 0.06em;
       color: #fcf5ea;
-      max-width: 440px;
-      margin-bottom: 18px;
-      text-shadow: 0 4px 24px rgba(0, 0, 0, 0.6);
-      animation: fadeUp 1.1s ease forwards;
+      margin-bottom: 14px;
+      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.55);
     }
 
     .intro-hug {
-      max-width: 360px;
-      padding: 11px 18px;
-      border-radius: 14px;
+      max-width: 440px;
+      padding: 9px 18px;
+      border-radius: 12px;
       background: rgba(255, 245, 232, 0.06);
       border: 1px solid rgba(255, 220, 178, 0.18);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      font-size: 13.5px;
-      line-height: 1.85;
+      font-size: 13px;
       color: rgba(252, 242, 228, 0.84);
-      margin-bottom: 32px;
-      animation: fadeUp 1.3s ease forwards;
+      margin-bottom: 24px;
     }
 
     .intro-btn {
-      padding: 13px 28px;
+      padding: 11px 26px;
       border-radius: 999px;
-      border: 1px solid rgba(246, 207, 164, 0.45);
-      background: linear-gradient(135deg, rgba(214, 134, 74, 0.9), rgba(182, 96, 52, 0.92));
+      border: 1px solid rgba(246, 207, 164, 0.48);
+      background: linear-gradient(135deg, rgba(214, 134, 74, 0.92), rgba(182, 96, 52, 0.92));
       color: #fffaf3;
-      font-size: 14px;
-      font-weight: 500;
+      font-size: 13.5px;
       letter-spacing: 0.08em;
       cursor: pointer;
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.48), 0 0 24px rgba(230, 161, 92, 0.28);
-      transition: transform 0.25s ease;
-      animation: fadeUp 1.5s ease forwards;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
     }
 
-    .intro-btn:active {
-      transform: scale(0.95);
-    }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(14px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    .intro-btn:active { transform: scale(0.95); }
 
     /* ==========================================================
-       物品特写模态容器
+       物品特写模态框架
        ========================================================== */
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      z-index: 70;
+      z-index: 80;
       display: none;
       align-items: center;
       justify-content: center;
-      padding: 18px 14px;
-      background: rgba(10, 7, 5, 0.62);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      animation: modalFade 0.28s ease forwards;
+      padding: 16px 20px;
+      background: rgba(8, 6, 4, 0.55);
+      animation: fadeSimple 0.25s ease forwards;
     }
 
-    .modal-backdrop.active {
-      display: flex;
-    }
+    .modal-backdrop.active { display: flex; }
 
-    @keyframes modalFade {
+    @keyframes fadeSimple {
       from { opacity: 0; }
       to { opacity: 1; }
     }
 
-    .modal-close-bar {
-      position: absolute;
-      top: max(14px, env(safe-area-inset-top, 14px));
-      right: 16px;
-      z-index: 75;
-    }
-
     .close-btn {
-      padding: 7px 14px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 240, 220, 0.24);
-      background: rgba(20, 15, 12, 0.78);
+      position: fixed;
+      top: max(12px, env(safe-area-inset-top, 12px));
+      right: max(16px, env(safe-area-inset-right, 16px));
+      z-index: 90;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 240, 220, 0.28);
+      background: rgba(18, 13, 10, 0.78);
       color: #faf2e6;
-      font-size: 12.5px;
+      font-size: 15px;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
     }
 
-    .close-btn:active {
-      transform: scale(0.94);
-    }
+    .close-btn:active { transform: scale(0.9); }
 
     .modal-panel {
       display: none;
-      width: 100%;
-      max-width: 620px;
-      max-height: 86dvh;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      border-radius: 20px;
-      animation: panelPop 0.36s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      max-width: 94vw;
+      max-height: 92dvh;
+      animation: panelPop 0.34s cubic-bezier(0.22, 1, 0.36, 1) forwards;
     }
 
-    .modal-panel.active {
-      display: block;
-    }
+    .modal-panel.active { display: flex; align-items: center; justify-content: center; }
 
     @keyframes panelPop {
-      from { opacity: 0; transform: translateY(16px) scale(0.96); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
+      from { opacity: 0; transform: scale(0.94) translateY(10px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
     }
 
     /* ==========================================================
-       1. 做旧 Mnemosyne 178 黑色方格本
+       一、100% 仿原版 Apple Watch（表冠上下滑动 + 单击进 App 界面）
        ========================================================== */
-    .mnemosyne-book {
-      background: #171615;
-      border-radius: 16px;
-      border: 1px solid rgba(255, 255, 255, 0.11);
-      box-shadow: 0 28px 65px rgba(0, 0, 0, 0.72);
-      overflow: hidden;
-    }
-
-    .mnemosyne-cover {
-      padding: 22px 24px 18px;
-      background:
-        radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.04) 0%, transparent 40%),
-        linear-gradient(155deg, #24221f 0%, #141311 100%);
-      border-bottom: 3px solid #2c2925;
+    .watch-stage {
       display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-    }
-
-    .mnemo-brand {
-      font-family: Georgia, serif;
-      font-size: 12px;
-      letter-spacing: 0.14em;
-      color: #bfa070;
-    }
-
-    .mnemo-spec {
-      font-family: var(--mono);
-      font-size: 10.5px;
-      color: rgba(255, 255, 255, 0.38);
-    }
-
-    .grid-paper {
-      padding: 28px 22px 34px;
-      background-color: #f6efe2;
-      background-image:
-        linear-gradient(to right, var(--paper-grid) 1px, transparent 1px),
-        linear-gradient(to bottom, var(--paper-grid) 1px, transparent 1px);
-      background-size: 20px 20px;
-      color: var(--ink-dark);
-    }
-
-    @media (min-width: 560px) {
-      .grid-paper {
-        padding: 36px 38px 42px;
-      }
-    }
-
-    .grid-paper-head {
-      display: flex;
-      justify-content: space-between;
       align-items: center;
-      padding-bottom: 12px;
-      margin-bottom: 20px;
-      border-bottom: 1px solid rgba(51, 37, 29, 0.14);
-      font-family: var(--mono);
-      font-size: 10.5px;
-      color: var(--ink-muted);
+      gap: 24px;
     }
 
-    .letter-salutation {
-      font-family: var(--serif);
-      font-size: 19px;
-      font-weight: 600;
-      margin-bottom: 16px;
-      color: var(--ink-dark);
-    }
-
-    .letter-body p {
-      font-family: var(--serif);
-      font-size: 15.2px;
-      line-height: 2;
-      color: #36281f;
-      margin-bottom: 16px;
-      letter-spacing: 0.02em;
-    }
-
-    .letter-body p.poem-quote {
-      padding-left: 14px;
-      border-left: 2px solid rgba(212, 122, 69, 0.5);
-      color: #5c483b;
-    }
-
-    .en-lyrics {
-      display: block;
-      margin-top: 8px;
-      font-family: Georgia, serif;
-      font-style: italic;
-      font-size: 14.5px;
-      color: #6b5547;
-    }
-
-    .memo-insert {
-      margin: 22px 0;
-      border-radius: 12px;
-      background: #fcf8eb;
-      border: 1px solid rgba(206, 168, 104, 0.5);
-      box-shadow: 0 6px 18px rgba(90, 68, 34, 0.1);
-      overflow: hidden;
-    }
-
-    .memo-insert-bar {
-      padding: 10px 14px;
-      background: rgba(238, 206, 140, 0.28);
-      border-bottom: 1px solid rgba(206, 168, 104, 0.28);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 12px;
-      font-weight: 500;
-      color: #7c5628;
-      cursor: pointer;
-    }
-
-    .memo-insert-body {
-      padding: 15px 16px;
-      font-family: var(--serif);
-      font-size: 14.5px;
-      line-height: 1.9;
-      color: #554233;
-      font-style: italic;
-      display: none;
-    }
-
-    .memo-insert.open .memo-insert-body {
-      display: block;
-    }
-
-    .letter-sign {
-      margin-top: 26px;
-      text-align: right;
-      font-family: var(--serif);
-      font-size: 14.8px;
-      color: var(--ink-soft);
-      line-height: 1.9;
-    }
-
-    /* ==========================================================
-       2. 老款黑色 Apple Watch
-       ========================================================== */
-    .watch-modal-wrap {
+    .watch-hardware {
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 10px 0 18px;
+      position: relative;
     }
 
-    .watch-band-top, .watch-band-bottom {
-      width: 146px;
-      height: 54px;
-      background: linear-gradient(90deg, #17181b 0%, #27292e 50%, #17181b 100%);
+    .watch-band {
+      width: 122px;
+      height: 34px;
+      background: linear-gradient(90deg, #16171a 0%, #24262b 50%, #16171a 100%);
       border-left: 1px solid rgba(255, 255, 255, 0.08);
       border-right: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: inset 0 6px 14px rgba(0, 0, 0, 0.65);
     }
+    .watch-band-top { border-radius: 14px 14px 0 0; }
+    .watch-band-bot { border-radius: 0 0 14px 14px; }
 
-    .watch-band-top { border-radius: 16px 16px 0 0; }
-    .watch-band-bottom { border-radius: 0 0 16px 16px; }
-
-    .watch-chassis {
+    .watch-case {
       position: relative;
-      width: 274px;
-      height: 330px;
-      padding: 18px 16px;
-      border-radius: 52px;
-      background: linear-gradient(145deg, #2a2c32 0%, #141518 48%, #0b0c0e 100%);
+      width: 242px;
+      height: 292px;
+      padding: 15px 14px;
+      border-radius: 48px;
+      background: linear-gradient(145deg, #2b2d33 0%, #141518 45%, #090a0c 100%);
       box-shadow:
-        0 28px 65px rgba(0, 0, 0, 0.8),
-        inset 0 2px 4px rgba(255, 255, 255, 0.2),
-        inset 0 -3px 8px rgba(0, 0, 0, 0.75);
+        0 26px 64px rgba(0, 0, 0, 0.85),
+        inset 0 2px 3px rgba(255, 255, 255, 0.22),
+        inset 0 -3px 7px rgba(0, 0, 0, 0.8);
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
-    .watch-crown {
+    /* 可上下滑动转动的实体数码表冠 Digital Crown */
+    .digital-crown-zone {
       position: absolute;
-      right: -13px;
-      top: 72px;
-      width: 15px;
-      height: 46px;
-      border-radius: 6px;
-      background: repeating-linear-gradient(
-        to bottom,
-        #3a3c42 0px,
-        #3a3c42 3px,
-        #18191c 3px,
-        #18191c 5px
-      );
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.5);
-      cursor: pointer;
+      right: -22px;
+      top: 46px;
+      width: 34px;
+      height: 82px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding-left: 8px;
+      cursor: ns-resize;
+      touch-action: none;
+      z-index: 12;
     }
 
-    .watch-crown:active { transform: translateX(-2px); }
+    .digital-crown {
+      width: 14px;
+      height: 48px;
+      border-radius: 5px;
+      background-color: #26282e;
+      background-image: repeating-linear-gradient(
+        to bottom,
+        #4a4d57 0px,
+        #4a4d57 2px,
+        #16171b 2px,
+        #16171b 5px
+      );
+      background-size: 100% 20px;
+      background-position: 0 0;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 2px 3px 10px rgba(0, 0, 0, 0.6);
+      transition: transform 0.1s ease;
+    }
 
-    .watch-side-btn {
+    .digital-crown.pressed {
+      transform: translateX(-2px) scaleY(0.97);
+    }
+
+    .watch-side-key {
       position: absolute;
       right: -7px;
-      top: 146px;
-      width: 8px;
-      height: 62px;
+      top: 138px;
+      width: 7px;
+      height: 54px;
       border-radius: 4px;
-      background: #222428;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: #23252a;
+      border: 1px solid rgba(255, 255, 255, 0.12);
       cursor: pointer;
     }
 
-    .watch-screen {
+    /* 原版 Apple Watch 纯黑 OLED 显示屏 */
+    .watch-oled {
       position: relative;
       width: 100%;
       height: 100%;
-      border-radius: 38px;
-      background: radial-gradient(circle at 50% 25%, #191411 0%, #050506 100%);
-      border: 2px solid #09090b;
+      border-radius: 35px;
+      background: #000000;
+      border: 1.5px solid #0e0e10;
       overflow: hidden;
-      padding: 18px 16px 14px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      color: #f7efe5;
-      box-shadow: inset 0 0 24px rgba(230, 161, 92, 0.08);
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif;
     }
 
-    .watch-glass-gloss {
+    .watch-oled-gloss {
       position: absolute;
-      top: -30%;
-      left: -20%;
-      width: 140%;
-      height: 60%;
-      background: linear-gradient(170deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 65%);
-      transform: rotate(-10deg);
+      inset: 0;
+      background: linear-gradient(150deg, rgba(255, 255, 255, 0.08) 0%, transparent 42%);
       pointer-events: none;
+      z-index: 20;
     }
 
-    .watch-status {
+    .w-screen {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      padding: 12px 13px;
+      overflow: hidden;
+    }
+
+    .w-screen.active {
+      display: flex;
+      animation: wFade 0.22s ease;
+    }
+
+    @keyframes wFade {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* --- Watch Screen A: 原版时钟表盘（大数字 + 复杂功能） --- */
+    .w-face-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-family: var(--mono);
-      font-size: 10px;
-      color: rgba(230, 161, 92, 0.85);
+      font-size: 11px;
+      font-weight: 600;
+      color: #ff9f0a;
+      letter-spacing: 0.04em;
+    }
+
+    .w-face-center {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .w-face-clock {
+      font-size: 56px;
+      font-weight: 700;
+      line-height: 0.95;
+      letter-spacing: -2px;
+      font-variant-numeric: tabular-nums;
+      color: #ffffff;
+    }
+
+    .w-face-clock span {
+      color: #ff9f0a;
+    }
+
+    .w-face-date {
+      margin-top: 6px;
+      font-size: 11.5px;
+      font-weight: 500;
+      color: #ff453a;
       letter-spacing: 0.06em;
     }
 
-    .watch-view {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      flex: 1;
+    .w-face-complications {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      padding-top: 4px;
+    }
+
+    .w-comp {
+      background: rgba(255, 255, 255, 0.09);
+      border-radius: 12px;
+      padding: 6px 4px;
       text-align: center;
-      padding: 6px 0;
+      font-size: 9.5px;
+      color: rgba(255, 255, 255, 0.8);
+      cursor: pointer;
     }
 
-    .watch-view.active {
-      display: flex;
-      animation: modalFade 0.25s ease;
+    .w-comp strong {
+      display: block;
+      font-size: 12px;
+      margin-bottom: 1px;
     }
 
-    .watch-time-big {
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-      font-size: 52px;
-      font-weight: 300;
-      letter-spacing: -1px;
-      line-height: 1;
-      color: #f9e1c2;
+    /* --- Watch Screen B: 原版 watchOS 蜂窝/网格 App 选择界面 --- */
+    .w-home-header {
+      text-align: center;
+      font-size: 10.5px;
+      color: rgba(255, 255, 255, 0.55);
       margin-bottom: 6px;
     }
 
-    .watch-date-sub {
-      font-family: var(--mono);
-      font-size: 11px;
-      color: rgba(247, 239, 229, 0.65);
-      margin-bottom: 16px;
-    }
-
-    .watch-quote-mini {
-      font-family: var(--serif);
-      font-size: 12.5px;
-      line-height: 1.7;
-      color: rgba(247, 239, 229, 0.86);
-      padding: 8px 10px;
-      border-radius: 12px;
-      background: rgba(255, 240, 220, 0.06);
-      border: 1px solid rgba(230, 161, 92, 0.2);
-    }
-
-    .watch-album-disc {
-      width: 82px;
-      height: 82px;
-      border-radius: 50%;
-      background: url("assets/place-03.jpg") center / cover no-repeat;
-      border: 2px solid rgba(230, 161, 92, 0.55);
-      box-shadow: 0 0 22px rgba(230, 161, 92, 0.25);
-      margin-bottom: 10px;
-      animation: spinSlow 14s linear infinite;
-      animation-play-state: paused;
-    }
-
-    .watch-album-disc.playing {
-      animation-play-state: running;
-    }
-
-    @keyframes spinSlow {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    .watch-track-title {
-      font-size: 13.5px;
-      font-weight: 500;
-      color: #fbf3e8;
-      margin-bottom: 2px;
-    }
-
-    .watch-track-artist {
-      font-size: 11px;
-      color: var(--sunset-gold);
-      margin-bottom: 12px;
-    }
-
-    .watch-audio-controls {
+    .w-honeycomb {
+      flex: 1;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 16px;
+      justify-content: center;
+      gap: 14px;
     }
 
-    .w-ctrl-btn {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      border: 1px solid rgba(255, 240, 220, 0.2);
-      background: rgba(255, 255, 255, 0.08);
-      color: #fff;
-      font-size: 13px;
-      cursor: pointer;
+    .w-hex-row {
       display: flex;
       align-items: center;
       justify-content: center;
+      gap: 18px;
     }
 
-    .w-play-btn {
-      width: 44px;
-      height: 44px;
-      background: var(--sunset-gold);
-      color: #1f140d;
+    .w-app-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      background: transparent;
       border: none;
-      font-size: 16px;
-      font-weight: 700;
+      color: #fff;
+      cursor: pointer;
+      transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    .watch-dots {
-      display: flex;
-      justify-content: center;
-      gap: 6px;
-      padding-top: 6px;
+    .w-app-btn.focused {
+      transform: scale(1.13);
     }
 
-    .w-dot {
-      width: 6px;
-      height: 6px;
+    .w-app-icon {
+      width: 58px;
+      height: 58px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.24);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .w-app-btn.focused .w-app-icon {
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.72), 0 6px 18px rgba(0, 0, 0, 0.7);
+    }
+
+    .w-app-name {
+      font-size: 10.5px;
+      color: rgba(255, 255, 255, 0.85);
+      letter-spacing: 0.02em;
+    }
+
+    /* 原版相册花瓣图标背景 */
+    .icon-photos { background: #ffffff; }
+
+    /* 原版 Apple Music 渐变图标背景 */
+    .icon-music {
+      background: linear-gradient(180deg, #fb5c74 0%, #fa233b 100%);
+    }
+
+    /* 原版微信翠绿图标背景 */
+    .icon-wechat {
+      background: linear-gradient(180deg, #2ee466 0%, #07c160 100%);
+    }
+
+    /* --- Watch App 1: 相册 (Photos) --- */
+    .w-nav-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      flex-shrink: 0;
+    }
+
+    .w-back-chip {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.16);
+      border: none;
+      color: #fff;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .w-photos-scroll {
+      flex: 1;
+      overflow-y: auto;
+      scrollbar-width: none;
+    }
+    .w-photos-scroll::-webkit-scrollbar { display: none; }
+
+    .w-photos-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3px;
+    }
+
+    .w-photo-thumb {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      border-radius: 4px;
       cursor: pointer;
     }
 
-    .w-dot.active {
-      background: var(--sunset-gold);
+    .w-photo-viewer {
+      position: absolute;
+      inset: 0;
+      background: #000;
+      z-index: 15;
+      display: none;
+      flex-direction: column;
     }
 
-    .watch-hint-bar {
-      margin-top: 14px;
-      padding: 8px 16px;
-      border-radius: 999px;
-      background: rgba(20, 15, 12, 0.78);
-      border: 1px solid rgba(255, 240, 220, 0.16);
-      font-size: 12px;
-      color: rgba(248, 241, 230, 0.84);
-      text-align: center;
+    .w-photo-viewer.active { display: flex; }
+
+    .w-photo-viewer img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
-    /* ==========================================================
-       3. 蓝色白拉链笔袋弹窗
-       ========================================================== */
-    .pouch-card {
-      background: linear-gradient(170deg, #16519d 0%, #103c77 100%);
-      border-radius: 20px;
-      padding: 6px;
-      box-shadow: 0 26px 60px rgba(0, 0, 0, 0.68);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-    }
-
-    .pouch-zipper {
-      height: 16px;
-      margin: 4px 10px 8px;
-      border-radius: 999px;
-      background: repeating-linear-gradient(
-        90deg,
-        #f7f5f0 0px,
-        #f7f5f0 6px,
-        #cbd2db 6px,
-        #cbd2db 9px
-      );
-      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.25);
-    }
-
-    .pouch-inner {
-      background: var(--paper-cream);
-      color: var(--ink-dark);
-      border-radius: 15px;
-      padding: 26px 22px 28px;
-    }
-
-    .pouch-title {
-      font-family: var(--serif);
-      font-size: 20px;
-      font-weight: 600;
-      margin-bottom: 10px;
-      color: #16407a;
-    }
-
-    .pouch-text {
-      font-family: var(--serif);
-      font-size: 15px;
-      line-height: 1.9;
-      color: var(--ink-soft);
-      margin-bottom: 18px;
-    }
-
-    .stationery-tags {
+    .w-pv-top {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 10px;
       display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-
-    .st-tag {
-      padding: 6px 12px;
-      border-radius: 10px;
-      background: #fff;
-      border: 1px solid rgba(24, 88, 168, 0.18);
-      font-size: 12.5px;
-      color: var(--ink-dark);
-    }
-
-    /* ==========================================================
-       4. 远方胶片画廊（6 张风格化双人剪影）
-       ========================================================== */
-    .gallery-card {
-      background: #f4ece0;
-      color: var(--ink-dark);
-      border-radius: 20px;
-      padding: 24px 18px 28px;
-      box-shadow: 0 28px 70px rgba(0, 0, 0, 0.68);
-    }
-
-    .gallery-head {
-      display: flex;
-      align-items: flex-end;
       justify-content: space-between;
-      margin-bottom: 18px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid rgba(80, 58, 42, 0.14);
+      z-index: 2;
     }
 
-    .gallery-title {
-      font-family: var(--serif);
-      font-size: 20px;
+    /* --- Watch App 2: Apple Music (原版 Now Playing + 右侧表冠绿色音量环) --- */
+    .w-music-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .w-music-art-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 2px;
+    }
+
+    .w-music-art {
+      width: 54px;
+      height: 54px;
+      border-radius: 10px;
+      object-fit: cover;
+      box-shadow: 0 4px 12px rgba(250, 45, 72, 0.3);
+    }
+
+    .w-music-meta {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .w-music-title {
+      font-size: 13px;
       font-weight: 600;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .gallery-sub {
+    .w-music-sub {
+      font-size: 11px;
+      color: #fa2d48;
+      margin-top: 2px;
+    }
+
+    .w-music-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 8px;
+    }
+
+    .w-m-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.12);
+      border: none;
+      color: #fff;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .w-m-play {
+      width: 52px;
+      height: 52px;
+      background: #fa2d48;
+      font-size: 18px;
+    }
+
+    /* 原版 watchOS 音量条（表冠上下滑实时调节） */
+    .w-vol-bar-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 4px 0;
+    }
+
+    .w-vol-track {
+      flex: 1;
+      height: 5px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.16);
+      overflow: hidden;
+    }
+
+    .w-vol-fill {
+      height: 100%;
+      width: 72%;
+      background: #30d158;
+      border-radius: 999px;
+      transition: width 0.12s ease;
+    }
+
+    /* --- Watch App 3: 微信 (WeChat WatchOS 原版绿气泡聊天) --- */
+    .w-wechat-scroll {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-right: 2px;
+      scrollbar-width: none;
+    }
+    .w-wechat-scroll::-webkit-scrollbar { display: none; }
+
+    .wc-msg {
+      max-width: 86%;
+      padding: 7px 10px;
+      border-radius: 12px;
       font-size: 11.5px;
-      color: var(--ink-muted);
+      line-height: 1.45;
     }
 
-    .film-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 20px;
+    .wc-her {
+      align-self: flex-start;
+      background: #262629;
+      color: #f4f4f6;
+      border-bottom-left-radius: 4px;
     }
 
-    @media (min-width: 560px) {
-      .film-grid {
-        grid-template-columns: repeat(2, 1fr);
+    .wc-me {
+      align-self: flex-end;
+      background: #07c160;
+      color: #031c0d;
+      font-weight: 500;
+      border-bottom-right-radius: 4px;
+    }
+
+    .wc-quick-row {
+      display: flex;
+      gap: 5px;
+      padding-top: 6px;
+      flex-shrink: 0;
+    }
+
+    .wc-q-btn {
+      flex: 1;
+      padding: 5px 4px;
+      border-radius: 10px;
+      border: none;
+      background: rgba(7, 193, 96, 0.22);
+      color: #30d158;
+      font-size: 10.5px;
+      cursor: pointer;
+    }
+
+    /* 表冠操作说明小气泡（在手表旁） */
+    .watch-side-guide {
+      max-width: 170px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: rgba(20, 15, 12, 0.72);
+      border: 1px solid rgba(255, 240, 220, 0.14);
+      backdrop-filter: blur(8px);
+      font-size: 12px;
+      line-height: 1.75;
+      color: rgba(246, 239, 228, 0.8);
+    }
+
+    @media (max-width: 520px) {
+      .watch-side-guide { display: none; }
+    }
+
+    /* ==========================================================
+       二、蓝色笔袋（含开口白色饮料瓶盖塑料环）+ 糖果纸巾整蛊
+       ========================================================== */
+    .pouch-modal {
+      width: min(500px, 90vw);
+      background: linear-gradient(165deg, #1754a4 0%, #0f3972 100%);
+      border-radius: 20px;
+      padding: 8px;
+      box-shadow: 0 28px 68px rgba(0, 0, 0, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      position: relative;
+    }
+
+    .pouch-zip-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 10px 10px;
+    }
+
+    .pouch-teeth {
+      flex: 1;
+      height: 14px;
+      border-radius: 999px;
+      background: repeating-linear-gradient(90deg, #f8f6f2 0 5px, #c4cbd6 5px 8px);
+    }
+
+    /* 开口的白色塑料饮料瓶盖防盗环细节 */
+    .bottle-ring-svg {
+      width: 30px;
+      height: 30px;
+      flex-shrink: 0;
+    }
+
+    .pouch-body {
+      background: #f6efe2;
+      color: #2c2018;
+      border-radius: 14px;
+      padding: 20px 22px 22px;
+    }
+
+    .pouch-h {
+      font-family: var(--serif);
+      font-size: 18px;
+      font-weight: 600;
+      color: #133c75;
+      margin-bottom: 8px;
+    }
+
+    .pouch-p {
+      font-family: var(--serif);
+      font-size: 14px;
+      line-height: 1.85;
+      color: #5b483a;
+      margin-bottom: 14px;
+    }
+
+    /* 藏在笔袋里的那颗糖果 -> 剥开变成折成方块的纸巾 */
+    .candy-prank-stage {
+      background: #fffcf6;
+      border: 1.5px dashed rgba(24, 88, 168, 0.25);
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: background 0.25s ease;
+    }
+
+    .candy-prank-stage:hover {
+      background: #fff;
+    }
+
+    .tissue-square {
+      display: none;
+      margin: 0 auto 10px;
+      width: 78px;
+      height: 78px;
+      background: linear-gradient(135deg, #ffffff 0%, #f1efe9 50%, #e4e1d8 100%);
+      border-radius: 6px;
+      border: 1px solid rgba(180, 175, 165, 0.45);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12), inset 0 0 12px rgba(255, 255, 255, 0.9);
+      position: relative;
+      transform: rotate(-4deg);
+    }
+
+    /* 纸巾折痕十字线条 */
+    .tissue-square::before,
+    .tissue-square::after {
+      content: "";
+      position: absolute;
+      background: rgba(150, 145, 135, 0.22);
+    }
+    .tissue-square::before { left: 50%; top: 4px; bottom: 4px; width: 1px; }
+    .tissue-square::after { top: 50%; left: 4px; right: 4px; height: 1px; }
+
+    .candy-prank-stage.unwrapped .candy-closed { display: none; }
+    .candy-prank-stage.unwrapped .tissue-square { display: block; animation: panelPop 0.35s ease; }
+
+    /* ==========================================================
+       三、做旧 Mnemosyne 笔记本（真实 3D 翻页 + 涂改手写信）
+       ========================================================== */
+    .notebook-shell {
+      width: min(580px, 88vw);
+      height: min(440px, 82dvh);
+      background: #171614;
+      border-radius: 16px;
+      padding: 10px;
+      box-shadow: 0 30px 75px rgba(0, 0, 0, 0.85), inset 0 1px 2px rgba(255, 255, 255, 0.12);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* 做旧黑壳顶边微磨白 */
+    .nb-top-edge {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2px 8px 8px;
+      font-family: Georgia, serif;
+      font-size: 11px;
+      color: rgba(206, 178, 128, 0.72);
+    }
+
+    .nb-viewport {
+      flex: 1;
+      position: relative;
+      perspective: 1400px;
+      overflow: hidden;
+      border-radius: 8px;
+    }
+
+    /* 方格内页样式 + 做旧泛黄与局部墨渍 */
+    .nb-page {
+      position: absolute;
+      inset: 0;
+      padding: 22px 26px 46px;
+      background-color: var(--paper-old);
+      background-image:
+        radial-gradient(circle at 88% 82%, rgba(162, 134, 96, 0.16) 0%, transparent 24%),
+        radial-gradient(circle at 12% 16%, rgba(138, 112, 82, 0.11) 0%, transparent 22%),
+        linear-gradient(to right, var(--paper-grid) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--paper-grid) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 19px 19px, 19px 19px;
+      color: var(--ink-pen);
+      overflow-y: auto;
+      transform-origin: left center;
+      transition: transform 0.65s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.45s ease;
+      box-shadow: inset 14px 0 24px rgba(80, 62, 42, 0.14);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .nb-page.is-current {
+      opacity: 1;
+      pointer-events: auto;
+      transform: rotateY(0deg);
+      z-index: 2;
+    }
+
+    .nb-page.is-flipped-left {
+      opacity: 0;
+      transform: rotateY(-78deg);
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .nb-page.is-waiting-right {
+      opacity: 0;
+      transform: rotateY(14deg) translateX(18px);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* 手写正文：略微不齐、深浅不一、真实涂改划掉 */
+    .hand-body {
+      font-family: var(--hand);
+      font-size: 20px;
+      line-height: 1.9;
+      color: #212636;
+      letter-spacing: 0.03em;
+    }
+
+    .hand-p {
+      margin-bottom: 14px;
+    }
+
+    .hw-char {
+      display: inline-block;
+    }
+
+    /* 钢笔划掉涂改效果 */
+    .strike {
+      position: relative;
+      display: inline-block;
+      color: rgba(34, 38, 51, 0.56);
+      margin: 0 3px;
+      transform: rotate(-1.5deg);
+    }
+
+    .strike::after {
+      content: "";
+      position: absolute;
+      left: -3px;
+      right: -3px;
+      top: 52%;
+      height: 2.5px;
+      background: #23283a;
+      transform: rotate(-3deg);
+      border-radius: 2px;
+    }
+
+    .strike-double::before {
+      content: "";
+      position: absolute;
+      left: -2px;
+      right: -2px;
+      top: 38%;
+      height: 1.8px;
+      background: #23283a;
+      transform: rotate(2.5deg);
+    }
+
+    .caret-insert {
+      display: inline-block;
+      font-size: 16px;
+      color: #283556;
+      transform: translateY(-4px) rotate(-2deg);
+      margin: 0 2px;
+    }
+
+    .ink-smudge {
+      display: inline-block;
+      width: 11px;
+      height: 8px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(33, 38, 54, 0.25) 0%, transparent 72%);
+      vertical-align: middle;
+      margin: 0 2px;
+    }
+
+    .nb-controls {
+      position: absolute;
+      bottom: 16px;
+      right: 18px;
+      left: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .nb-page-btn {
+      pointer-events: auto;
+      padding: 5px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(51, 37, 29, 0.24);
+      background: rgba(246, 238, 223, 0.9);
+      color: #4b3a2e;
+      font-size: 11.5px;
+      cursor: pointer;
+    }
+
+    .nb-page-btn:disabled {
+      opacity: 0.35;
+      cursor: default;
+    }
+
+    .nb-page-num {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      color: rgba(75, 58, 46, 0.65);
+      background: rgba(246, 238, 223, 0.8);
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+
+    /* ==========================================================
+       四、复刻 Julab 视频的拍立得散开 -> 网格 -> 逐张翻面 + 慢显影
+       ========================================================== */
+    .polaroid-theater {
+      width: min(760px, 94vw);
+      height: min(460px, 88dvh);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .pol-bar {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding: 0 6px;
+      z-index: 20;
+    }
+
+    .pol-bar-tip {
+      font-family: var(--serif);
+      font-size: 13px;
+      color: rgba(246, 239, 228, 0.82);
+      letter-spacing: 0.04em;
+    }
+
+    .pol-flip-all {
+      padding: 5px 13px;
+      border-radius: 999px;
+      border: 1px solid rgba(230, 161, 92, 0.45);
+      background: rgba(230, 161, 92, 0.18);
+      color: #f9dfc0;
+      font-size: 11.5px;
+      cursor: pointer;
+    }
+
+    .pol-canvas {
+      position: relative;
+      width: 100%;
+      flex: 1;
+    }
+
+    /* 每张拍立得卡片容器（负责坐标散开与网格定位 + 3D翻转） */
+    .pol-card-slot {
+      position: absolute;
+      width: 132px;
+      height: 162px;
+      left: 50%;
+      top: 50%;
+      perspective: 1000px;
+      cursor: pointer;
+      transition:
+        transform 0.72s cubic-bezier(0.22, 1, 0.36, 1),
+        width 0.55s ease,
+        height 0.55s ease;
+    }
+
+    @media (min-width: 720px) and (min-height: 430px) {
+      .pol-card-slot {
+        width: 146px;
+        height: 178px;
       }
     }
 
-    .polaroid {
-      background: #fcf8f2;
-      padding: 10px 10px 15px;
-      border-radius: 12px;
-      border: 1px solid rgba(110, 86, 68, 0.16);
-      box-shadow: 0 10px 26px rgba(60, 42, 28, 0.14);
-    }
-
-    .polaroid-frame {
+    .pol-card-inner {
       position: relative;
       width: 100%;
-      aspect-ratio: 3 / 4;
-      border-radius: 7px;
-      overflow: hidden;
-      cursor: pointer;
-      background: #e2d4c2;
+      height: 100%;
+      transform-style: preserve-3d;
+      /* 初始处于背面朝上翻扣状态 */
+      transform: rotateY(180deg);
+      transition: transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    .polaroid-img {
+    /* 翻到正面（被点开） */
+    .pol-card-slot.is-face-up .pol-card-inner {
+      transform: rotateY(0deg);
+    }
+
+    /* 显影后再次点击，翻回背面看手写字 */
+    .pol-card-slot.is-face-up.show-writing .pol-card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .pol-side {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 7px;
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.52);
+    }
+
+    /* 拍立得背面（初始可见，或显影后再点击看背面手写字） */
+    .pol-back {
+      transform: rotateY(180deg);
+      background: linear-gradient(155deg, #252220 0%, #171514 100%);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+      text-align: center;
+      color: rgba(246, 238, 224, 0.88);
+    }
+
+    .pol-back-sealed {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      color: rgba(255, 255, 255, 0.36);
+    }
+
+    .pol-back-note {
+      display: none;
+      font-family: var(--hand);
+      font-size: 16.5px;
+      line-height: 1.55;
+      color: #f4eadc;
+    }
+
+    /* 翻正过一次并显影后，背面变成复古信纸写字状态 */
+    .pol-card-slot.has-developed .pol-back {
+      background: linear-gradient(160deg, #f6eedf 0%, #eadec8 100%);
+      color: #2f231b;
+    }
+
+    .pol-card-slot.has-developed .pol-back-sealed { display: none; }
+    .pol-card-slot.has-developed .pol-back-note {
+      display: block;
+      color: #2c2420;
+    }
+
+    /* 拍立得正面（仿视频里的个性多彩复古边框） */
+    .pol-front {
+      padding: 8px 8px 24px;
+      display: flex;
+      flex-direction: column;
+      background: var(--frame-bg, #f7f1e5);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+    }
+
+    /* 主题边框差异化（参考视频 00:01 多彩拼贴相纸框） */
+    .pol-card-slot[data-theme="cream"]  .pol-front { background: #f4ece0; }
+    .pol-card-slot[data-theme="pink"]   .pol-front { background: #f2cfd6; }
+    .pol-card-slot[data-theme="mint"]   .pol-front { background: #cde0d8; }
+    .pol-card-slot[data-theme="butter"] .pol-front { background: #f3e4b8; }
+    .pol-card-slot[data-theme="dark"]   .pol-front { background: #232122; color: #eae2d6; }
+    .pol-card-slot[data-theme="peach"]  .pol-front { background: #f1d4be; }
+
+    .pol-img-well {
+      position: relative;
+      flex: 1;
+      width: 100%;
+      background: #1b2220;
+      overflow: hidden;
+      border-radius: 2px;
+    }
+
+    /* 缓慢化学显影动画：暗青灰模糊 -> 清晰呈现 */
+    .pol-img-well img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
-      filter: blur(0.6px) saturate(0.95) contrast(0.94);
-      transition: filter 0.55s ease, transform 0.55s ease;
+      filter: brightness(0.14) contrast(0.35) blur(10px) saturate(0.15) sepia(0.75);
+      opacity: 0.35;
+      transition:
+        filter 4.2s cubic-bezier(0.22, 0.65, 0.25, 1),
+        opacity 3.6s ease;
     }
 
-    .polaroid-frame.is-hazy .polaroid-img {
-      filter: blur(2.5px) saturate(0.88) brightness(1.03);
-      transform: scale(1.04);
+    .pol-card-slot.is-developing .pol-img-well img {
+      filter: brightness(0.98) contrast(0.96) blur(0.4px) saturate(0.96) sepia(0.06);
+      opacity: 1;
     }
 
-    .polaroid-frame.is-sharp .polaroid-img {
-      filter: blur(0px) saturate(1);
-      transform: scale(1);
-    }
-
-    .polaroid-stamp {
-      position: absolute;
-      right: 10px;
-      bottom: 8px;
-      font-family: var(--mono);
-      font-size: 10.5px;
-      font-weight: 600;
-      color: rgba(255, 146, 86, 0.9);
-      text-shadow: 0 0 6px rgba(255, 120, 50, 0.65);
-    }
-
-    .polaroid-back {
+    .pol-chem-veil {
       position: absolute;
       inset: 0;
-      padding: 18px 16px;
-      background: rgba(250, 244, 235, 0.93);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.35s ease;
-    }
-
-    .polaroid-frame.show-back .polaroid-back {
+      background: linear-gradient(145deg, rgba(215, 224, 218, 0.85), rgba(164, 176, 170, 0.72));
       opacity: 1;
-      pointer-events: auto;
+      pointer-events: none;
+      transition: opacity 3.8s ease;
     }
 
-    .polaroid-back p {
-      font-family: var(--serif);
-      font-size: 14px;
-      line-height: 1.85;
-      color: var(--ink-dark);
+    .pol-card-slot.is-developing .pol-chem-veil {
+      opacity: 0;
     }
 
-    .polaroid-meta {
-      padding: 10px 4px 2px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .polaroid-name {
-      font-family: var(--serif);
-      font-size: 14.5px;
-      font-weight: 600;
-    }
-
-    .polaroid-actions {
-      display: flex;
-      gap: 6px;
-    }
-
-    .p-btn {
-      padding: 3px 9px;
-      border-radius: 999px;
-      border: 1px solid rgba(110, 86, 68, 0.24);
-      background: rgba(246, 239, 230, 0.8);
-      font-size: 11px;
-      color: var(--ink-soft);
-      cursor: pointer;
-    }
-
-    /* ==========================================================
-       5. 纸糖果彩蛋卡片
-       ========================================================== */
-    .note-modal-card {
-      background: #fbf5eb;
-      color: var(--ink-dark);
-      border-radius: 18px;
-      padding: 28px 24px 30px;
-      border: 1px solid rgba(154, 130, 114, 0.26);
-      box-shadow: 0 26px 60px rgba(0, 0, 0, 0.68);
-      text-align: center;
-    }
-
-    .note-emoji-icon {
-      font-size: 36px;
-      margin-bottom: 12px;
-    }
-
-    .note-modal-title {
-      font-family: var(--serif);
-      font-size: 20px;
-      font-weight: 600;
-      margin-bottom: 12px;
-    }
-
-    .note-modal-text {
-      font-family: var(--serif);
-      font-size: 15px;
-      line-height: 1.95;
-      color: var(--ink-soft);
-      margin-bottom: 20px;
-    }
-
-    .coupon-box {
-      padding: 14px 16px;
-      border-radius: 14px;
-      background: rgba(230, 161, 92, 0.12);
-      border: 1.5px dashed rgba(212, 122, 69, 0.45);
-      margin-bottom: 16px;
-    }
-
-    .coupon-box strong {
-      display: block;
-      font-size: 14px;
-      color: var(--sunset-amber);
-      margin-bottom: 4px;
-    }
-
-    .coupon-box span {
-      font-size: 12.5px;
-      color: var(--ink-soft);
-    }
-
-    .claim-btn {
-      padding: 9px 22px;
-      border-radius: 999px;
-      border: none;
-      background: linear-gradient(135deg, #d88b56, #c6723e);
-      color: #fff;
+    .pol-front-cap {
+      position: absolute;
+      bottom: 5px;
+      left: 10px;
+      right: 10px;
+      font-family: var(--hand);
       font-size: 13px;
-      cursor: pointer;
-    }
-
-    .claim-btn.claimed {
-      background: #6f8b6c;
-    }
-
-    .hud-pill-watch {
-      padding: 5px 12px;
-      border-radius: 999px;
-      background: rgba(230, 161, 92, 0.22);
-      border: 1px solid rgba(230, 161, 92, 0.5);
-      color: #f7efe5;
-      font-size: 11px;
-      cursor: pointer;
+      color: inherit;
+      opacity: 0.78;
+      display: flex;
+      justify-content: space-between;
     }
   </style>
 </head>
 <body>
-  <div class="ambient-backdrop" aria-hidden="true"></div>
+  <!-- iOS Safari 真实震动反馈隐藏开关 -->
+  <label class="haptic-proxy" for="hapticSwitch">
+    <input type="checkbox" id="hapticSwitch" switch />
+  </label>
+
+  <!-- 竖屏引导蒙层 -->
+  <div class="rotate-guard" id="rotateGuard">
+    <div class="rotate-phone-icon"></div>
+    <div class="rotate-title">请将手机横过来</div>
+    <div class="rotate-sub">坐到这张夕阳下的课桌前，看落日光影里的秘密</div>
+    <button class="rotate-bypass" id="bypassRotateBtn" type="button">仍以当前方向查看</button>
+  </div>
+
   <canvas id="dustCanvas" aria-hidden="true"></canvas>
   <div class="film-grain" aria-hidden="true"></div>
 
   <!-- ==========================================================
-       第一幕：暗调落日失焦开场生日祝福
+       第一幕：开场生日祝福遮罩
        ========================================================== -->
   <section class="intro-overlay" id="introOverlay">
     <div class="intro-kicker">TO JIAYI · 19TH BIRTHDAY</div>
@@ -1128,366 +1432,522 @@
   </section>
 
   <!-- ==========================================================
-       第二幕：横版 4:3 高中课桌俯视主舞台（桌上仅保留小圆点）
+       第二幕：100% 全屏课桌（无文字 HUD，物品仅留小圆点）
        ========================================================== -->
-  <main class="viewport-shell">
-    <header class="top-hud">
-      <div class="hud-badge">
-        <span class="hud-dot"></span>
-        <span>SUNSET DESK · LV.19</span>
-      </div>
-      <span id="progressText">0 / 5</span>
-    </header>
+  <main class="fullscreen-desk" id="deskContainer">
+    <img src="assets/desk-sunset.jpg" alt="落日高中课桌" class="desk-bg-img" id="deskBgImg" />
+    <div class="desk-flare"></div>
 
-    <div class="desk-stage" id="deskStage">
-      <div class="desk-photo-layer"></div>
-      <div class="desk-vignette"></div>
-      <div class="desk-lens-flare"></div>
-
-      <div class="hotspots-layer" id="hotspotsLayer">
-        <!-- 1. 蓝色白色拉链笔袋 -->
-        <button class="hotspot hs-pencil" data-modal="modalPencil" data-key="pencil" type="button" aria-label="打开蓝色笔袋">
-          <span class="hs-ring"></span>
-        </button>
-
-        <!-- 2. 银色纸糖果 -->
-        <button class="hotspot hs-candy" data-modal="modalCandy" data-key="candy" type="button" aria-label="拆开纸糖果">
-          <span class="hs-ring"></span>
-        </button>
-
-        <!-- 3. 右上角拍立得相片叠 -->
-        <button class="hotspot hs-photos" data-modal="modalPhotos" data-key="photos" type="button" aria-label="翻看远方胶片">
-          <span class="hs-ring"></span>
-        </button>
-
-        <!-- 4. 做旧 Mnemosyne 178 黑色小笔记本 -->
-        <button class="hotspot hs-notebook" data-modal="modalNotebook" data-key="notebook" type="button" aria-label="翻开 Mnemosyne 笔记本">
-          <span class="hs-ring"></span>
-        </button>
-
-        <!-- 5. 老款黑色 Apple Watch -->
-        <button class="hotspot hs-watch" data-modal="modalWatch" data-key="watch" type="button" aria-label="点亮 Apple Watch">
-          <span class="hs-ring"></span>
-        </button>
-      </div>
+    <div class="hotspots-box" id="hotspotsBox">
+      <button class="hotspot hs-pencil" data-modal="modalPencil" data-key="pencil" type="button" aria-label="蓝色笔袋">
+        <span class="hs-dot"></span>
+      </button>
+      <button class="hotspot hs-photos" data-modal="modalPhotos" data-key="photos" type="button" aria-label="翻扣的拍立得">
+        <span class="hs-dot"></span>
+      </button>
+      <button class="hotspot hs-notebook" data-modal="modalNotebook" data-key="notebook" type="button" aria-label="做旧笔记本">
+        <span class="hs-dot"></span>
+      </button>
+      <button class="hotspot hs-watch" data-modal="modalWatch" data-key="watch" type="button" aria-label="Apple Watch">
+        <span class="hs-dot"></span>
+      </button>
     </div>
-
-    <div class="bottom-hint">轻触桌上的小圆点，翻看藏在光影里的东西</div>
   </main>
 
   <!-- ==========================================================
-       物品交互弹窗合集
+       弹窗总容器
        ========================================================== -->
   <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true">
-    <div class="modal-close-bar">
-      <button class="close-btn" id="closeModalBtn" type="button">✕ 放回课桌</button>
-    </div>
+    <button class="close-btn" id="closeModalBtn" type="button" aria-label="返回课桌">✕</button>
 
-    <!-- 1. 做旧 Mnemosyne 178 黑色方格笔记本 -->
-    <div class="modal-panel" id="modalNotebook">
-      <div class="mnemosyne-book">
-        <div class="mnemosyne-cover">
-          <span class="mnemo-brand">178 | Mnemosyne</span>
-          <span class="mnemo-spec">B7 · 5MM GRID · TO JIAYI</span>
-        </div>
-        <div class="grid-paper">
-          <div class="grid-paper-head">
-            <span>DATE: NOV. 19TH</span>
-            <span>NO. 19</span>
-          </div>
-          <div class="letter-salutation">展信佳：</div>
-          <div class="letter-body">
-            <p>该从哪里落笔呢，你的十九岁。</p>
-
-            <p>总觉得日子不该走得这样快。冬意一深，我恍惚间还以为又到了高三快要“一诊”的时候——按理说，这会儿我本该正坐在家里的台灯下，对着淘宝屏幕，借口挑我喜欢的款式，偷偷给你选着文具。其实哪是什么顺手呢，不过是那时的想念太满，迫切地需要一点具体的安置。大概就是从那句说笑般的生日礼物起，某种微妙的秩序在我心里悄然重写——那是沦陷最初的预兆。</p>
-
-            <p>有人说，命运的职责在两个人初遇的那一刻便已经完尽了。可到了我们这里，它好像总有些放心不下，偏要在暗中多推一把——它不动声色地拨动了 xpy 的换座位软件，穿过教室里扬起的粉笔灰，给了我再一次靠近你、重新认识你的机会。</p>
-
-            <p>前些天我做了一个梦。梦见清晨的第一抹阳光斜斜地切进窗户，你就站在光里，在我眼前。醒来时心里空落落的，甚至有些孩子气地想：为什么人不能永远留在高中呢？如果可以重来一次，我宁愿再忍受一遍当时所有的枯燥与煎熬。可转念一想，记忆里那段如黄金般闪耀的日子，又哪是上天白白赐予的呢？分明是因为我遇见了那样一群鲜活滚烫的人，是因为我遇见了你。是你，才让原本苦涩漫长的跋涉，变成了落日后久久不肯散去的余晖。</p>
-
-            <p>那些散落在时光里的切片，至今仍在反复发光：<br />
-            是你捧着我的相机，抬起头真诚夸赞我照片的那个瞬间——镜头原本是没有感情的，只是拍照的人用了心，我不是在按快门，是在借着取景框偷偷留住有你的时间；<br />
-            是你递过一颗纸糖果、眉眼弯弯逗我发笑的瞬间——那种喜欢悬在舌尖，像咬开一颗青提，酸涩的皮破开后，清清凉凉的甜意便漫了上来；<br />
-            也是你用长长的信笺，一笔一划回溯我们初识的那天；是分别多时后，耳机里猝不及防响起某首歌的那一刻……<br />
-            这些零碎的瞬间在心里轻轻一碰，便拼出了你在我青春里的全部重量。原来，让人目光变得匆促的心动叫做喜欢；而心里那块被你装满、像半个米缸终于溢出了缸沿般的踏实，叫做爱。</p>
-
-            <p>只是，与轰轰烈烈的青春冲动相反，那时的我太擅长把汹涌的感情藏进沉默里。一个人没有那么喜欢谁的时候，总觉得自己足够理性、足够洒脱；可一旦真正把你放进心里，以前所有关于自己的判断就统统失效了。我像走在夜路上的盲人，小心翼翼地试探着你的方向，鼓起全部勇气把你约出来，却又在临门一脚时咽下了正式的告白。我既怕错过你，更怕彻底失去你；而你又藏得那样好，好到我不敢生出一分一毫的笃定。</p>
-
-            <p>直到那段时光轻轻合上，我写给你的信，依然安静地躺在手机备忘录里，像一页未曾投递的折角书签，平静而沉默。</p>
-
-            <p>今天是你十九岁的起点，我想把那封躺在备忘录里许久的信，原原本本地摊开在你面前：</p>
-
-            <div class="memo-insert open" id="memoInsert">
-              <div class="memo-insert-bar" id="memoToggleBtn">
-                <span>📝 备忘录 · 未递出的那一页</span>
-                <span>收起 / 展开</span>
-              </div>
-              <div class="memo-insert-body">
-                “嗯，我不知道，我相信你也一样——这一切到底是如何发生的，未来又会如何变化，我不知道。玫瑰花到底能不能盛开呢？遥望未来太累了，我只想过好眼前的这一刻，像小时候一样：在傍晚、晚风、余晖和路灯下，在你飘动的发丝间，在你的眼眸里，在我跳跃无常的思绪里。在某年某日的某个瞬间，我的思绪跳入了你的宇宙，于是我决定停留。我喜欢你，像受命运指引一般，并且，我已经做好了爱你的准备。”
-              </div>
-            </div>
-
-            <p class="poem-quote">
-              嘴上写着“做好了准备”，可真到了看见你迟疑和纠结的那一刻，我还是慌了神，好像一下子承住了万千重量。<br />
-              爱一个人，到底是怎样的感觉呢？<br />
-              它应当是一个深思熟虑的判断吗？是冲动，还是勇气？<br />
-              我想，它大概是我漫长而平凡的生活里，鲜有的浪涛与波澜起伏吧。<br />
-              你会爱我吗？
-              <span class="en-lyrics">Is it a crime to be unsure?<br />In time we'll find if we're suitable.</span>
-            </p>
-
-            <p>没关系的，给时间一点时间。爱情本就是一场属于勇敢者的游戏，真正读懂一个人或许需要穷尽一生的时间，而我们都在参与这场温柔的赌局——赌我们在看清彼此全部的脆弱与棱角之后，依然愿意坚定地爱下去。爱，从来都是勇敢者的奖励。</p>
-
-            <p>你看过《奥本海默》吗？我脑海里关于未来的样子，就像电影里的主角和他的妻子那样：无论往后岁月里有多少磨难与争吵，无论前一秒争执得多么面红耳赤、不可开交，只要下一秒我转过身，向你伸出手，你仍然愿意把手放进我掌心，握紧我，共同继续走下去。</p>
-
-            <p>被人深爱给予我力量，而深爱一个人赋予我勇气。</p>
-
-            <p>十九岁生日快乐，嘉怡。世界终于要见到我早就见到过的、那个熠熠生辉的你了；如果把《喜欢你》做成一本书，你是一部诗的终点，而这句“我爱你”，只是序言。</p>
-          </div>
-          <div class="letter-sign">
-            祝你今天愉快，你明天的愉快留着我明天再祝。<br />
-            —— 永远愿意陪你把路灯下的路走得很长的人
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 2. 老款黑色 Apple Watch -->
+    <!-- 1. 100% 仿原版 Apple Watch（表冠上下滑动 + 震动 + 3 个原生风格 App） -->
     <div class="modal-panel" id="modalWatch">
-      <div class="watch-modal-wrap">
-        <div class="watch-band-top"></div>
-        <div class="watch-chassis">
-          <button class="watch-crown" id="watchCrownBtn" type="button" title="旋转/按下表冠切换功能"></button>
-          <button class="watch-side-btn" id="watchSideBtn" type="button" title="打开远方胶片"></button>
-
-          <div class="watch-screen">
-            <div class="watch-glass-gloss"></div>
-            <div class="watch-status">
-              <span id="watchAppName">表盘</span>
-              <span>LV.19 ♥</span>
+      <div class="watch-stage">
+        <div class="watch-hardware">
+          <div class="watch-band watch-band-top"></div>
+          <div class="watch-case">
+            <!-- 可上下滑动与单击的实体表冠 -->
+            <div class="digital-crown-zone" id="crownZone" title="上下滑动转动表冠 · 单击进入或返回">
+              <div class="digital-crown" id="crownEl"></div>
             </div>
+            <button class="watch-side-key" id="watchSideKey" type="button" title="回到表盘"></button>
 
-            <div class="watch-view active" data-wview="0">
-              <div class="watch-time-big">19:00</div>
-              <div class="watch-date-sub">JIAYI · 19TH BIRTHDAY</div>
-              <div class="watch-quote-mini">
-                “138 亿年前宇宙爆炸的星尘里，咱俩其实早就见过了。”
+            <div class="watch-oled">
+              <div class="watch-oled-gloss"></div>
+
+              <!-- Screen 0: 原版时钟表盘 -->
+              <div class="w-screen active" id="wScreenFace">
+                <div class="w-face-top">
+                  <span>TUE 17</span>
+                  <span>19% ♥</span>
+                </div>
+                <div class="w-face-center">
+                  <div class="w-face-clock" id="wClockText">19<span>:</span>00</div>
+                  <div class="w-face-date">JIAYI · 19TH</div>
+                </div>
+                <div class="w-face-complications">
+                  <div class="w-comp" data-open-wapp="wScreenPhotos"><strong>🖼️</strong>相册</div>
+                  <div class="w-comp" data-open-wapp="wScreenMusic"><strong>🎵</strong>Music</div>
+                  <div class="w-comp" data-open-wapp="wScreenWechat"><strong>💬</strong>微信</div>
+                </div>
               </div>
-            </div>
 
-            <div class="watch-view" data-wview="1">
-              <div class="watch-album-disc" id="watchDisc"></div>
-              <div class="watch-track-title" id="trackTitle">放学后的夕阳前奏</div>
-              <div class="watch-track-artist" id="trackDesc">轻柔电钢琴 · 桌前单曲</div>
-              <div class="watch-audio-controls">
-                <button class="w-ctrl-btn" id="prevTrackBtn" type="button">⏮</button>
-                <button class="w-ctrl-btn w-play-btn" id="playPauseBtn" type="button">▶</button>
-                <button class="w-ctrl-btn" id="nextTrackBtn" type="button">⏭</button>
+              <!-- Screen 1: 原版 App 选择界面（单击表冠进入，3个核心 App） -->
+              <div class="w-screen" id="wScreenHome">
+                <div class="w-home-header">Apps · 转动表冠选择</div>
+                <div class="w-honeycomb">
+                  <div class="w-hex-row">
+                    <!-- 原版相册花瓣图标 -->
+                    <button class="w-app-btn focused" data-wapp="wScreenPhotos" data-idx="0" type="button">
+                      <div class="w-app-icon icon-photos">
+                        <svg viewBox="0 0 60 60" width="44" height="44">
+                          <g transform="translate(30,30)">
+                            <ellipse cx="0" cy="-12" rx="5.5" ry="10.5" fill="#FF9F0A" opacity="0.92" />
+                            <ellipse cx="0" cy="-12" rx="5.5" ry="10.5" fill="#FF3B30" opacity="0.88" transform="rotate(45)" />
+                            <ellipse cx="0" cy="-12" rx="5.5" ry="10.5" fill="#AF52DE" opacity="0.88" transform="rotate(90)" />
+                            <ellipse cx="0" cy="-12" rx="5.5" ry="10.5" fill="#5856D6" opacity="0.88" transform="rotate(135)" />
+                            <ellipse cx="0" cy="-12" rx="5.5" ry="10.5" fill="#007AFF" opacity="0.88" transform="rotate(180)" />
+                            <ellipse cx="0" cy="-12" rx="5.5" ry="10.5" fill="#34C759" opacity="0.88" transform="rotate(225)" />
+                            <ellipse cx="0" cy="-12" rx="5.5" ry="10.5" fill="#A8E048" opacity="0.9" transform="rotate(270)" />
+                            <ellipse cx="0" cy="-12" rx="5.5" ry="10.5" fill="#FFCC00" opacity="0.92" transform="rotate(315)" />
+                          </g>
+                        </svg>
+                      </div>
+                      <span class="w-app-name">相册</span>
+                    </button>
+
+                    <!-- 原版 Apple Music 图标 -->
+                    <button class="w-app-btn" data-wapp="wScreenMusic" data-idx="1" type="button">
+                      <div class="w-app-icon icon-music">
+                        <svg viewBox="0 0 60 60" width="34" height="34" fill="#ffffff">
+                          <path d="M41 13v22.2a6.3 6.3 0 1 1-3.5-5.6V20.5l-14 3.4v14.8a6.3 6.3 0 1 1-3.5-5.6V18.2c0-1.4.9-2.6 2.2-3l16.3-4c1.4-.3 2.5.7 2.5 1.8z" />
+                        </svg>
+                      </div>
+                      <span class="w-app-name">音乐</span>
+                    </button>
+                  </div>
+
+                  <div class="w-hex-row">
+                    <!-- 原版微信图标 -->
+                    <button class="w-app-btn" data-wapp="wScreenWechat" data-idx="2" type="button">
+                      <div class="w-app-icon icon-wechat">
+                        <svg viewBox="0 0 60 60" width="38" height="38" fill="#ffffff">
+                          <path d="M24 16c-7.7 0-14 5.2-14 11.6 0 3.7 2 7 5.2 9.2l-1.3 4 4.6-2.3c1.7.5 3.6.8 5.5.8.6 0 1.2 0 1.8-.1-.4-1.1-.6-2.2-.6-3.4 0-5.7 5.4-10.3 12-10.3.7 0 1.4.1 2.1.2C38.1 20.1 31.6 16 24 16zm-4.8 9.2a1.6 1.6 0 1 1 0-3.2 1.6 1.6 0 0 1 0 3.2zm9.6 0a1.6 1.6 0 1 1 0-3.2 1.6 1.6 0 0 1 0 3.2z" />
+                          <path d="M37.5 27.5c-6.1 0-11 4.1-11 9.2s4.9 9.2 11 9.2c1.5 0 2.9-.3 4.2-.7l3.6 1.8-1-3.2c2.5-1.7 4.2-4.3 4.2-7.1 0-5.1-4.9-9.2-11-9.2zm-3.6 7.5a1.3 1.3 0 1 1 0-2.6 1.3 1.3 0 0 1 0 2.6zm7.2 0a1.3 1.3 0 1 1 0-2.6 1.3 1.3 0 0 1 0 2.6z" />
+                        </svg>
+                      </div>
+                      <span class="w-app-name">微信</span>
+                    </button>
+                  </div>
+                </div>
               </div>
-            </div>
 
-            <div class="watch-view" data-wview="2">
-              <div style="width:94px;height:112px;border-radius:12px;overflow:hidden;border:2px solid rgba(230,161,92,0.5);margin-bottom:10px;">
-                <img src="assets/place-06.jpg" alt="胶片预览" style="width:100%;height:100%;object-fit:cover;" />
+              <!-- Screen 2: 原版 相册 App -->
+              <div class="w-screen" id="wScreenPhotos">
+                <div class="w-nav-bar">
+                  <button class="w-back-chip" data-wback="wScreenHome" type="button">‹</button>
+                  <span>所有照片</span>
+                  <span style="font-size:10px;color:#0a84ff;">6</span>
+                </div>
+                <div class="w-photos-scroll" id="wPhotosScroll">
+                  <div class="w-photos-grid">
+                    <img class="w-photo-thumb" src="assets/place-01.jpg" alt="照片1" />
+                    <img class="w-photo-thumb" src="assets/place-02.jpg" alt="照片2" />
+                    <img class="w-photo-thumb" src="assets/place-03.jpg" alt="照片3" />
+                    <img class="w-photo-thumb" src="assets/place-04.jpg" alt="照片4" />
+                    <img class="w-photo-thumb" src="assets/place-05.jpg" alt="照片5" />
+                    <img class="w-photo-thumb" src="assets/place-06.jpg" alt="照片6" />
+                  </div>
+                </div>
+                <div class="w-photo-viewer" id="wPhotoViewer">
+                  <div class="w-pv-top">
+                    <button class="w-back-chip" id="wClosePhotoBtn" type="button">✕</button>
+                  </div>
+                  <img id="wViewerImg" src="assets/place-01.jpg" alt="预览" />
+                </div>
               </div>
-              <div class="watch-track-title">想和你去很多地方</div>
-              <div class="watch-track-artist" style="margin-bottom:10px;">6 帧胶片底片已就绪</div>
-              <button class="hud-pill-watch" id="watchOpenGalleryBtn" type="button">
-                打开全部相片 →
-              </button>
-            </div>
 
-            <div class="watch-dots">
-              <span class="w-dot active" data-wdot="0"></span>
-              <span class="w-dot" data-wdot="1"></span>
-              <span class="w-dot" data-wdot="2"></span>
+              <!-- Screen 3: 原版 Apple Music App -->
+              <div class="w-screen" id="wScreenMusic">
+                <div class="w-nav-bar">
+                  <button class="w-back-chip" data-wback="wScreenHome" type="button">‹</button>
+                  <span style="color:#fa2d48;">播放中</span>
+                  <span style="font-size:10px;color:#fa2d48;" id="wVolText">72%</span>
+                </div>
+                <div class="w-music-body">
+                  <div class="w-music-art-row">
+                    <img class="w-music-art" src="assets/place-03.jpg" alt="专辑封面" />
+                    <div class="w-music-meta">
+                      <div class="w-music-title" id="wTrackTitle">放学后的夕阳前奏</div>
+                      <div class="w-music-sub" id="wTrackArtist">To Jiayi · 19</div>
+                    </div>
+                  </div>
+                  <div class="w-music-controls">
+                    <button class="w-m-btn" id="wPrevBtn" type="button">⏮</button>
+                    <button class="w-m-btn w-m-play" id="wPlayBtn" type="button">▶</button>
+                    <button class="w-m-btn" id="wNextBtn" type="button">⏭</button>
+                  </div>
+                  <div class="w-vol-bar-wrap">
+                    <span style="font-size:10px;color:#8e8e93;">🔈</span>
+                    <div class="w-vol-track"><div class="w-vol-fill" id="wVolFill"></div></div>
+                    <span style="font-size:10px;color:#8e8e93;">🔊</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Screen 4: 原版 微信 Watch App -->
+              <div class="w-screen" id="wScreenWechat">
+                <div class="w-nav-bar">
+                  <button class="w-back-chip" data-wback="wScreenHome" type="button">‹</button>
+                  <span style="color:#07c160;">嘉怡</span>
+                  <span style="font-size:10px;color:#8e8e93;">●</span>
+                </div>
+                <div class="w-wechat-scroll" id="wWechatScroll">
+                  <div class="wc-msg wc-her">我往你蓝色笔袋里塞了一颗糖果🍬</div>
+                  <div class="wc-msg wc-me">真的假的，我现在去翻翻看</div>
+                  <div class="wc-msg wc-her">记得看清楚再吃哈哈哈</div>
+                  <div class="wc-msg wc-me">19 岁生日快乐，桌上的小本子里也有给你的信</div>
+                </div>
+                <div class="wc-quick-row">
+                  <button class="wc-q-btn js-wc-reply" data-reply="❤️" type="button">❤️</button>
+                  <button class="wc-q-btn js-wc-reply" data-reply="被你整蛊到了！" type="button">整蛊到我了</button>
+                </div>
+              </div>
             </div>
           </div>
+          <div class="watch-band watch-band-bot"></div>
         </div>
-        <div class="watch-band-bottom"></div>
-        <div class="watch-hint-bar">轻按右侧「表冠」或底部小圆点切换表盘与音乐</div>
+
+        <div class="watch-side-guide">
+          <strong style="color:#e6a15c;display:block;margin-bottom:6px;">⌚ 操作说明</strong>
+          • <b>单击表冠</b>：进入 App 选择界面 / 返回<br />
+          • <b>上下滑动表冠</b>：转动选中 App、滚动微信、调节音乐音量（附带震动反馈）
+        </div>
       </div>
     </div>
 
-    <!-- 3. 蓝色白色拉链笔袋 -->
+    <!-- 2. 蓝色笔袋（拉链带开口白色塑料瓶盖环）+ 糖果竟是方块纸巾整蛊 -->
     <div class="modal-panel" id="modalPencil">
-      <div class="pouch-card">
-        <div class="pouch-zipper"></div>
-        <div class="pouch-inner">
-          <h3 class="pouch-title">✏️ 蓝色大拉链笔袋里的秘密</h3>
-          <p class="pouch-text">
-            冬天一诊快到的时候，坐在家里对着淘宝屏幕给你挑我喜欢的文具。现在回过头看才发现，其实哪是什么顺手挑几支笔呢——不过是那时候的想念太满，迫切地需要一点具体的安置。
+      <div class="pouch-modal">
+        <div class="pouch-zip-bar">
+          <div class="pouch-teeth"></div>
+          <!-- 开口的白色塑料饮料瓶盖防盗环 SVG -->
+          <svg class="bottle-ring-svg" viewBox="0 0 36 36" aria-hidden="true">
+            <path d="M29 14 A12 12 0 1 0 28 24" fill="none" stroke="#f7f5f0" stroke-width="3.6" stroke-linecap="round" />
+            <circle cx="9" cy="18" r="2.2" fill="#d0d6df" />
+          </svg>
+        </div>
+        <div class="pouch-body">
+          <h3 class="pouch-h">✏️ 蓝色笔袋里的秘密</h3>
+          <p class="pouch-p">
+            高三一诊快到的时候，坐在家里对着淘宝给你挑文具——后来才懂，其实不过是那时的想念需要一点具体的安置。咦，笔袋最里面好像还塞了一颗你偷偷放进来的银色“糖果”？
           </p>
-          <div class="stationery-tags">
-            <span class="st-tag">📓 Mnemosyne 记忆女神 B7 方格本</span>
-            <span class="st-tag">🖊️ 借口顺便挑的顺滑中性笔</span>
-            <span class="st-tag">🖍️ 划重点用的橘蓝双色笔</span>
-            <span class="st-tag">☁️ 一张偷偷夹进去的小纸条</span>
+
+          <div class="candy-prank-stage" id="candyPrankBtn" role="button" tabindex="0">
+            <div class="candy-closed">
+              <div style="font-size:32px;margin-bottom:6px;">🍬</div>
+              <div style="font-size:13.5px;font-weight:600;color:#1858a8;">轻触剥开笔袋里的这颗糖果</div>
+              <div style="font-size:11.5px;color:#7a6c60;margin-top:3px;">看看里面藏了什么口味</div>
+            </div>
+
+            <div class="tissue-square"></div>
+            <div class="candy-opened-text" style="display:none;" id="candyPrankText">
+              <div style="font-size:13.5px;font-weight:600;color:#c95e3a;margin-bottom:4px;">居然是一块折得方方正正的纸巾！</div>
+              <div style="font-family:var(--hand);font-size:18px;color:#3b2d23;line-height:1.6;">
+                “哈哈哈哈被你整蛊到了！满怀期待剥开糖纸，结果是叠成小方块的纸巾——不过每次想起你憋笑的样子，还是比糖还要甜。”
+              </div>
+            </div>
           </div>
-          <p class="pouch-text" style="margin-bottom:0;font-size:13.5px;color:#826b5a;">
-            “你可以大方地收下，别有压力——是我的想念，需要一点具体的安置。”
-          </p>
         </div>
       </div>
     </div>
 
-    <!-- 4. 右上角拍立得相片叠 -->
+    <!-- 3. 做旧 Mnemosyne 笔记本（真实 3D 翻页 + 没寄出去的信 + 手写涂改瑕疵） -->
+    <div class="modal-panel" id="modalNotebook">
+      <div class="notebook-shell">
+        <div class="nb-top-edge">
+          <span>178 | Mnemosyne · 记忆女神</span>
+          <span>那封没寄出去的信</span>
+        </div>
+
+        <div class="nb-viewport" id="nbViewport">
+          <!-- Page 0: 扉页 -->
+          <div class="nb-page is-current" data-page="0">
+            <div class="hand-body" style="padding-top:18px;">
+              <p class="hand-p" style="font-size:24px;margin-bottom:22px;">致十九岁的嘉怡：</p>
+              <p class="hand-p">
+                这个小本子<span class="ink-smudge"></span>一直在抽屉里放着。里面写着的，是我那封
+                <span class="strike">早就写好却</span>
+                <span class="caret-insert">一直</span>
+                没有寄出去的信。
+              </p>
+              <p class="hand-p" style="margin-top:26px;font-size:17px;color:var(--ink-fade);">
+                （字写得有点乱，还有划掉改过的痕迹——翻到下一页看吧。）
+              </p>
+            </div>
+          </div>
+
+          <!-- Page 1: 未寄出去的信 · 上 -->
+          <div class="nb-page is-waiting-right" data-page="1">
+            <div class="hand-body">
+              <p class="hand-p">
+                嗯，我不知道，我相信你也一样——这一切到底是如何发生的，未来又会如何变化，我不知道。
+              </p>
+              <p class="hand-p">
+                玫瑰花到底能不能盛开呢？<span class="strike strike-double">其实我有点害怕</span>
+                遥望未来太累了，我只想过好
+                <span class="strike">以后</span><span class="caret-insert">眼前的这一刻</span>，像小时候一样：
+              </p>
+              <p class="hand-p">
+                在傍晚、晚风、余晖和路灯下，在你飘动的发丝间，在你的
+                <span class="strike">眼睛</span><span class="caret-insert">眼眸里</span>，在我跳跃无常的思绪里。
+              </p>
+            </div>
+          </div>
+
+          <!-- Page 2: 未寄出去的信 · 下 -->
+          <div class="nb-page is-waiting-right" data-page="2">
+            <div class="hand-body">
+              <p class="hand-p">
+                在某年某日的某个瞬间，我的思绪跳入了你的宇宙<span class="ink-smudge"></span>，于是我决定停留。
+              </p>
+              <p class="hand-p">
+                我喜欢你，像受命运指引一般，并且，我
+                <span class="strike">好像</span>
+                已经做好了爱你的准备。
+              </p>
+              <p class="hand-p" style="margin-top:16px;font-size:18px;color:#3d445c;">
+                Is it a crime to be unsure?<br />
+                In time we'll find if we're suitable.
+              </p>
+            </div>
+          </div>
+
+          <!-- Page 3: 预留后续手写加字页 -->
+          <div class="nb-page is-waiting-right" data-page="3">
+            <div class="hand-body">
+              <p class="hand-p">
+                被人深爱给予我力量，而深爱一个人赋予我勇气。
+              </p>
+              <p class="hand-p">
+                十九岁生日快乐，嘉怡。愿我们像《奥本海默》里那样，不管经历多少磨难与争吵，转过身向你伸出手时，你依然愿意握住我。
+              </p>
+              <p class="hand-p" style="margin-top:24px;color:rgba(76,70,64,0.52);font-size:17px;">
+                —— 这一页后面的格子，留着以后继续慢慢写给你。
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="nb-controls">
+          <button class="nb-page-btn" id="nbPrevBtn" type="button" disabled>‹ 上一页</button>
+          <span class="nb-page-num" id="nbPageNum">1 / 4</span>
+          <button class="nb-page-btn" id="nbNextBtn" type="button">翻到下一页 ›</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. 拍立得（复刻视频动效：叠放 -> 散开 -> 网格 -> 一张张翻过来缓慢显影 + 背后写字） -->
     <div class="modal-panel" id="modalPhotos">
-      <div class="gallery-card">
-        <div class="gallery-head">
-          <div>
-            <h3 class="gallery-title">🎞️ 想和你一起去很多地方</h3>
-            <div class="gallery-sub">纯双人剪影重绘 · 点击相片翻看背面寄语</div>
+      <div class="polaroid-theater">
+        <div class="pol-bar">
+          <span class="pol-bar-tip" id="polHintText">轻触每一张翻过来的拍立得，看它慢慢显影</span>
+          <button class="pol-flip-all" id="polFlipAllBtn" type="button">逐张翻开</button>
+        </div>
+
+        <div class="pol-canvas" id="polCanvas">
+          <!-- 6 张拍立得由 JS 根据视频同款 3 阶段坐标动画排布 -->
+          <div class="pol-card-slot" data-idx="0" data-theme="cream">
+            <div class="pol-card-inner">
+              <div class="pol-side pol-back">
+                <span class="pol-back-sealed">POLAROID · #01</span>
+                <div class="pol-back-note">“答应自己要去的地方，无论多远，我都想站在你身旁一起看见雪山与倒影。”</div>
+              </div>
+              <div class="pol-side pol-front">
+                <div class="pol-img-well"><img src="assets/place-01.jpg" alt="高原湖畔" /><div class="pol-chem-veil"></div></div>
+                <div class="pol-front-cap"><span>高原湖畔</span><span>01</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pol-card-slot" data-idx="1" data-theme="pink">
+            <div class="pol-card-inner">
+              <div class="pol-side pol-back">
+                <span class="pol-back-sealed">POLAROID · #02</span>
+                <div class="pol-back-note">“天在将黑未黑时最美，你在我身边吹风的样子，比粉紫色的晚霞更动人。”</div>
+              </div>
+              <div class="pol-side pol-front">
+                <div class="pol-img-well"><img src="assets/place-02.jpg" alt="暮色甲板" /><div class="pol-chem-veil"></div></div>
+                <div class="pol-front-cap"><span>暮色甲板</span><span>02</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pol-card-slot" data-idx="2" data-theme="butter">
+            <div class="pol-card-inner">
+              <div class="pol-side pol-back">
+                <span class="pol-back-sealed">POLAROID · #03</span>
+                <div class="pol-back-note">“我们要散步，把八分钟的路绕成四十分钟，走到整片落日海岸线的尽头。”</div>
+              </div>
+              <div class="pol-side pol-front">
+                <div class="pol-img-well"><img src="assets/place-03.jpg" alt="金色海岸" /><div class="pol-chem-veil"></div></div>
+                <div class="pol-front-cap"><span>金色海岸</span><span>03</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pol-card-slot" data-idx="3" data-theme="dark">
+            <div class="pol-card-inner">
+              <div class="pol-side pol-back">
+                <span class="pol-back-sealed">POLAROID · #04</span>
+                <div class="pol-back-note">“车窗是流动的取景器。只要你靠在肩头，经过的山湖都是只放给我们看的电影。”</div>
+              </div>
+              <div class="pol-side pol-front">
+                <div class="pol-img-well"><img src="assets/place-04.jpg" alt="黄昏列车" /><div class="pol-chem-veil"></div></div>
+                <div class="pol-front-cap"><span>黄昏列车</span><span>04</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pol-card-slot" data-idx="4" data-theme="mint">
+            <div class="pol-card-inner">
+              <div class="pol-side pol-back">
+                <span class="pol-back-sealed">POLAROID · #05</span>
+                <div class="pol-back-note">“镜头失焦的时候光斑会变成温柔的圆，就像那天站在窗前看烟火时你的眼睛。”</div>
+              </div>
+              <div class="pol-side pol-front">
+                <div class="pol-img-well"><img src="assets/place-05.jpg" alt="失焦烟火" /><div class="pol-chem-veil"></div></div>
+                <div class="pol-front-cap"><span>失焦烟火</span><span>05</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pol-card-slot" data-idx="5" data-theme="peach">
+            <div class="pol-card-inner">
+              <div class="pol-side pol-back">
+                <span class="pol-back-sealed">POLAROID · #06</span>
+                <div class="pol-back-note">“在傍晚、晚风、余晖和路灯下，在你飘动的发丝间——和你一起浪费时间，是最美妙的事。”</div>
+              </div>
+              <div class="pol-side pol-front">
+                <div class="pol-img-well"><img src="assets/place-06.jpg" alt="路灯晚风" /><div class="pol-chem-veil"></div></div>
+                <div class="pol-front-cap"><span>路灯晚风</span><span>06</span></div>
+              </div>
+            </div>
           </div>
         </div>
-
-        <div class="film-grid">
-          <article class="polaroid">
-            <div class="polaroid-frame">
-              <img class="polaroid-img" src="assets/place-01.jpg" alt="雪山与高原湖畔的两个人影" />
-              <span class="polaroid-stamp">'26 11 19</span>
-              <div class="polaroid-back">
-                <p>“答应自己要去的地方，无论多远，我都想拉着你去看看雪山与倒影。”</p>
-              </div>
-            </div>
-            <div class="polaroid-meta">
-              <span class="polaroid-name">01 · 高原湖畔</span>
-              <div class="polaroid-actions">
-                <button class="p-btn js-pfocus" type="button">对焦</button>
-                <button class="p-btn js-pback" type="button">翻面</button>
-              </div>
-            </div>
-          </article>
-
-          <article class="polaroid">
-            <div class="polaroid-frame">
-              <img class="polaroid-img" src="assets/place-02.jpg" alt="暮色海湾甲板上的两个人影" />
-              <span class="polaroid-stamp">'26 11 19</span>
-              <div class="polaroid-back">
-                <p>“天在将黑未黑时最美，你在我身边吹风的样子，比粉紫色的晚霞更动人。”</p>
-              </div>
-            </div>
-            <div class="polaroid-meta">
-              <span class="polaroid-name">02 · 暮色甲板</span>
-              <div class="polaroid-actions">
-                <button class="p-btn js-pfocus" type="button">对焦</button>
-                <button class="p-btn js-pback" type="button">翻面</button>
-              </div>
-            </div>
-          </article>
-
-          <article class="polaroid">
-            <div class="polaroid-frame">
-              <img class="polaroid-img" src="assets/place-03.jpg" alt="金色海岸与落日剪影" />
-              <span class="polaroid-stamp">'26 11 19</span>
-              <div class="polaroid-back">
-                <p>“我们要散步，把八分钟的路绕成四十分钟，走到整片落日海岸线的尽头。”</p>
-              </div>
-            </div>
-            <div class="polaroid-meta">
-              <span class="polaroid-name">03 · 金色海岸</span>
-              <div class="polaroid-actions">
-                <button class="p-btn js-pfocus" type="button">对焦</button>
-                <button class="p-btn js-pback" type="button">翻面</button>
-              </div>
-            </div>
-          </article>
-
-          <article class="polaroid">
-            <div class="polaroid-frame">
-              <img class="polaroid-img" src="assets/place-04.jpg" alt="落日列车车窗前的两个人影" />
-              <span class="polaroid-stamp">'26 11 19</span>
-              <div class="polaroid-back">
-                <p>“车窗是移动的取景器。只要你靠在肩头，经过的山湖都是只放给我们看的电影。”</p>
-              </div>
-            </div>
-            <div class="polaroid-meta">
-              <span class="polaroid-name">04 · 黄昏列车</span>
-              <div class="polaroid-actions">
-                <button class="p-btn js-pfocus" type="button">对焦</button>
-                <button class="p-btn js-pback" type="button">翻面</button>
-              </div>
-            </div>
-          </article>
-
-          <article class="polaroid">
-            <div class="polaroid-frame">
-              <img class="polaroid-img" src="assets/place-05.jpg" alt="落地窗前看烟火的两个人影" />
-              <span class="polaroid-stamp">'26 11 19</span>
-              <div class="polaroid-back">
-                <p>“镜头失焦的时候光斑会变成温柔的圆，就像那天站在窗前看烟火时你的眼睛。”</p>
-              </div>
-            </div>
-            <div class="polaroid-meta">
-              <span class="polaroid-name">05 · 失焦烟火</span>
-              <div class="polaroid-actions">
-                <button class="p-btn js-pfocus" type="button">对焦</button>
-                <button class="p-btn js-pback" type="button">翻面</button>
-              </div>
-            </div>
-          </article>
-
-          <article class="polaroid">
-            <div class="polaroid-frame">
-              <img class="polaroid-img" src="assets/place-06.jpg" alt="晚风路灯下牵手散步的两个人影" />
-              <span class="polaroid-stamp">'26 11 19</span>
-              <div class="polaroid-back">
-                <p>“在傍晚、晚风、余晖和路灯下，在你飘动的发丝间——和你一起浪费时间，是最美妙的事。”</p>
-              </div>
-            </div>
-            <div class="polaroid-meta">
-              <span class="polaroid-name">06 · 路灯晚风</span>
-              <div class="polaroid-actions">
-                <button class="p-btn js-pfocus" type="button">对焦</button>
-                <button class="p-btn js-pback" type="button">翻面</button>
-              </div>
-            </div>
-          </article>
-        </div>
-      </div>
-    </div>
-
-    <!-- 5. 纸糖果彩蛋卡片 -->
-    <div class="modal-panel" id="modalCandy">
-      <div class="note-modal-card">
-        <div class="note-emoji-icon">🍬</div>
-        <h3 class="note-modal-title">一颗银色糖纸包着的糖</h3>
-        <p class="note-modal-text">
-          总想起你用纸糖果逗我笑的那一天。<br />
-          那种喜欢悬在舌尖，像咬开一颗青提——酸涩的皮破开后，清清凉凉的甜意便慢慢漫上来。
-        </p>
-        <div class="coupon-box">
-          <strong>🎟️ 19 岁生日专属愿望券</strong>
-          <span>可兑换：任意一场落日下的老派散步 + 我先把双手搓热后再抱紧你。</span>
-        </div>
-        <button class="claim-btn" id="claimCandyBtn" type="button">收下这颗糖果</button>
       </div>
     </div>
   </div>
 
   <script>
     // ==========================================================
-    // 1. 教室夕阳飘浮光尘粒子
+    // 0. 震动反馈引擎（优先调用 iOS Safari <input switch> + Vibrate + 轻咔哒声）
+    // ==========================================================
+    const hapticSwitch = document.getElementById("hapticSwitch");
+    let audioCtx = null;
+
+    function ensureAudio() {
+      if (!audioCtx) {
+        const Ctx = window.AudioContext || window.webkitAudioContext;
+        if (Ctx) audioCtx = new Ctx();
+      }
+      if (audioCtx && audioCtx.state === "suspended") {
+        audioCtx.resume();
+      }
+    }
+
+    function playMicroTick(freq = 1200, dur = 0.015, vol = 0.025) {
+      if (!audioCtx) return;
+      try {
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(freq, now);
+        gain.gain.setValueAtTime(vol, now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + dur + 0.005);
+      } catch (_) {}
+    }
+
+    function triggerHaptic(kind = "tick") {
+      // iOS 17.4+ Safari 原生 Taptic Engine 触发方式
+      try {
+        if (hapticSwitch) hapticSwitch.click();
+      } catch (_) {}
+      // Android / 支持 Web Vibration API 的浏览器
+      if (navigator.vibrate) {
+        navigator.vibrate(kind === "heavy" ? 16 : 6);
+      }
+      // 辅助极轻机械阻尼声（只在音频已激活时轻声反馈）
+      if (audioCtx && audioCtx.state === "running") {
+        playMicroTick(kind === "heavy" ? 820 : 1450, 0.014, 0.018);
+      }
+    }
+
+    // 竖屏手动跳过按钮
+    document.getElementById("bypassRotateBtn").addEventListener("click", () => {
+      document.body.classList.add("allow-portrait");
+      syncHotspotsBox();
+    });
+
+    // ==========================================================
+    // 1. 全屏背景图 object-fit: cover 后的热区精确映射
+    //    保证 100% 全屏铺满且 4 个小圆点永不错位
+    // ==========================================================
+    const IMG_RATIO = 1600 / 893;
+    const hotspotsBox = document.getElementById("hotspotsBox");
+
+    function syncHotspotsBox() {
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const viewRatio = vw / vh;
+      let renderW, renderH, offsetX, offsetY;
+
+      if (viewRatio > IMG_RATIO) {
+        renderW = vw;
+        renderH = vw / IMG_RATIO;
+        offsetX = 0;
+        offsetY = (vh - renderH) / 2;
+      } else {
+        renderH = vh;
+        renderW = vh * IMG_RATIO;
+        offsetX = (vw - renderW) / 2;
+        offsetY = 0;
+      }
+
+      hotspotsBox.style.width = `${renderW}px`;
+      hotspotsBox.style.height = `${renderH}px`;
+      hotspotsBox.style.left = `${offsetX}px`;
+      hotspotsBox.style.top = `${offsetY}px`;
+    }
+
+    // ==========================================================
+    // 2. 飘浮夕阳浮尘画布
     // ==========================================================
     const dustCanvas = document.getElementById("dustCanvas");
     const dCtx = dustCanvas.getContext("2d");
     const specks = [];
 
-    function resizeDust() {
+    function resizeScene() {
+      syncHotspotsBox();
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       dustCanvas.width = window.innerWidth * dpr;
       dustCanvas.height = window.innerHeight * dpr;
       dCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
       specks.length = 0;
-      const count = Math.min(46, Math.floor((window.innerWidth * window.innerHeight) / 14500));
+      const count = Math.min(44, Math.floor((window.innerWidth * window.innerHeight) / 14000));
       for (let i = 0; i < count; i++) {
         specks.push({
           x: Math.random() * window.innerWidth,
           y: Math.random() * window.innerHeight,
-          r: Math.random() * 1.5 + 0.45,
+          r: Math.random() * 1.4 + 0.4,
           vx: (Math.random() - 0.5) * 0.14,
-          vy: -(Math.random() * 0.16 + 0.04),
-          alpha: Math.random() * 0.42 + 0.1,
+          vy: -(Math.random() * 0.15 + 0.04),
+          alpha: Math.random() * 0.36 + 0.08,
           phase: Math.random() * Math.PI * 2
         });
       }
@@ -1512,51 +1972,45 @@
       requestAnimationFrame(drawDust);
     }
 
-    window.addEventListener("resize", resizeDust);
-    resizeDust();
+    window.addEventListener("resize", resizeScene);
+    window.addEventListener("orientationchange", () => setTimeout(resizeScene, 120));
+    resizeScene();
     drawDust();
 
     // ==========================================================
-    // 2. Web Audio 温柔复古旋律合成器（用于 Apple Watch 播放）
+    // 3. 轻柔和弦与 Apple Music 旋律合成
     // ==========================================================
     const tracks = [
       {
         title: "放学后的夕阳前奏",
-        desc: "温暖电钢琴 · 桌前单曲",
+        artist: "To Jiayi · 19",
+        cover: "assets/place-03.jpg",
         notes: [261.63, 329.63, 392.00, 493.88, 392.00, 329.63, 293.66, 349.23, 440.00, 523.25, 440.00, 349.23],
         tempo: 680
       },
       {
         title: "晚风里的八音盒",
-        desc: "老派散步 · 轻柔八音盒",
+        artist: "老派散步 · 19",
+        cover: "assets/place-06.jpg",
         notes: [392.00, 493.88, 587.33, 659.25, 587.33, 493.88, 349.23, 440.00, 523.25, 587.33, 523.25, 440.00],
         tempo: 580
       },
       {
         title: "十九岁夜空的星尘",
-        desc: "138 亿年的余晖",
+        artist: "138 亿年的余晖",
+        cover: "assets/place-02.jpg",
         notes: [220.00, 261.63, 329.63, 392.00, 440.00, 392.00, 329.63, 261.63, 196.00, 246.94, 293.66, 392.00],
         tempo: 740
       }
     ];
 
-    let audioCtx = null;
     let isPlaying = false;
     let trackIdx = 0;
     let noteStep = 0;
     let playTimer = null;
+    let musicVolume = 72;
 
-    function ensureAudio() {
-      if (!audioCtx) {
-        const Ctx = window.AudioContext || window.webkitAudioContext;
-        if (Ctx) audioCtx = new Ctx();
-      }
-      if (audioCtx && audioCtx.state === "suspended") {
-        audioCtx.resume();
-      }
-    }
-
-    function playSoftTone(freq) {
+    function playMusicNote(freq) {
       if (!audioCtx) return;
       const now = audioCtx.currentTime;
       const osc = audioCtx.createOscillator();
@@ -1570,10 +2024,11 @@
       sub.frequency.setValueAtTime(freq * 0.5, now);
 
       filter.type = "lowpass";
-      filter.frequency.setValueAtTime(1100, now);
+      filter.frequency.setValueAtTime(1080, now);
 
+      const peak = Math.max(0.002, (musicVolume / 100) * 0.11);
       gain.gain.setValueAtTime(0.0001, now);
-      gain.gain.exponentialRampToValueAtTime(0.08, now + 0.06);
+      gain.gain.exponentialRampToValueAtTime(peak, now + 0.06);
       gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.35);
 
       osc.connect(filter);
@@ -1587,27 +2042,29 @@
       sub.stop(now + 1.4);
     }
 
-    function updatePlayerUI() {
+    function syncMusicUI() {
       const t = tracks[trackIdx];
-      document.getElementById("trackTitle").textContent = t.title;
-      document.getElementById("trackDesc").textContent = t.desc;
-      document.getElementById("playPauseBtn").textContent = isPlaying ? "❚❚" : "▶";
-      document.getElementById("watchDisc").classList.toggle("playing", isPlaying);
+      document.getElementById("wTrackTitle").textContent = t.title;
+      document.getElementById("wTrackArtist").textContent = t.artist;
+      document.querySelector(".w-music-art").src = t.cover;
+      document.getElementById("wPlayBtn").textContent = isPlaying ? "❚❚" : "▶";
+      document.getElementById("wVolText").textContent = `${musicVolume}%`;
+      document.getElementById("wVolFill").style.width = `${musicVolume}%`;
     }
 
     function startMusic() {
       ensureAudio();
       if (playTimer) clearInterval(playTimer);
       isPlaying = true;
-      updatePlayerUI();
-      const runTick = () => {
+      syncMusicUI();
+      const tick = () => {
         if (!isPlaying) return;
         const seq = tracks[trackIdx].notes;
-        playSoftTone(seq[noteStep % seq.length]);
+        playMusicNote(seq[noteStep % seq.length]);
         noteStep += 1;
       };
-      runTick();
-      playTimer = setInterval(runTick, tracks[trackIdx].tempo);
+      tick();
+      playTimer = setInterval(tick, tracks[trackIdx].tempo);
     }
 
     function pauseMusic() {
@@ -1616,56 +2073,50 @@
         clearInterval(playTimer);
         playTimer = null;
       }
-      updatePlayerUI();
+      syncMusicUI();
     }
 
     // ==========================================================
-    // 3. 开场唤醒逻辑
+    // 4. 开场醒来 + 弹窗调度
     // ==========================================================
     document.getElementById("wakeBtn").addEventListener("click", () => {
       document.body.classList.add("is-awake");
       ensureAudio();
-      playSoftTone(329.63);
-      setTimeout(() => playSoftTone(440.00), 140);
-      setTimeout(() => playSoftTone(523.25), 280);
+      triggerHaptic("heavy");
+      playMusicNote(329.63);
+      setTimeout(() => playMusicNote(440.00), 140);
+      setTimeout(() => playMusicNote(523.25), 280);
     });
 
-    // ==========================================================
-    // 4. 课桌物品弹窗管理与探索进度（5 件物品）
-    // ==========================================================
     const modalBackdrop = document.getElementById("modalBackdrop");
     const closeModalBtn = document.getElementById("closeModalBtn");
-    const progressText = document.getElementById("progressText");
-    const visitedSet = new Set();
 
     function openItemModal(modalId, key) {
+      triggerHaptic("tick");
       document.querySelectorAll(".modal-panel").forEach((p) => p.classList.remove("active"));
       const target = document.getElementById(modalId);
       if (!target) return;
       target.classList.add("active");
-      target.scrollTop = 0;
       modalBackdrop.classList.add("active");
       document.body.classList.add("modal-open");
 
       if (key) {
-        visitedSet.add(key);
-        progressText.textContent = `${visitedSet.size} / 5`;
-        document.querySelectorAll(`[data-key="${key}"]`).forEach((el) => {
-          el.classList.add("is-visited");
-        });
+        document.querySelectorAll(`[data-key="${key}"]`).forEach((el) => el.classList.add("is-visited"));
+      }
+      if (modalId === "modalPhotos") {
+        runPolaroidIntroSequence();
       }
     }
 
     function closeItemModal() {
+      triggerHaptic("tick");
       modalBackdrop.classList.remove("active");
       document.body.classList.remove("modal-open");
       document.querySelectorAll(".modal-panel").forEach((p) => p.classList.remove("active"));
     }
 
     document.querySelectorAll("[data-modal]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        openItemModal(btn.dataset.modal, btn.dataset.key);
-      });
+      btn.addEventListener("click", () => openItemModal(btn.dataset.modal, btn.dataset.key));
     });
 
     closeModalBtn.addEventListener("click", closeItemModal);
@@ -1673,91 +2124,352 @@
       if (e.target === modalBackdrop) closeItemModal();
     });
 
-    document.getElementById("memoToggleBtn").addEventListener("click", () => {
-      document.getElementById("memoInsert").classList.toggle("open");
-    });
-
     // ==========================================================
-    // 5. 老款 Apple Watch 内部表盘切换 & 音乐控制
+    // 5. Apple Watch 完整逻辑：单击表冠进 App 选择 + 上下滑动转动表冠 + 震动
     // ==========================================================
-    const watchViews = document.querySelectorAll(".watch-view");
-    const watchDots = document.querySelectorAll(".w-dot");
-    const watchAppNames = ["表盘", "随身听", "胶片"];
-    let watchScreenIdx = 0;
+    let currentWatchScreen = "wScreenFace";
+    let focusedAppIndex = 0;
+    const appBtns = Array.from(document.querySelectorAll(".w-app-btn"));
 
-    function switchWatchView(idx) {
-      watchScreenIdx = (idx + watchViews.length) % watchViews.length;
-      watchViews.forEach((v, i) => v.classList.toggle("active", i === watchScreenIdx));
-      watchDots.forEach((d, i) => d.classList.toggle("active", i === watchScreenIdx));
-      document.getElementById("watchAppName").textContent = watchAppNames[watchScreenIdx];
+    function showWatchScreen(screenId) {
+      currentWatchScreen = screenId;
+      document.querySelectorAll(".w-screen").forEach((s) => s.classList.remove("active"));
+      const target = document.getElementById(screenId);
+      if (target) target.classList.add("active");
+      triggerHaptic("tick");
     }
 
-    document.getElementById("watchCrownBtn").addEventListener("click", () => {
-      switchWatchView(watchScreenIdx + 1);
+    // 更新时钟显示
+    function refreshWatchClock() {
+      const now = new Date();
+      const hh = String(now.getHours()).padStart(2, "0");
+      const mm = String(now.getMinutes()).padStart(2, "0");
+      document.getElementById("wClockText").innerHTML = `${hh}<span>:</span>${mm}`;
+    }
+    refreshWatchClock();
+    setInterval(refreshWatchClock, 15000);
+
+    // 表盘底部 3 个快捷复杂功能 & 返回按键
+    document.querySelectorAll("[data-open-wapp]").forEach((el) => {
+      el.addEventListener("click", () => showWatchScreen(el.dataset.openWapp));
     });
 
-    watchDots.forEach((dot) => {
-      dot.addEventListener("click", () => {
-        switchWatchView(Number(dot.dataset.wdot));
+    document.querySelectorAll("[data-wback]").forEach((el) => {
+      el.addEventListener("click", () => showWatchScreen(el.dataset.wback));
+    });
+
+    appBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        focusedAppIndex = Number(btn.dataset.idx);
+        appBtns.forEach((b, i) => b.classList.toggle("focused", i === focusedAppIndex));
+        showWatchScreen(btn.dataset.wapp);
       });
     });
 
-    document.getElementById("watchSideBtn").addEventListener("click", () => {
-      openItemModal("modalPhotos", "photos");
+    document.getElementById("watchSideKey").addEventListener("click", () => {
+      showWatchScreen("wScreenFace");
     });
 
-    document.getElementById("watchOpenGalleryBtn").addEventListener("click", () => {
-      openItemModal("modalPhotos", "photos");
+    // 表冠上下滑动与单击交互
+    const crownZone = document.getElementById("crownZone");
+    const crownEl = document.getElementById("crownEl");
+    let crownDragActive = false;
+    let crownStartY = 0;
+    let crownLastStepY = 0;
+    let crownTotalDelta = 0;
+    let crownBgPos = 0;
+
+    function handleCrownStep(dir) {
+      // 视觉转动齿纹
+      crownBgPos += dir * 6;
+      crownEl.style.backgroundPosition = `0 ${crownBgPos}px`;
+      triggerHaptic("tick");
+
+      if (currentWatchScreen === "wScreenHome") {
+        focusedAppIndex = (focusedAppIndex + dir + appBtns.length) % appBtns.length;
+        appBtns.forEach((b, i) => b.classList.toggle("focused", i === focusedAppIndex));
+      } else if (currentWatchScreen === "wScreenMusic") {
+        musicVolume = Math.max(10, Math.min(100, musicVolume - dir * 8));
+        syncMusicUI();
+      } else if (currentWatchScreen === "wScreenWechat") {
+        document.getElementById("wWechatScroll").scrollTop += dir * 28;
+      } else if (currentWatchScreen === "wScreenPhotos") {
+        document.getElementById("wPhotosScroll").scrollTop += dir * 28;
+      }
+    }
+
+    crownZone.addEventListener("pointerdown", (e) => {
+      ensureAudio();
+      crownDragActive = true;
+      crownStartY = e.clientY;
+      crownLastStepY = e.clientY;
+      crownTotalDelta = 0;
+      crownEl.classList.add("pressed");
+      crownZone.setPointerCapture(e.pointerId);
     });
 
-    document.getElementById("playPauseBtn").addEventListener("click", () => {
+    crownZone.addEventListener("pointermove", (e) => {
+      if (!crownDragActive) return;
+      const dy = e.clientY - crownLastStepY;
+      crownTotalDelta += Math.abs(e.clientY - crownStartY);
+      if (Math.abs(dy) >= 14) {
+        const dir = dy > 0 ? 1 : -1;
+        handleCrownStep(dir);
+        crownLastStepY = e.clientY;
+      }
+    });
+
+    function endCrownPointer(e) {
+      if (!crownDragActive) return;
+      crownDragActive = false;
+      crownEl.classList.remove("pressed");
+      // 若垂直移动很小，视为「单击表冠」
+      if (Math.abs(e.clientY - crownStartY) < 7) {
+        if (currentWatchScreen === "wScreenFace") {
+          showWatchScreen("wScreenHome");
+        } else if (currentWatchScreen === "wScreenHome") {
+          showWatchScreen("wScreenFace");
+        } else {
+          showWatchScreen("wScreenHome");
+        }
+      }
+    }
+
+    crownZone.addEventListener("pointerup", endCrownPointer);
+    crownZone.addEventListener("pointercancel", endCrownPointer);
+
+    // 桌面鼠标滚轮悬停在表冠上也可以顺滑滚动
+    crownZone.addEventListener("wheel", (e) => {
+      e.preventDefault();
+      handleCrownStep(e.deltaY > 0 ? 1 : -1);
+    }, { passive: false });
+
+    // Watch 相册缩略图点开放大
+    const wPhotoViewer = document.getElementById("wPhotoViewer");
+    const wViewerImg = document.getElementById("wViewerImg");
+    document.querySelectorAll(".w-photo-thumb").forEach((img) => {
+      img.addEventListener("click", () => {
+        triggerHaptic("tick");
+        wViewerImg.src = img.src;
+        wPhotoViewer.classList.add("active");
+      });
+    });
+    document.getElementById("wClosePhotoBtn").addEventListener("click", () => {
+      triggerHaptic("tick");
+      wPhotoViewer.classList.remove("active");
+    });
+
+    // Watch 音乐控制
+    document.getElementById("wPlayBtn").addEventListener("click", () => {
+      triggerHaptic("heavy");
       if (isPlaying) pauseMusic();
       else startMusic();
     });
-
-    document.getElementById("prevTrackBtn").addEventListener("click", () => {
+    document.getElementById("wPrevBtn").addEventListener("click", () => {
+      triggerHaptic("tick");
       trackIdx = (trackIdx - 1 + tracks.length) % tracks.length;
       noteStep = 0;
       startMusic();
     });
-
-    document.getElementById("nextTrackBtn").addEventListener("click", () => {
+    document.getElementById("wNextBtn").addEventListener("click", () => {
+      triggerHaptic("tick");
       trackIdx = (trackIdx + 1) % tracks.length;
       noteStep = 0;
       startMusic();
     });
 
-    // ==========================================================
-    // 6. 拍立得画廊的对焦 & 翻面交互 + 糖果券收下交互
-    // ==========================================================
-    document.querySelectorAll(".polaroid").forEach((card) => {
-      const frame = card.querySelector(".polaroid-frame");
-      const focusBtn = card.querySelector(".js-pfocus");
-      const backBtn = card.querySelector(".js-pback");
-
-      function toggleBack() {
-        frame.classList.toggle("show-back");
-      }
-
-      frame.addEventListener("click", toggleBack);
-      backBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        toggleBack();
-      });
-
-      focusBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        frame.classList.remove("show-back");
-        const isSharp = frame.classList.toggle("is-sharp");
-        frame.classList.toggle("is-hazy", !isSharp);
-        focusBtn.textContent = isSharp ? "虚焦" : "对焦";
+    // Watch 微信快捷回复
+    const wcScroll = document.getElementById("wWechatScroll");
+    document.querySelectorAll(".js-wc-reply").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        triggerHaptic("heavy");
+        const bubble = document.createElement("div");
+        bubble.className = "wc-msg wc-me";
+        bubble.textContent = btn.dataset.reply;
+        wcScroll.appendChild(bubble);
+        wcScroll.scrollTop = wcScroll.scrollHeight;
       });
     });
 
-    const claimCandyBtn = document.getElementById("claimCandyBtn");
-    claimCandyBtn.addEventListener("click", () => {
-      claimCandyBtn.classList.add("claimed");
-      claimCandyBtn.textContent = "✓ 已放进口袋里";
+    // ==========================================================
+    // 6. 蓝色笔袋：糖果剥开变成折成方块的纸巾（整蛊彩蛋）
+    // ==========================================================
+    const candyPrankBtn = document.getElementById("candyPrankBtn");
+    candyPrankBtn.addEventListener("click", () => {
+      triggerHaptic("heavy");
+      candyPrankBtn.classList.add("unwrapped");
+      document.getElementById("candyPrankText").style.display = "block";
+    });
+
+    // ==========================================================
+    // 7. 做旧笔记本：3D 真实翻页 + 手写体自然抖动与涂改
+    //    后续如需加字，只需往 HTML 的 .nb-page 里增删段落或新增页即可
+    // ==========================================================
+    // 给每个字符加上微小的自然书写抖动（倾角与高低错落，不至于太整齐）
+    document.querySelectorAll(".hand-p").forEach((p) => {
+      const walk = (node) => {
+        if (node.nodeType === 3) {
+          const text = node.nodeValue;
+          if (!text.trim()) return;
+          const frag = document.createDocumentFragment();
+          for (const ch of text) {
+            if (ch === " " || ch === "\n") {
+              frag.appendChild(document.createTextNode(ch));
+            } else {
+              const span = document.createElement("span");
+              span.className = "hw-char";
+              const rot = (Math.random() - 0.5) * 3.6;
+              const ty = (Math.random() - 0.5) * 2.2;
+              span.style.transform = `translateY(${ty.toFixed(1)}px) rotate(${rot.toFixed(1)}deg)`;
+              span.textContent = ch;
+              frag.appendChild(span);
+            }
+          }
+          node.parentNode.replaceChild(frag, node);
+        } else if (node.nodeType === 1 && !node.classList.contains("strike") && !node.classList.contains("ink-smudge")) {
+          Array.from(node.childNodes).forEach(walk);
+        }
+      };
+      walk(p);
+    });
+
+    const nbPages = Array.from(document.querySelectorAll(".nb-page"));
+    const nbPrevBtn = document.getElementById("nbPrevBtn");
+    const nbNextBtn = document.getElementById("nbNextBtn");
+    const nbPageNum = document.getElementById("nbPageNum");
+    let currentNbPage = 0;
+
+    function updateNotebookPage(newIdx) {
+      if (newIdx < 0 || newIdx >= nbPages.length) return;
+      currentNbPage = newIdx;
+      triggerHaptic("tick");
+      playMicroTick(640, 0.03, 0.018);
+
+      nbPages.forEach((pg, i) => {
+        pg.classList.remove("is-current", "is-flipped-left", "is-waiting-right");
+        if (i < currentNbPage) pg.classList.add("is-flipped-left");
+        else if (i === currentNbPage) pg.classList.add("is-current");
+        else pg.classList.add("is-waiting-right");
+      });
+
+      nbPrevBtn.disabled = currentNbPage === 0;
+      nbNextBtn.disabled = currentNbPage === nbPages.length - 1;
+      nbPageNum.textContent = `${currentNbPage + 1} / ${nbPages.length}`;
+    }
+
+    nbPrevBtn.addEventListener("click", () => updateNotebookPage(currentNbPage - 1));
+    nbNextBtn.addEventListener("click", () => updateNotebookPage(currentNbPage + 1));
+
+    // ==========================================================
+    // 8. 拍立得交互墙（复刻 Julab 视频：叠放 -> 散开 -> 网格 -> 一张张翻过来显影 + 背面写字）
+    // ==========================================================
+    const polCanvas = document.getElementById("polCanvas");
+    const polSlots = Array.from(document.querySelectorAll(".pol-card-slot"));
+    const polHintText = document.getElementById("polHintText");
+    let polTimers = [];
+
+    function resetPolaroidsToStack() {
+      polTimers.forEach(clearTimeout);
+      polTimers = [];
+      polHintText.textContent = "轻触每一张翻过来的拍立得，看它慢慢显影";
+
+      polSlots.forEach((slot, i) => {
+        slot.classList.remove("is-face-up", "is-developing", "has-developed", "show-writing");
+        const rot = (i - 2.5) * 2.5;
+        const dx = (i - 2.5) * 1.5;
+        const dy = (i - 2.5) * 1.5;
+        slot.style.zIndex = 10 + i;
+        slot.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) rotate(${rot}deg) scale(0.95)`;
+      });
+    }
+
+    // 阶段 2：像视频 00:01 一样花瓣般散开重叠
+    function scatterPolaroids() {
+      const scatterMap = [
+        { x: -115, y: -62, r: -14 },
+        { x: 105,  y: -58, r: 12 },
+        { x: -135, y: 46,  r: 9 },
+        { x: 18,   y: -80, r: -4 },
+        { x: 130,  y: 52,  r: -11 },
+        { x: -12,  y: 74,  r: 6 }
+      ];
+      polSlots.forEach((slot, i) => {
+        const p = scatterMap[i];
+        slot.style.transform = `translate(calc(-50% + ${p.x}px), calc(-50% + ${p.y}px)) rotate(${p.r}deg) scale(0.98)`;
+      });
+    }
+
+    // 阶段 3：像视频 00:02 一样整齐收拢为 3x2 网格
+    function gridPolaroids() {
+      const w = polCanvas.clientWidth || 680;
+      const h = polCanvas.clientHeight || 360;
+      const cols = w >= 480 ? 3 : 2;
+      const rows = Math.ceil(polSlots.length / cols);
+      const cellW = Math.min(180, w / cols);
+      const cellH = Math.min(188, h / rows);
+
+      polSlots.forEach((slot, i) => {
+        const c = i % cols;
+        const r = Math.floor(i / cols);
+        const offsetX = (c - (cols - 1) / 2) * cellW;
+        const offsetY = (r - (rows - 1) / 2) * cellH;
+        const tilt = (i % 2 === 0 ? -1.5 : 1.5);
+        slot.style.transform = `translate(calc(-50% + ${offsetX}px), calc(-50% + ${offsetY}px)) rotate(${tilt}deg) scale(0.92)`;
+      });
+    }
+
+    function runPolaroidIntroSequence() {
+      resetPolaroidsToStack();
+      polTimers.push(setTimeout(() => {
+        triggerHaptic("tick");
+        scatterPolaroids();
+      }, 380));
+      polTimers.push(setTimeout(() => {
+        triggerHaptic("tick");
+        gridPolaroids();
+      }, 1150));
+    }
+
+    function flipPolaroidCard(slot) {
+      triggerHaptic("heavy");
+      // 1. 还没翻开：翻过来并开始 4 秒缓慢化学显影
+      if (!slot.classList.contains("is-face-up")) {
+        slot.classList.add("is-face-up");
+        // 稍微等翻面过半后开始显影化学变化
+        setTimeout(() => {
+          slot.classList.add("is-developing");
+        }, 320);
+        // 显影完成后标记，允许再点翻到背面看写字
+        setTimeout(() => {
+          slot.classList.add("has-developed");
+          polHintText.textContent = "显影完成 · 再次轻触任意相片翻看背后写字";
+        }, 3400);
+        return;
+      }
+
+      // 2. 已经显影：点击在正面与背面手写字之间切换
+      if (slot.classList.contains("has-developed")) {
+        slot.classList.toggle("show-writing");
+      }
+    }
+
+    polSlots.forEach((slot) => {
+      slot.addEventListener("click", () => flipPolaroidCard(slot));
+    });
+
+    // 一键逐张翻开按钮
+    document.getElementById("polFlipAllBtn").addEventListener("click", () => {
+      polSlots.forEach((slot, idx) => {
+        if (!slot.classList.contains("is-face-up")) {
+          setTimeout(() => flipPolaroidCard(slot), idx * 240);
+        }
+      });
+    });
+
+    window.addEventListener("resize", () => {
+      if (document.getElementById("modalPhotos").classList.contains("active")) {
+        gridPolaroids();
+      }
     });
   </script>
 </body>
