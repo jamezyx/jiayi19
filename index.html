@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>To Jiayi · 19th</title>
+  <title>To +1 · 19th</title>
   <!-- 轻量化中文手写字体（带国内加速节点及系统手写体兜底） -->
   <link rel="preconnect" href="https://fonts.loli.net" crossorigin />
   <link href="https://fonts.loli.net/css2?family=Long+Cang&family=Zhi+Mang+Xing&display=swap" rel="stylesheet" />
@@ -704,13 +704,72 @@
       z-index: 2;
     }
 
-    /* --- Watch App 2: Apple Music (原版 Now Playing + 右侧表冠绿色音量环) --- */
+    /* --- Watch App 2: Apple Music (Now Playing + 歌单列表视图 + 音量环) --- */
     .w-music-body {
       flex: 1;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       position: relative;
+      overflow: hidden;
+    }
+
+    .w-music-playlist {
+      display: none;
+      flex: 1;
+      flex-direction: column;
+      gap: 6px;
+      overflow-y: auto;
+      scrollbar-width: none;
+      padding-top: 2px;
+    }
+    .w-music-playlist::-webkit-scrollbar { display: none; }
+    .w-music-body.show-list .w-music-now { display: none; }
+    .w-music-body.show-list .w-music-playlist { display: flex; }
+
+    .w-music-now {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .w-track-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 8px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.08);
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .w-track-row.active {
+      background: rgba(250, 45, 72, 0.22);
+      border-color: rgba(250, 45, 72, 0.45);
+    }
+    .w-track-row img {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .w-track-row-meta {
+      flex: 1;
+      min-width: 0;
+    }
+    .w-track-row-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .w-track-row-artist {
+      font-size: 9.5px;
+      color: rgba(255, 255, 255, 0.6);
     }
 
     .w-music-art-row {
@@ -832,9 +891,27 @@
       border-bottom-right-radius: 4px;
     }
 
+    .wc-time {
+      align-self: center;
+      font-size: 9px;
+      color: rgba(255, 255, 255, 0.4);
+      margin: 2px 0;
+    }
+
+    .wc-typing {
+      align-self: flex-start;
+      background: #262629;
+      color: rgba(255, 255, 255, 0.65);
+      padding: 6px 10px;
+      border-radius: 12px;
+      border-bottom-left-radius: 4px;
+      font-size: 10.5px;
+      letter-spacing: 0.05em;
+    }
+
     .wc-quick-row {
       display: flex;
-      gap: 5px;
+      gap: 4px;
       padding-top: 6px;
       flex-shrink: 0;
     }
@@ -846,8 +923,145 @@
       border: none;
       background: rgba(7, 193, 96, 0.22);
       color: #30d158;
-      font-size: 10.5px;
+      font-size: 10px;
       cursor: pointer;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* 手表下方自由输入条（点击“⌨ 发消息”时展开，方便在手机竖屏打字测试） */
+    .wc-compose-bar {
+      display: none;
+      width: min(330px, 88vw);
+      margin-top: 10px;
+      gap: 6px;
+      padding: 6px 8px;
+      border-radius: 999px;
+      background: rgba(24, 24, 28, 0.92);
+      border: 1px solid rgba(7, 193, 96, 0.45);
+      backdrop-filter: blur(10px);
+    }
+    .wc-compose-bar.open { display: flex; }
+    .wc-compose-bar input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #fff;
+      font-size: 13px;
+      padding: 4px 8px;
+      min-width: 0;
+    }
+    .wc-compose-bar button {
+      padding: 5px 12px;
+      border-radius: 999px;
+      border: none;
+      background: #07c160;
+      color: #031c0d;
+      font-weight: 600;
+      font-size: 12px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    /* 低调的数据导入入口按钮与弹窗 */
+    .watch-import-btn {
+      margin-top: 10px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 240, 220, 0.16);
+      background: rgba(20, 16, 13, 0.65);
+      color: rgba(246, 239, 228, 0.65);
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .import-drawer {
+      position: fixed;
+      inset: 0;
+      z-index: 140;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background: rgba(6, 5, 4, 0.84);
+      backdrop-filter: blur(12px);
+    }
+    .import-drawer.open { display: flex; }
+    .import-card {
+      width: min(420px, 92vw);
+      max-height: 86dvh;
+      display: flex;
+      flex-direction: column;
+      background: #181615;
+      border: 1px solid rgba(255, 240, 220, 0.16);
+      border-radius: 18px;
+      padding: 14px 16px;
+      color: #f6efe4;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8);
+    }
+    .import-tabs {
+      display: flex;
+      gap: 6px;
+      margin: 10px 0;
+    }
+    .import-tab {
+      flex: 1;
+      padding: 6px 4px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.05);
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 11.5px;
+      cursor: pointer;
+    }
+    .import-tab.active {
+      background: rgba(230, 161, 92, 0.2);
+      border-color: rgba(230, 161, 92, 0.55);
+      color: #ffe2bd;
+    }
+    .import-pane { display: none; flex-direction: column; gap: 8px; overflow-y: auto; }
+    .import-pane.active { display: flex; }
+    .import-textarea {
+      width: 100%;
+      min-height: 140px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: #100f0e;
+      color: #f6efe4;
+      font-family: var(--mono);
+      font-size: 11.5px;
+      line-height: 1.55;
+      padding: 10px;
+      resize: vertical;
+      outline: none;
+    }
+    .import-help {
+      font-size: 11px;
+      line-height: 1.55;
+      color: rgba(246, 239, 228, 0.65);
+    }
+    .import-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .import-act-btn {
+      flex: 1;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.08);
+      color: #f6efe4;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .import-act-btn.primary {
+      background: #e6a15c;
+      color: #1c120a;
+      border-color: #e6a15c;
+      font-weight: 600;
     }
 
     /* 表冠操作说明小气泡（在手表旁） */
@@ -968,29 +1182,62 @@
     .candy-prank-stage.unwrapped .tissue-square { display: block; animation: panelPop 0.35s ease; }
 
     /* ==========================================================
-       三、做旧 Mnemosyne 笔记本（真实 3D 翻页 + 涂改手写信）
+       三、1:1 还原 Mnemosyne 178 上翻小本子（拿在手里的实体感 + 上翻 3D 翻页 + 无划掉手写信）
        ========================================================== */
+    .notebook-hand-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
     .notebook-shell {
-      width: min(580px, 88vw);
-      height: min(440px, 82dvh);
-      background: #171614;
-      border-radius: 16px;
-      padding: 10px;
-      box-shadow: 0 30px 75px rgba(0, 0, 0, 0.85), inset 0 1px 2px rgba(255, 255, 255, 0.12);
+      width: min(336px, 84vw);
+      height: min(478px, 76dvh);
+      background: linear-gradient(170deg, #1e1d1b 0%, #121110 100%);
+      border-radius: 8px 8px 10px 10px;
+      padding: 0 7px 9px;
+      box-shadow:
+        0 28px 65px rgba(0, 0, 0, 0.85),
+        0 6px 0 #ebe3d0,
+        0 8px 0 #d5cbb5,
+        0 10px 16px rgba(0, 0, 0, 0.45),
+        inset 0 1px 1px rgba(255, 255, 255, 0.14);
       display: flex;
       flex-direction: column;
       position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.08);
     }
 
-    /* 做旧黑壳顶边微磨白 */
-    .nb-top-edge {
+    /* 实体顶部黑色装订脊 + 银色平订书钉 + 两道横向压痕折线 */
+    .nb-top-spine {
+      position: relative;
+      height: 38px;
+      flex-shrink: 0;
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
+      justify-content: center;
       align-items: center;
-      padding: 2px 8px 8px;
-      font-family: Georgia, serif;
-      font-size: 11px;
-      color: rgba(206, 178, 128, 0.72);
+      background: linear-gradient(to bottom, #1b1a18 0%, #141312 100%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      z-index: 6;
+    }
+
+    /* 正中央一根实体银色订书钉 */
+    .nb-staple {
+      width: 28px;
+      height: 3.5px;
+      border-radius: 2px;
+      background: linear-gradient(to bottom, #f4f4f6 0%, #9fa3aa 55%, #5b5f66 100%);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.75);
+      margin-bottom: 7px;
+    }
+
+    /* 上翻折痕横线 */
+    .nb-crease-line {
+      width: calc(100% + 14px);
+      height: 1px;
+      background: rgba(255, 255, 255, 0.08);
+      margin: 4px 0;
     }
 
     .nb-viewport {
@@ -998,26 +1245,18 @@
       position: relative;
       perspective: 1400px;
       overflow: hidden;
-      border-radius: 8px;
+      border-radius: 0 0 5px 5px;
+      background: #141312;
+      touch-action: pan-x;
     }
 
-    /* 方格内页样式 + 做旧泛黄与局部墨渍 */
+    /* 每页支持从顶边向上掀翻（rotateX） */
     .nb-page {
       position: absolute;
       inset: 0;
-      padding: 18px 24px 20px;
-      background-color: var(--paper-old);
-      background-image:
-        radial-gradient(circle at 88% 82%, rgba(162, 134, 96, 0.16) 0%, transparent 24%),
-        radial-gradient(circle at 12% 16%, rgba(138, 112, 82, 0.11) 0%, transparent 22%),
-        linear-gradient(to right, var(--paper-grid) 1px, transparent 1px),
-        linear-gradient(to bottom, var(--paper-grid) 1px, transparent 1px);
-      background-size: 100% 100%, 100% 100%, 19px 19px, 19px 19px;
-      color: var(--ink-pen);
       overflow-y: auto;
-      transform-origin: left center;
-      transition: transform 0.65s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.45s ease;
-      box-shadow: inset 14px 0 24px rgba(80, 62, 42, 0.14);
+      transform-origin: center top;
+      transition: transform 0.68s cubic-bezier(0.24, 0.82, 0.25, 1), opacity 0.45s ease;
       opacity: 0;
       pointer-events: none;
     }
@@ -1025,87 +1264,126 @@
     .nb-page.is-current {
       opacity: 1;
       pointer-events: auto;
-      transform: rotateY(0deg);
+      transform: rotateX(0deg);
       z-index: 2;
     }
 
-    .nb-page.is-flipped-left {
+    .nb-page.is-flipped-up {
       opacity: 0;
-      transform: rotateY(-78deg);
+      transform: rotateX(104deg);
       z-index: 3;
       pointer-events: none;
     }
 
-    .nb-page.is-waiting-right {
+    .nb-page.is-waiting-down {
       opacity: 0;
-      transform: rotateY(14deg) translateX(18px);
+      transform: rotateX(-14deg) translateY(14px);
       z-index: 1;
       pointer-events: none;
     }
 
-    /* 手写正文：略微不齐、深浅不一、真实涂改划掉 */
+    /* 第 0 页：Mnemosyne N178A 做旧黑卡纸封面 */
+    .nb-cover-page {
+      background:
+        radial-gradient(circle at 22% 76%, rgba(255, 255, 255, 0.045) 0%, transparent 45%),
+        radial-gradient(circle at 82% 24%, rgba(214, 180, 128, 0.04) 0%, transparent 40%),
+        linear-gradient(155deg, #1b1a18 0%, #11100f 75%, #171513 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 26px 22px 24px;
+      cursor: pointer;
+      box-shadow: inset 0 8px 18px rgba(0, 0, 0, 0.45);
+    }
+
+    .nb-cover-crease {
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      margin: 0 -22px;
+      padding-top: 26px;
+    }
+
+    .nb-cover-brand {
+      align-self: flex-end;
+      margin-top: 68px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 13.5px;
+      letter-spacing: 0.08em;
+      color: rgba(206, 178, 128, 0.78);
+    }
+
+    .nb-cover-hint {
+      text-align: center;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: rgba(246, 239, 228, 0.38);
+    }
+
+    /* 内页：还原 Mnemosyne 白色 DATE / NO. 页眉 + 淡灰 5mm 方格区 */
+    .nb-grid-page {
+      background-color: #f4efe4;
+      display: flex;
+      flex-direction: column;
+      box-shadow: inset 0 12px 20px rgba(72, 56, 38, 0.12);
+    }
+
+    .nb-sheet-header {
+      padding: 12px 18px 8px;
+      border-bottom: 1px solid rgba(110, 102, 92, 0.24);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      background: linear-gradient(to bottom, #f7f3ea 0%, #f4efe4 100%);
+      flex-shrink: 0;
+    }
+
+    .nb-date-no {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      color: rgba(98, 90, 80, 0.68);
+    }
+
+    .nb-date-val {
+      font-family: var(--hand);
+      font-size: 14px;
+      color: rgba(40, 48, 72, 0.78);
+    }
+
+    .nb-sheet-grid {
+      flex: 1;
+      margin: 6px 12px 12px;
+      padding: 12px 10px 18px;
+      background-image:
+        radial-gradient(circle at 88% 82%, rgba(162, 134, 96, 0.12) 0%, transparent 28%),
+        linear-gradient(to right, rgba(120, 112, 100, 0.16) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(120, 112, 100, 0.16) 1px, transparent 1px);
+      background-size: 100% 100%, 16px 16px, 16px 16px;
+      border: 1px solid rgba(120, 112, 100, 0.12);
+    }
+
+    /* 手写正文：自然错落，干净无划掉 */
     .hand-body {
       font-family: var(--hand);
-      font-size: 20px;
-      line-height: 1.9;
+      font-size: 19.5px;
+      line-height: 1.85;
       color: #212636;
       letter-spacing: 0.03em;
     }
 
     .hand-p {
-      margin-bottom: 14px;
+      margin-bottom: 13px;
     }
 
     .hw-char {
       display: inline-block;
     }
 
-    /* 钢笔划掉涂改效果 */
-    .strike {
-      position: relative;
-      display: inline-block;
-      color: rgba(34, 38, 51, 0.56);
-      margin: 0 3px;
-      transform: rotate(-1.5deg);
-    }
-
-    .strike::after {
-      content: "";
-      position: absolute;
-      left: -3px;
-      right: -3px;
-      top: 52%;
-      height: 2.5px;
-      background: #23283a;
-      transform: rotate(-3deg);
-      border-radius: 2px;
-    }
-
-    .strike-double::before {
-      content: "";
-      position: absolute;
-      left: -2px;
-      right: -2px;
-      top: 38%;
-      height: 1.8px;
-      background: #23283a;
-      transform: rotate(2.5deg);
-    }
-
-    .caret-insert {
-      display: inline-block;
-      font-size: 16px;
-      color: #283556;
-      transform: translateY(-4px) rotate(-2deg);
-      margin: 0 2px;
-    }
-
     .ink-smudge {
       display: inline-block;
-      width: 11px;
-      height: 8px;
+      width: 9px;
+      height: 7px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(33, 38, 54, 0.25) 0%, transparent 72%);
+      background: radial-gradient(circle, rgba(33, 38, 54, 0.2) 0%, transparent 72%);
       vertical-align: middle;
       margin: 0 2px;
     }
@@ -1114,15 +1392,16 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 8px 4px 2px;
+      width: min(336px, 84vw);
+      padding: 12px 4px 0;
       flex-shrink: 0;
     }
 
     .nb-page-btn {
       padding: 5px 12px;
       border-radius: 999px;
-      border: 1px solid rgba(255, 240, 220, 0.22);
-      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 240, 220, 0.24);
+      background: rgba(20, 16, 13, 0.72);
       color: rgba(246, 239, 228, 0.9);
       font-size: 11.5px;
       cursor: pointer;
@@ -1136,7 +1415,7 @@
     .nb-page-num {
       font-family: var(--mono);
       font-size: 11px;
-      color: rgba(206, 178, 128, 0.8);
+      color: rgba(206, 178, 128, 0.85);
       padding: 2px 8px;
     }
 
@@ -1371,7 +1650,7 @@
        第一幕：开场生日祝福遮罩
        ========================================================== -->
   <section class="intro-overlay" id="introOverlay">
-    <div class="intro-kicker">TO JIAYI · 19TH BIRTHDAY</div>
+    <div class="intro-kicker">TO +1 · 19TH BIRTHDAY</div>
     <h1 class="intro-title">
       如果能把十九岁这一天，<br />
       搬回落日余晖不断的高中课桌前
@@ -1621,61 +1900,69 @@
                 </div>
               </div>
 
-              <!-- Screen 3: 原版 Apple Music App -->
+              <!-- Screen 3: 原版 Apple Music App（支持切换与导入多首歌单） -->
               <div class="w-screen" id="wScreenMusic">
                 <div class="w-nav-bar">
                   <button class="w-back-chip" data-wback="wScreenHome" type="button">‹</button>
-                  <span style="color:#fa2d48;">播放中</span>
-                  <span style="font-size:10px;color:#fa2d48;" id="wVolText">72%</span>
+                  <span style="color:#fa2d48;" id="wMusicNavTitle">播放中</span>
+                  <button class="w-back-chip" id="wPlaylistToggleBtn" type="button" title="歌单列表">≡</button>
                 </div>
-                <div class="w-music-body">
-                  <div class="w-music-art-row">
-                    <img class="w-music-art" src="assets/place-03.jpg" alt="专辑封面" />
-                    <div class="w-music-meta">
-                      <div class="w-music-title" id="wTrackTitle">放学后的夕阳前奏</div>
-                      <div class="w-music-sub" id="wTrackArtist">To Jiayi · 19</div>
+                <div class="w-music-body" id="wMusicBody">
+                  <div class="w-music-now">
+                    <div class="w-music-art-row">
+                      <img class="w-music-art" src="assets/place-03.jpg" alt="专辑封面" />
+                      <div class="w-music-meta">
+                        <div class="w-music-title" id="wTrackTitle">放学后的夕阳前奏</div>
+                        <div class="w-music-sub" id="wTrackArtist">To +1 · 19</div>
+                      </div>
+                    </div>
+                    <div class="w-music-controls">
+                      <button class="w-m-btn" id="wPrevBtn" type="button">⏮</button>
+                      <button class="w-m-btn w-m-play" id="wPlayBtn" type="button">▶</button>
+                      <button class="w-m-btn" id="wNextBtn" type="button">⏭</button>
+                    </div>
+                    <div class="w-vol-bar-wrap">
+                      <span style="font-size:10px;color:#8e8e93;" id="wVolText">72%</span>
+                      <div class="w-vol-track"><div class="w-vol-fill" id="wVolFill"></div></div>
+                      <span style="font-size:10px;color:#8e8e93;">🔊</span>
                     </div>
                   </div>
-                  <div class="w-music-controls">
-                    <button class="w-m-btn" id="wPrevBtn" type="button">⏮</button>
-                    <button class="w-m-btn w-m-play" id="wPlayBtn" type="button">▶</button>
-                    <button class="w-m-btn" id="wNextBtn" type="button">⏭</button>
-                  </div>
-                  <div class="w-vol-bar-wrap">
-                    <span style="font-size:10px;color:#8e8e93;">🔈</span>
-                    <div class="w-vol-track"><div class="w-vol-fill" id="wVolFill"></div></div>
-                    <span style="font-size:10px;color:#8e8e93;">🔊</span>
-                  </div>
+                  <div class="w-music-playlist" id="wMusicPlaylist"></div>
                 </div>
+                <audio id="customAudioPlayer" preload="metadata"></audio>
               </div>
 
-              <!-- Screen 4: 原版 微信 Watch App -->
+              <!-- Screen 4: 原版 微信 Watch App（聊天记录流 + 自由输入 + 关键词定制回复） -->
               <div class="w-screen" id="wScreenWechat">
                 <div class="w-nav-bar">
                   <button class="w-back-chip" data-wback="wScreenHome" type="button">‹</button>
-                  <span style="color:#07c160;">嘉怡</span>
-                  <span style="font-size:10px;color:#8e8e93;">●</span>
+                  <span style="color:#07c160;" id="wcContactName">给 +1 的回信</span>
+                  <span style="font-size:10px;color:#30d158;">●</span>
                 </div>
-                <div class="w-wechat-scroll" id="wWechatScroll">
-                  <div class="wc-msg wc-her">我往你蓝色笔袋里塞了一颗糖果🍬</div>
-                  <div class="wc-msg wc-me">真的假的，我现在去翻翻看</div>
-                  <div class="wc-msg wc-her">记得看清楚再吃哈哈哈</div>
-                  <div class="wc-msg wc-me">19 岁生日快乐，桌上的小本子里也有给你的信</div>
-                </div>
+                <div class="w-wechat-scroll" id="wWechatScroll"></div>
                 <div class="wc-quick-row">
-                  <button class="wc-q-btn js-wc-reply" data-reply="❤️" type="button">❤️</button>
-                  <button class="wc-q-btn js-wc-reply" data-reply="被你整蛊到了！" type="button">整蛊到我了</button>
+                  <button class="wc-q-btn js-wc-reply" data-reply="我想你了" type="button">想你了</button>
+                  <button class="wc-q-btn js-wc-reply" data-reply="那个糖果纸巾被我拆穿啦！" type="button">纸巾整蛊</button>
+                  <button class="wc-q-btn" id="wcToggleInputBtn" type="button">⌨ 发消息</button>
                 </div>
               </div>
             </div>
           </div>
           <div class="watch-band watch-band-bot"></div>
+
+          <!-- 手表下方自由输入条 & 歌单/聊天记录导入入口 -->
+          <div class="wc-compose-bar" id="wcComposeBar">
+            <input type="text" id="wcCustomInput" placeholder="在微信里说点什么，看看回信..." maxlength="120" />
+            <button type="button" id="wcSendCustomBtn">发送</button>
+          </div>
+          <button class="watch-import-btn" id="openImportBtn" type="button">⚙ 导入歌单 / 聊天记录与自动回复</button>
         </div>
 
         <div class="watch-side-guide">
           <strong style="color:#e6a15c;display:block;margin-bottom:6px;">⌚ 操作说明</strong>
           • <b>单击表冠</b>：进入 App 选择界面 / 返回<br />
-          • <b>上下滑动表冠</b>：转动选中 App、滚动微信、调节音乐音量（附带震动反馈）
+          • <b>上下滑动表冠</b>：转动选中 App、滚动微信、调节音乐音量<br />
+          • <b>微信发消息</b>：支持输入任意文字并触发关键词回复
         </div>
       </div>
     </div>
@@ -1716,87 +2003,113 @@
       </div>
     </div>
 
-    <!-- 3. 做旧 Mnemosyne 笔记本（真实 3D 翻页 + 没寄出去的信 + 手写涂改瑕疵） -->
+    <!-- 3. 1:1 还原 Mnemosyne 178 上翻本（做旧封面 + 上翻 3D 翻页 + 干净手写信） -->
     <div class="modal-panel" id="modalNotebook">
-      <div class="notebook-shell">
-        <div class="nb-top-edge">
-          <span>178 | Mnemosyne · 记忆女神</span>
-          <span>那封没寄出去的信</span>
-        </div>
-
-        <div class="nb-viewport" id="nbViewport">
-          <!-- Page 0: 扉页 -->
-          <div class="nb-page is-current" data-page="0">
-            <div class="hand-body" style="padding-top:18px;">
-              <p class="hand-p" style="font-size:24px;margin-bottom:22px;">致十九岁的嘉怡：</p>
-              <p class="hand-p">
-                这个小本子<span class="ink-smudge"></span>一直在抽屉里放着。里面写着的，是我那封
-                <span class="strike">早就写好却</span>
-                <span class="caret-insert">一直</span>
-                没有寄出去的信。
-              </p>
-              <p class="hand-p" style="margin-top:26px;font-size:17px;color:var(--ink-fade);">
-                （字写得有点乱，还有划掉改过的痕迹——翻到下一页看吧。）
-              </p>
-            </div>
+      <div class="notebook-hand-wrap">
+        <div class="notebook-shell">
+          <!-- 顶部装订脊：居中银色订书钉 + 两道压痕折线 -->
+          <div class="nb-top-spine">
+            <div class="nb-staple"></div>
+            <div class="nb-crease-line"></div>
           </div>
 
-          <!-- Page 1: 未寄出去的信 · 上 -->
-          <div class="nb-page is-waiting-right" data-page="1">
-            <div class="hand-body">
-              <p class="hand-p">
-                嗯，我不知道，我相信你也一样——这一切到底是如何发生的，未来又会如何变化，我不知道。
-              </p>
-              <p class="hand-p">
-                玫瑰花到底能不能盛开呢？<span class="strike strike-double">其实我有点害怕</span>
-                遥望未来太累了，我只想过好
-                <span class="strike">以后</span><span class="caret-insert">眼前的这一刻</span>，像小时候一样：
-              </p>
-              <p class="hand-p">
-                在傍晚、晚风、余晖和路灯下，在你飘动的发丝间，在你的
-                <span class="strike">眼睛</span><span class="caret-insert">眼眸里</span>，在我跳跃无常的思绪里。
-              </p>
+          <div class="nb-viewport" id="nbViewport">
+            <!-- Page 0: 做旧黑色 178 | Mnemosyne 上翻封面 -->
+            <div class="nb-page nb-cover-page is-current" data-page="0" id="nbCoverPage">
+              <div class="nb-cover-crease"></div>
+              <div class="nb-cover-brand">178 | Mnemosyne</div>
+              <div class="nb-cover-hint">轻触或向上轻扫，翻开小本子 ↑</div>
             </div>
-          </div>
 
-          <!-- Page 2: 未寄出去的信 · 下 -->
-          <div class="nb-page is-waiting-right" data-page="2">
-            <div class="hand-body">
-              <p class="hand-p">
-                在某年某日的某个瞬间，我的思绪跳入了你的宇宙<span class="ink-smudge"></span>，于是我决定停留。
-              </p>
-              <p class="hand-p">
-                我喜欢你，像受命运指引一般，并且，我
-                <span class="strike">好像</span>
-                已经做好了爱你的准备。
-              </p>
-              <p class="hand-p" style="margin-top:16px;font-size:18px;color:#3d445c;">
-                Is it a crime to be unsure?<br />
-                In time we'll find if we're suitable.
-              </p>
+            <!-- Page 1: 扉页（DATE / NO. 页眉 + 5mm 方格） -->
+            <div class="nb-page nb-grid-page is-waiting-down" data-page="1">
+              <div class="nb-sheet-header">
+                <span class="nb-date-no">DATE / NO.</span>
+                <span class="nb-date-val">10.02 · No.01</span>
+              </div>
+              <div class="nb-sheet-grid">
+                <div class="hand-body">
+                  <p class="hand-p" style="font-size:23px;margin-bottom:20px;">致十九岁的+1：</p>
+                  <p class="hand-p">
+                    这个小本子<span class="ink-smudge"></span>一直在抽屉里放着。里面写着的，是我那封一直没有寄出去的信。
+                  </p>
+                  <p class="hand-p" style="margin-top:26px;font-size:17px;color:var(--ink-fade);">
+                    （向上翻页看吧。）
+                  </p>
+                </div>
+              </div>
             </div>
-          </div>
 
-          <!-- Page 3: 预留后续手写加字页 -->
-          <div class="nb-page is-waiting-right" data-page="3">
-            <div class="hand-body">
-              <p class="hand-p">
-                被人深爱给予我力量，而深爱一个人赋予我勇气。
-              </p>
-              <p class="hand-p">
-                十九岁生日快乐，嘉怡。愿我们像《奥本海默》里那样，不管经历多少磨难与争吵，转过身向你伸出手时，你依然愿意握住我。
-              </p>
-              <p class="hand-p" style="margin-top:24px;color:rgba(76,70,64,0.52);font-size:17px;">
-                —— 这一页后面的格子，留着以后继续慢慢写给你。
-              </p>
+            <!-- Page 2: 未寄出去的信 · 上 -->
+            <div class="nb-page nb-grid-page is-waiting-down" data-page="2">
+              <div class="nb-sheet-header">
+                <span class="nb-date-no">DATE / NO.</span>
+                <span class="nb-date-val">10.02 · No.02</span>
+              </div>
+              <div class="nb-sheet-grid">
+                <div class="hand-body">
+                  <p class="hand-p">
+                    嗯，我不知道，我相信你也一样——这一切到底是如何发生的，未来又会如何变化，我不知道。
+                  </p>
+                  <p class="hand-p">
+                    玫瑰花到底能不能盛开呢？遥望未来太累了，我只想过好眼前的这一刻，像小时候一样：
+                  </p>
+                  <p class="hand-p">
+                    在傍晚、晚风、余晖和路灯下，在你飘动的发丝间，在你的眼眸里，在我跳跃无常的思绪里。
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Page 3: 未寄出去的信 · 下 -->
+            <div class="nb-page nb-grid-page is-waiting-down" data-page="3">
+              <div class="nb-sheet-header">
+                <span class="nb-date-no">DATE / NO.</span>
+                <span class="nb-date-val">10.02 · No.03</span>
+              </div>
+              <div class="nb-sheet-grid">
+                <div class="hand-body">
+                  <p class="hand-p">
+                    在某年某日的某个瞬间，我的思绪跳入了你的宇宙<span class="ink-smudge"></span>，于是我决定停留。
+                  </p>
+                  <p class="hand-p">
+                    我喜欢你，像受命运指引一般，并且，我已经做好了爱你的准备。
+                  </p>
+                  <p class="hand-p" style="margin-top:16px;font-size:17.5px;color:#3d445c;">
+                    Is it a crime to be unsure?<br />
+                    In time we'll find if we're suitable.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Page 4: 留白加字页 -->
+            <div class="nb-page nb-grid-page is-waiting-down" data-page="4">
+              <div class="nb-sheet-header">
+                <span class="nb-date-no">DATE / NO.</span>
+                <span class="nb-date-val">10.02 · No.04</span>
+              </div>
+              <div class="nb-sheet-grid">
+                <div class="hand-body">
+                  <p class="hand-p">
+                    被人深爱给予我力量，而深爱一个人赋予我勇气。
+                  </p>
+                  <p class="hand-p">
+                    十九岁生日快乐，+1。愿我们像《奥本海默》里那样，不管经历多少磨难与争吵，转过身向你伸出手时，你依然愿意握住我。
+                  </p>
+                  <p class="hand-p" style="margin-top:20px;color:rgba(76,70,64,0.55);font-size:16.5px;">
+                    —— 这一页后面的格子，留着以后继续慢慢写给你。
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
         <div class="nb-controls">
-          <button class="nb-page-btn" id="nbPrevBtn" type="button" disabled>‹ 上一页</button>
-          <span class="nb-page-num" id="nbPageNum">1 / 4</span>
-          <button class="nb-page-btn" id="nbNextBtn" type="button">翻到下一页 ›</button>
+          <button class="nb-page-btn" id="nbPrevBtn" type="button" disabled>↓ 翻回上一页</button>
+          <span class="nb-page-num" id="nbPageNum">封面 · 0 / 4</span>
+          <button class="nb-page-btn" id="nbNextBtn" type="button">向上翻页 ↑</button>
         </div>
       </div>
     </div>
@@ -1889,6 +2202,54 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 低调数据导入配置弹窗（支持导入歌单、本地音频、微信聊天记录与定制自动回复规则） -->
+  <div class="import-drawer" id="importDrawer">
+    <div class="import-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <strong style="font-size:14.5px;color:#ffe2bd;">导入歌单 · 聊天记录与自动回复</strong>
+        <button class="close-btn" id="closeImportBtn" type="button" style="position:static;width:28px;height:28px;font-size:13px;">✕</button>
+      </div>
+
+      <div class="import-tabs">
+        <button class="import-tab active" data-itab="paneMusic" type="button">🎵 歌单导入</button>
+        <button class="import-tab" data-itab="paneWechat" type="button">💬 聊天记录</button>
+        <button class="import-tab" data-itab="paneRules" type="button">✨ 自动回复</button>
+      </div>
+
+      <!-- Tab 1: 歌单导入 -->
+      <div class="import-pane active" id="paneMusic">
+        <div class="import-help">每行一首，格式：<code>歌名 - 歌手</code>（可选在后面加 <code>| 音频URL</code>，留空则自动演奏柔和旋律）：</div>
+        <textarea class="import-textarea" id="importTracksInput"></textarea>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <label class="import-act-btn" style="text-align:center;display:inline-block;">
+            + 添加本地音乐 (.mp3/.m4a)
+            <input type="file" id="importLocalAudio" accept="audio/*" multiple style="display:none;" />
+          </label>
+        </div>
+      </div>
+
+      <!-- Tab 2: 聊天记录导入 -->
+      <div class="import-pane" id="paneWechat">
+        <div class="import-help">每行一条，格式：<code>我: 内容</code>（代表男生/回复方）或 <code>+1: 内容</code>（代表女生）；可用 <code>--- 时间</code> 插入时间分割线：</div>
+        <textarea class="import-textarea" id="importChatInput"></textarea>
+      </div>
+
+      <!-- Tab 3: 自动回复规则 -->
+      <div class="import-pane" id="paneRules">
+        <div class="import-help">每行一条规则，格式：<code>关键词1,关键词2 => 回复内容</code>（当 +1 在手表微信发出含对应词的消息时触发；<code>* => 回复</code> 为默认兜底回复）：</div>
+        <textarea class="import-textarea" id="importRulesInput"></textarea>
+      </div>
+
+      <div class="import-help" style="margin-top:8px;color:rgba(230,161,92,0.85);">
+        提示：导入会保存在当前浏览器；若要让 +1 用自己手机扫 NFC 打开也看到你导入的真实歌单与记录，可点击“复制配置发给我”直接固化进线上网页。
+      </div>
+      <div class="import-actions">
+        <button class="import-act-btn" id="copyConfigJsonBtn" type="button">复制配置 JSON</button>
+        <button class="import-act-btn primary" id="applyImportBtn" type="button">应用并保存到手表</button>
       </div>
     </div>
   </div>
@@ -2045,12 +2406,14 @@
     drawDust();
 
     // ==========================================================
-    // 3. 轻柔和弦与 Apple Music 旋律合成
+    // 3. Apple Music 歌单数据 + 真实音频 / 八音盒合成双模式 + 本地保存
     // ==========================================================
-    const tracks = [
+    const STORAGE_KEY = "jiayi19_plus1_config_v1";
+
+    const DEFAULT_TRACKS = [
       {
         title: "放学后的夕阳前奏",
-        artist: "To Jiayi · 19",
+        artist: "To +1 · 19",
         cover: "assets/place-03.jpg",
         notes: [261.63, 329.63, 392.00, 493.88, 392.00, 329.63, 293.66, 349.23, 440.00, 523.25, 440.00, 349.23],
         tempo: 680
@@ -2068,14 +2431,69 @@
         cover: "assets/place-02.jpg",
         notes: [220.00, 261.63, 329.63, 392.00, 440.00, 392.00, 329.63, 261.63, 196.00, 246.94, 293.66, 392.00],
         tempo: 740
+      },
+      {
+        title: "给你的未完待续",
+        artist: "十月二日",
+        cover: "assets/place-01.jpg",
+        notes: [293.66, 349.23, 440.00, 523.25, 440.00, 349.23, 261.63, 329.63, 392.00, 493.88, 392.00, 329.63],
+        tempo: 640
       }
     ];
+
+    const DEFAULT_WECHAT_HISTORY = [
+      { role: "time", text: "十月二日 · 课桌前" },
+      { role: "me", text: "19岁生日快乐，+1 🎂" },
+      { role: "plus1", text: "谢谢！课桌上的蓝笔袋和小本子我都看到了" },
+      { role: "me", text: "蓝色笔袋里还收着你之前塞给我的那颗糖果🍬" },
+      { role: "plus1", text: "哈哈哈哈你竟然还记得那个整蛊！" }
+    ];
+
+    const DEFAULT_WECHAT_RULES = [
+      { keywords: ["生日", "19", "十月二", "快乐"], reply: "19岁生日快乐，+1！今天无论在哪里，你都是最偏爱的小寿星。" },
+      { keywords: ["糖", "纸巾", "整蛊", "骗", "拆穿"], reply: "哈哈哈哈被你憋笑整蛊到的画面我现在还记得，方块纸巾比真糖还甜。" },
+      { keywords: ["信", "本子", "笔记本", "字", "Mnemosyne"], reply: "那本上翻小本子攒了好久，翻到最后空白页是留着以后慢慢写给你的。" },
+      { keywords: ["想你", "抱", "喜欢", "爱", "在吗"], reply: "我一直在呀。你点开这里停留的每一秒，都像被我轻轻抱了一下。" },
+      { keywords: ["照片", "拍立得", "去哪", "地方", "旅行"], reply: "答应自己要去的地方，我们以后一起去把这些底片一张张拍成真的。" },
+      { keywords: ["歌", "音乐", "听", "唱"], reply: "表盘右侧那几首歌都是我想和你一起散步听的，上下滑表冠还能调音量。" },
+      { keywords: ["晚安", "睡", "困"], reply: "晚安 +1，19岁的第一晚要睡个好觉，梦里见。" },
+      { keywords: ["*"], reply: "收到啦 +1，不管是今天还是以后，只要你发消息，我都会在。" }
+    ];
+
+    let tracks = DEFAULT_TRACKS.map((t) => ({ ...t }));
+    let wechatHistory = DEFAULT_WECHAT_HISTORY.map((m) => ({ ...m }));
+    let wechatReplyRules = DEFAULT_WECHAT_RULES.map((r) => ({ ...r }));
+
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+      if (saved) {
+        if (Array.isArray(saved.tracks) && saved.tracks.length) tracks = saved.tracks;
+        if (Array.isArray(saved.wechatHistory) && saved.wechatHistory.length) wechatHistory = saved.wechatHistory;
+        if (Array.isArray(saved.wechatReplyRules) && saved.wechatReplyRules.length) wechatReplyRules = saved.wechatReplyRules;
+      }
+    } catch (_) {}
+
+    function saveCustomConfig() {
+      try {
+        const cleanTracks = tracks.map((t) => ({
+          ...t,
+          audioUrl: t.isBlob ? "" : (t.audioUrl || "")
+        }));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          tracks: cleanTracks,
+          wechatHistory,
+          wechatReplyRules
+        }));
+      } catch (_) {}
+    }
 
     let isPlaying = false;
     let trackIdx = 0;
     let noteStep = 0;
     let playTimer = null;
     let musicVolume = 72;
+    let showMusicList = false;
+    const customAudioPlayer = document.getElementById("customAudioPlayer");
 
     function playMusicNote(freq) {
       if (!audioCtx) return;
@@ -2109,29 +2527,80 @@
       sub.stop(now + 1.4);
     }
 
+    function renderPlaylistUI() {
+      const listEl = document.getElementById("wMusicPlaylist");
+      if (!listEl) return;
+      listEl.innerHTML = "";
+      tracks.forEach((t, i) => {
+        const row = document.createElement("div");
+        row.className = `w-track-row${i === trackIdx ? " active" : ""}`;
+        row.innerHTML = `
+          <img src="${t.cover || "assets/place-03.jpg"}" alt="" />
+          <div class="w-track-row-meta">
+            <div class="w-track-row-title">${t.title}</div>
+            <div class="w-track-row-artist">${t.artist || "To +1 · 19"}</div>
+          </div>
+          <span style="font-size:10px;color:#fa2d48;">${i === trackIdx && isPlaying ? "♫" : ""}</span>
+        `;
+        row.addEventListener("click", () => {
+          triggerHaptic("tick");
+          trackIdx = i;
+          noteStep = 0;
+          showMusicList = false;
+          startMusic();
+        });
+        listEl.appendChild(row);
+      });
+    }
+
     function syncMusicUI() {
+      if (trackIdx >= tracks.length) trackIdx = 0;
       const t = tracks[trackIdx];
       document.getElementById("wTrackTitle").textContent = t.title;
-      document.getElementById("wTrackArtist").textContent = t.artist;
-      document.querySelector(".w-music-art").src = t.cover;
+      document.getElementById("wTrackArtist").textContent = t.artist || "To +1 · 19";
+      document.querySelector(".w-music-art").src = t.cover || "assets/place-03.jpg";
       document.getElementById("wPlayBtn").textContent = isPlaying ? "❚❚" : "▶";
       document.getElementById("wVolText").textContent = `${musicVolume}%`;
       document.getElementById("wVolFill").style.width = `${musicVolume}%`;
+      document.getElementById("wMusicBody").classList.toggle("show-list", showMusicList);
+      document.getElementById("wMusicNavTitle").textContent = showMusicList ? `歌单 (${tracks.length})` : "播放中";
+      if (customAudioPlayer) customAudioPlayer.volume = musicVolume / 100;
+      renderPlaylistUI();
     }
 
     function startMusic() {
       ensureAudio();
       if (playTimer) clearInterval(playTimer);
+      playTimer = null;
+      if (customAudioPlayer) {
+        customAudioPlayer.pause();
+      }
       isPlaying = true;
+      const current = tracks[trackIdx];
       syncMusicUI();
+
+      if (current.audioUrl && customAudioPlayer) {
+        customAudioPlayer.src = current.audioUrl;
+        customAudioPlayer.volume = musicVolume / 100;
+        customAudioPlayer.play().catch(() => {});
+        customAudioPlayer.onended = () => {
+          trackIdx = (trackIdx + 1) % tracks.length;
+          startMusic();
+        };
+        return;
+      }
+
+      const seq = Array.isArray(current.notes) && current.notes.length
+        ? current.notes
+        : DEFAULT_TRACKS[trackIdx % DEFAULT_TRACKS.length].notes;
+      const tempo = current.tempo || 660;
       const tick = () => {
         if (!isPlaying) return;
-        const seq = tracks[trackIdx].notes;
         playMusicNote(seq[noteStep % seq.length]);
         noteStep += 1;
       };
       tick();
-      playTimer = setInterval(tick, tracks[trackIdx].tempo);
+      playTimer = setInterval(tick, tempo);
     }
 
     function pauseMusic() {
@@ -2140,8 +2609,11 @@
         clearInterval(playTimer);
         playTimer = null;
       }
+      if (customAudioPlayer) customAudioPlayer.pause();
       syncMusicUI();
     }
+
+    syncMusicUI();
 
     // ==========================================================
     // 4. 开场醒来 + 弹窗调度
@@ -2308,8 +2780,12 @@
         focusedAppIndex = (focusedAppIndex + dir + appBtns.length) % appBtns.length;
         appBtns.forEach((b, i) => b.classList.toggle("focused", i === focusedAppIndex));
       } else if (currentWatchScreen === "wScreenMusic") {
-        musicVolume = Math.max(10, Math.min(100, musicVolume - dir * 8));
-        syncMusicUI();
+        if (showMusicList) {
+          document.getElementById("wMusicPlaylist").scrollTop += dir * 28;
+        } else {
+          musicVolume = Math.max(10, Math.min(100, musicVolume - dir * 8));
+          syncMusicUI();
+        }
       } else if (currentWatchScreen === "wScreenWechat") {
         document.getElementById("wWechatScroll").scrollTop += dir * 28;
       } else if (currentWatchScreen === "wScreenPhotos") {
@@ -2378,7 +2854,12 @@
       wPhotoViewer.classList.remove("active");
     });
 
-    // Watch 音乐控制
+    // Watch 音乐控制 & 歌单列表切换
+    document.getElementById("wPlaylistToggleBtn").addEventListener("click", () => {
+      triggerHaptic("tick");
+      showMusicList = !showMusicList;
+      syncMusicUI();
+    });
     document.getElementById("wPlayBtn").addEventListener("click", () => {
       triggerHaptic("heavy");
       if (isPlaying) pauseMusic();
@@ -2397,17 +2878,220 @@
       startMusic();
     });
 
-    // Watch 微信快捷回复
+    // ==========================================================
+    // 5.5 Watch 微信：聊天记录导入渲染 + 自由输入 + 关键词自动回复引擎 + 导入面板
+    // ==========================================================
     const wcScroll = document.getElementById("wWechatScroll");
-    document.querySelectorAll(".js-wc-reply").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        triggerHaptic("heavy");
-        const bubble = document.createElement("div");
-        bubble.className = "wc-msg wc-me";
-        bubble.textContent = btn.dataset.reply;
-        wcScroll.appendChild(bubble);
-        wcScroll.scrollTop = wcScroll.scrollHeight;
+
+    function renderWechatMessages() {
+      wcScroll.innerHTML = "";
+      wechatHistory.forEach((m) => {
+        const el = document.createElement("div");
+        if (m.role === "time") {
+          el.className = "wc-time";
+        } else if (m.role === "plus1") {
+          // +1 自己拿着手表发出消息显示在右侧绿气泡
+          el.className = "wc-msg wc-me";
+        } else {
+          // 男生（我）给她的历史记录和自动回复显示在左侧
+          el.className = "wc-msg wc-her";
+        }
+        el.textContent = m.text;
+        wcScroll.appendChild(el);
       });
+      wcScroll.scrollTop = wcScroll.scrollHeight;
+    }
+    renderWechatMessages();
+
+    function matchWechatReply(text) {
+      const normalized = text.trim().toLowerCase();
+      for (const rule of wechatReplyRules) {
+        if (!Array.isArray(rule.keywords)) continue;
+        if (rule.keywords.includes("*")) continue;
+        if (rule.keywords.some((kw) => kw && normalized.includes(kw.toLowerCase()))) {
+          return rule.reply;
+        }
+      }
+      const fallback = wechatReplyRules.find((r) => Array.isArray(r.keywords) && r.keywords.includes("*"));
+      return fallback ? fallback.reply : "收到啦 +1，无论何时只要你发消息，我都会回复你。";
+    }
+
+    function sendPlus1WechatMessage(text) {
+      const clean = text.trim();
+      if (!clean) return;
+      triggerHaptic("heavy");
+      wechatHistory.push({ role: "plus1", text: clean });
+      saveCustomConfig();
+      renderWechatMessages();
+
+      // 显示拟真“对方正在输入...”然后弹出匹配的专属回复
+      const typingEl = document.createElement("div");
+      typingEl.className = "wc-typing";
+      typingEl.textContent = "正在输入...";
+      wcScroll.appendChild(typingEl);
+      wcScroll.scrollTop = wcScroll.scrollHeight;
+
+      const replyText = matchWechatReply(clean);
+      setTimeout(() => {
+        typingEl.remove();
+        wechatHistory.push({ role: "me", text: replyText });
+        saveCustomConfig();
+        renderWechatMessages();
+        triggerHaptic("tick");
+        playMicroTick(980, 0.04, 0.025);
+      }, 780);
+    }
+
+    document.querySelectorAll(".js-wc-reply").forEach((btn) => {
+      btn.addEventListener("click", () => sendPlus1WechatMessage(btn.dataset.reply));
+    });
+
+    const wcComposeBar = document.getElementById("wcComposeBar");
+    const wcCustomInput = document.getElementById("wcCustomInput");
+    document.getElementById("wcToggleInputBtn").addEventListener("click", () => {
+      triggerHaptic("tick");
+      wcComposeBar.classList.toggle("open");
+      if (wcComposeBar.classList.contains("open")) wcCustomInput.focus();
+    });
+    document.getElementById("wcSendCustomBtn").addEventListener("click", () => {
+      sendPlus1WechatMessage(wcCustomInput.value);
+      wcCustomInput.value = "";
+    });
+    wcCustomInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        sendPlus1WechatMessage(wcCustomInput.value);
+        wcCustomInput.value = "";
+      }
+    });
+
+    // 导入弹窗逻辑（歌单 / 本地音频 / 聊天记录 / 自动回复规则）
+    const importDrawer = document.getElementById("importDrawer");
+    const importTracksInput = document.getElementById("importTracksInput");
+    const importChatInput = document.getElementById("importChatInput");
+    const importRulesInput = document.getElementById("importRulesInput");
+
+    function populateImportFields() {
+      importTracksInput.value = tracks.map((t) =>
+        `${t.title} - ${t.artist || "To +1 · 19"}${t.audioUrl && !t.isBlob ? ` | ${t.audioUrl}` : ""}`
+      ).join("\n");
+      importChatInput.value = wechatHistory.map((m) => {
+        if (m.role === "time") return `--- ${m.text}`;
+        return `${m.role === "me" ? "我" : "+1"}: ${m.text}`;
+      }).join("\n");
+      importRulesInput.value = wechatReplyRules.map((r) => `${r.keywords.join(",")} => ${r.reply}`).join("\n");
+    }
+
+    document.getElementById("openImportBtn").addEventListener("click", () => {
+      triggerHaptic("tick");
+      populateImportFields();
+      importDrawer.classList.add("open");
+    });
+    document.getElementById("closeImportBtn").addEventListener("click", () => {
+      importDrawer.classList.remove("open");
+    });
+
+    document.querySelectorAll(".import-tab").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".import-tab").forEach((t) => t.classList.remove("active"));
+        document.querySelectorAll(".import-pane").forEach((p) => p.classList.remove("active"));
+        tab.classList.add("active");
+        document.getElementById(tab.dataset.itab).classList.add("active");
+      });
+    });
+
+    document.getElementById("importLocalAudio").addEventListener("change", (e) => {
+      const files = Array.from(e.target.files || []);
+      files.forEach((f, idx) => {
+        const cleanTitle = f.name.replace(/\.[^.]+$/, "");
+        const url = URL.createObjectURL(f);
+        tracks.unshift({
+          title: cleanTitle,
+          artist: "本地导入 · To +1",
+          cover: `assets/place-0${((idx % 6) + 1)}.jpg`,
+          audioUrl: url,
+          isBlob: true
+        });
+      });
+      if (files.length) {
+        trackIdx = 0;
+        syncMusicUI();
+        populateImportFields();
+      }
+    });
+
+    document.getElementById("applyImportBtn").addEventListener("click", () => {
+      triggerHaptic("heavy");
+      // 1. 解析歌单文本
+      const trackLines = importTracksInput.value.split(/\n+/).map((s) => s.trim()).filter(Boolean);
+      if (trackLines.length) {
+        tracks = trackLines.map((line, i) => {
+          const [left, urlPart] = line.split("|").map((s) => s.trim());
+          const parts = left.split(/\s*-\s*/);
+          const title = parts[0] || `Track ${i + 1}`;
+          const artist = parts.slice(1).join(" - ") || "To +1 · 19";
+          const existing = tracks.find((old) => old.title === title);
+          return {
+            title,
+            artist,
+            cover: (existing && existing.cover) || `assets/place-0${(i % 6) + 1}.jpg`,
+            audioUrl: urlPart || (existing && existing.isBlob ? existing.audioUrl : ""),
+            isBlob: !urlPart && !!(existing && existing.isBlob),
+            notes: DEFAULT_TRACKS[i % DEFAULT_TRACKS.length].notes,
+            tempo: DEFAULT_TRACKS[i % DEFAULT_TRACKS.length].tempo
+          };
+        });
+        trackIdx = 0;
+        syncMusicUI();
+      }
+
+      // 2. 解析聊天记录文本
+      const chatLines = importChatInput.value.split(/\n+/).map((s) => s.trim()).filter(Boolean);
+      if (chatLines.length) {
+        wechatHistory = chatLines.map((line) => {
+          if (line.startsWith("---")) return { role: "time", text: line.replace(/^---+\s*/, "") };
+          const match = line.match(/^(\+1|她|对方|me|我)\s*[:：]\s*(.+)$/i);
+          if (match) {
+            const speaker = match[1].toLowerCase();
+            const role = (speaker === "+1" || speaker === "她") ? "plus1" : "me";
+            return { role, text: match[2].trim() };
+          }
+          return { role: "plus1", text: line };
+        });
+        renderWechatMessages();
+      }
+
+      // 3. 解析自动回复规则
+      const ruleLines = importRulesInput.value.split(/\n+/).map((s) => s.trim()).filter(Boolean);
+      if (ruleLines.length) {
+        const parsed = [];
+        ruleLines.forEach((line) => {
+          const arrowIdx = line.indexOf("=>");
+          if (arrowIdx > 0) {
+            const kws = line.slice(0, arrowIdx).split(/[,，]/).map((k) => k.trim()).filter(Boolean);
+            const reply = line.slice(arrowIdx + 2).trim();
+            if (kws.length && reply) parsed.push({ keywords: kws, reply });
+          }
+        });
+        if (parsed.length) wechatReplyRules = parsed;
+      }
+
+      saveCustomConfig();
+      importDrawer.classList.remove("open");
+    });
+
+    document.getElementById("copyConfigJsonBtn").addEventListener("click", () => {
+      const payload = JSON.stringify({
+        tracks: tracks.map(({ title, artist, audioUrl }) => ({ title, artist, ...(audioUrl ? { audioUrl } : {}) })),
+        wechatHistory,
+        wechatReplyRules
+      }, null, 2);
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(payload).then(() => {
+          const btn = document.getElementById("copyConfigJsonBtn");
+          btn.textContent = "已复制 JSON ✓";
+          setTimeout(() => { btn.textContent = "复制配置 JSON"; }, 1800);
+        });
+      }
     });
 
     // ==========================================================
@@ -2465,19 +3149,36 @@
       playMicroTick(640, 0.03, 0.018);
 
       nbPages.forEach((pg, i) => {
-        pg.classList.remove("is-current", "is-flipped-left", "is-waiting-right");
-        if (i < currentNbPage) pg.classList.add("is-flipped-left");
+        pg.classList.remove("is-current", "is-flipped-up", "is-waiting-down");
+        if (i < currentNbPage) pg.classList.add("is-flipped-up");
         else if (i === currentNbPage) pg.classList.add("is-current");
-        else pg.classList.add("is-waiting-right");
+        else pg.classList.add("is-waiting-down");
       });
 
       nbPrevBtn.disabled = currentNbPage === 0;
       nbNextBtn.disabled = currentNbPage === nbPages.length - 1;
-      nbPageNum.textContent = `${currentNbPage + 1} / ${nbPages.length}`;
+      nbPageNum.textContent = currentNbPage === 0
+        ? `封面 · 0 / ${nbPages.length - 1}`
+        : `第 ${currentNbPage} / ${nbPages.length - 1} 页`;
     }
 
     nbPrevBtn.addEventListener("click", () => updateNotebookPage(currentNbPage - 1));
     nbNextBtn.addEventListener("click", () => updateNotebookPage(currentNbPage + 1));
+
+    // 点击黑封面直接向上掀开
+    document.getElementById("nbCoverPage").addEventListener("click", () => {
+      if (currentNbPage === 0) updateNotebookPage(1);
+    });
+
+    // 支持在拿在手里的笔记本上直接“向上滑翻下一页 / 向下滑翻上一页”
+    const nbViewport = document.getElementById("nbViewport");
+    let nbTouchStartY = 0;
+    nbViewport.addEventListener("pointerdown", (e) => { nbTouchStartY = e.clientY; });
+    nbViewport.addEventListener("pointerup", (e) => {
+      const dy = e.clientY - nbTouchStartY;
+      if (dy < -42) updateNotebookPage(currentNbPage + 1);
+      else if (dy > 42) updateNotebookPage(currentNbPage - 1);
+    });
 
     // ==========================================================
     // 8. 拍立得交互墙（复刻 Julab 视频：叠放 -> 散开 -> 网格 -> 一张张翻过来显影 + 背面写字）
