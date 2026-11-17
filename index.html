@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>To Jiayi · 19th Birthday</title>
+  <style>
+    /* 基础变量与配色：取自午夜星轨深蓝与暖金微光 */
+    :root {
+      --bg-deep: #070b18;
+      --bg-mid: #0e1933;
+      --gold-warm: #e8cfa4;
+      --gold-muted: #ac916d;
+      --text-main: #f5efe6;
+      --text-sub: rgba(245, 239, 230, 0.72);
+      --glass-bg: rgba(255, 255, 255, 0.04);
+      --glass-border: rgba(232, 207, 164, 0.22);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      min-height: 100dvh;
+      background: radial-gradient(circle at 50% 25%, #16274c 0%, var(--bg-mid) 45%, var(--bg-deep) 100%);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Noto Serif SC", serif;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    /* 背景星光画布 */
+    #starfield {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* 居中主卡片容器 */
+    .stage {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 28px 24px env(safe-area-inset-bottom, 24px);
+      text-align: center;
+    }
+
+    /* 呼吸光球 */
+    .orb-wrap {
+      position: relative;
+      width: 96px;
+      height: 96px;
+      margin-bottom: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .orb-halo {
+      position: absolute;
+      inset: -14px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(232, 207, 164, 0.32) 0%, rgba(232, 207, 164, 0) 70%);
+      animation: breathe 4.2s ease-in-out infinite;
+    }
+
+    .orb-core {
+      position: relative;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 32%, #fff5e1 0%, var(--gold-warm) 42%, var(--gold-muted) 100%);
+      box-shadow: 0 0 28px rgba(232, 207, 164, 0.45), inset 0 0 12px rgba(255, 255, 255, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: #24190e;
+      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .orb-wrap:active .orb-core {
+      transform: scale(0.92);
+    }
+
+    @keyframes breathe {
+      0%, 100% {
+        transform: scale(0.92);
+        opacity: 0.65;
+      }
+      50% {
+        transform: scale(1.16);
+        opacity: 1;
+      }
+    }
+
+    /* 英文徽章 */
+    .badge {
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size: 12px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold-warm);
+      opacity: 0.85;
+      margin-bottom: 18px;
+      animation: fadeUp 1s ease forwards;
+    }
+
+    /* 主标题与正文 */
+    .headline {
+      font-size: clamp(26px, 6.8vw, 34px);
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      line-height: 1.45;
+      margin-bottom: 16px;
+      color: var(--text-main);
+      animation: fadeUp 1.15s ease forwards;
+    }
+
+    .subtitle {
+      max-width: 320px;
+      font-size: 15px;
+      line-height: 1.9;
+      color: var(--text-sub);
+      font-weight: 300;
+      letter-spacing: 0.04em;
+      animation: fadeUp 1.35s ease forwards;
+    }
+
+    /* 底部提示卡片 */
+    .pill {
+      margin-top: 40px;
+      padding: 12px 22px;
+      border-radius: 999px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      color: var(--gold-warm);
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.25s ease;
+      animation: fadeUp 1.55s ease forwards;
+    }
+
+    .pill:active {
+      transform: scale(0.96);
+      background: rgba(232, 207, 164, 0.12);
+    }
+
+    .whisper {
+      margin-top: 16px;
+      min-height: 22px;
+      font-size: 12.5px;
+      color: rgba(232, 207, 164, 0.78);
+      letter-spacing: 0.06em;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    .whisper.show {
+      opacity: 1;
+    }
+
+    .footer-sign {
+      position: fixed;
+      bottom: max(18px, env(safe-area-inset-bottom, 18px));
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      color: rgba(245, 239, 230, 0.35);
+      pointer-events: none;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="starfield"></canvas>
+
+  <main class="stage">
+    <div class="orb-wrap" id="orbBtn" role="button" aria-label="点亮星光">
+      <div class="orb-halo"></div>
+      <div class="orb-core">19</div>
+    </div>
+
+    <div class="badge">To Jiayi · Lv.19</div>
+    <h1 class="headline">你来了。</h1>
+    <p class="subtitle">
+      在这个页面停留的每一秒，<br />
+      都像被我轻轻抱了一下。<br />
+      正在为你布置属于 19 岁的秘密空间……
+    </p>
+
+    <button class="pill" id="hugBtn" type="button">轻触收集一颗星光</button>
+    <p class="whisper" id="whisperText"></p>
+  </main>
+
+  <footer class="footer-sign">13.8 BILLION YEARS IN THE MAKING</footer>
+
+  <script>
+    // 绘制柔和闪烁与漂浮星光背景
+    const canvas = document.getElementById("starfield");
+    const ctx = canvas.getContext("2d");
+    let width = 0;
+    let height = 0;
+    const stars = [];
+    const ripples = [];
+
+    function resize() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function initStars() {
+      stars.length = 0;
+      const count = Math.min(95, Math.floor((width * height) / 4800));
+      for (let i = 0; i < count; i++) {
+        stars.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          r: Math.random() * 1.4 + 0.4,
+          alpha: Math.random() * 0.65 + 0.15,
+          phase: Math.random() * Math.PI * 2,
+          speed: Math.random() * 0.015 + 0.006,
+          vy: -(Math.random() * 0.14 + 0.03)
+        });
+      }
+    }
+
+    function spawnRipple(x, y) {
+      ripples.push({ x, y, r: 10, maxR: 130, alpha: 0.6 });
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+
+      for (const s of stars) {
+        s.phase += s.speed;
+        s.y += s.vy;
+        if (s.y < -4) {
+          s.y = height + 4;
+          s.x = Math.random() * width;
+        }
+        const twinkle = s.alpha * (0.65 + 0.35 * Math.sin(s.phase));
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(245, 234, 214, ${twinkle.toFixed(3)})`;
+        ctx.fill();
+      }
+
+      for (let i = ripples.length - 1; i >= 0; i--) {
+        const rp = ripples[i];
+        rp.r += 2.2;
+        rp.alpha *= 0.96;
+        ctx.beginPath();
+        ctx.arc(rp.x, rp.y, rp.r, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(232, 207, 164, ${rp.alpha.toFixed(3)})`;
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+        if (rp.alpha < 0.02 || rp.r > rp.maxR) {
+          ripples.splice(i, 1);
+        }
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    window.addEventListener("resize", () => {
+      resize();
+      initStars();
+    });
+
+    resize();
+    initStars();
+    animate();
+
+    // 点击星光时的温柔回应句库
+    const whispers = [
+      "严格地说，138 亿年前咱俩就见过了。",
+      "世界终于要见到我早就见到过的那个熠熠生辉的你了。",
+      "希望你 19 岁的每一天，都像咬开青提那样清凉又甜。",
+      "在没有见面的日子里，我的想念都需要一点具体的安置。",
+      "19 岁生日快乐，惊喜正片很快就会在这里亮起。"
+    ];
+    let idx = 0;
+    const whisperEl = document.getElementById("whisperText");
+    const orbBtn = document.getElementById("orbBtn");
+    const hugBtn = document.getElementById("hugBtn");
+
+    function triggerSpark(e) {
+      const rect = orbBtn.getBoundingClientRect();
+      const cx = (e && e.clientX) || rect.left + rect.width / 2;
+      const cy = (e && e.clientY) || rect.top + rect.height / 2;
+      spawnRipple(cx, cy);
+      whisperEl.classList.remove("show");
+      setTimeout(() => {
+        whisperEl.textContent = whispers[idx % whispers.length];
+        idx += 1;
+        whisperEl.classList.add("show");
+      }, 160);
+    }
+
+    orbBtn.addEventListener("click", triggerSpark);
+    hugBtn.addEventListener("click", triggerSpark);
+  </script>
+</body>
+</html>
