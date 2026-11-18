@@ -434,25 +434,28 @@
       filter: drop-shadow(0 6px 11px rgba(0, 0, 0, 0.74)) brightness(0.92);
     }
 
-    /* 各真实物品在笔袋内衬夹缝与笔旁的精确安放（pouch-inside.jpg: 768x1376） */
+    /* 各真实物品完全塞进白拉链开口之内的蓝布内衬与笔缝间（pouch-inside.jpg: 768x1376） */
     /* 1. 阿尔卑斯折纸糖果 */
-    .pi-candy  { left: 21%; top: 38%; width: 15%; transform: translate(-50%, -50%) rotate(-18deg); }
-    /* 2. 黄色横线长纸条（折叠态塞在右上夹缝） */
-    .pi-yellow { left: 79%; top: 38%; width: 14%; aspect-ratio: 1 / 1.3; transform: translate(-50%, -50%) rotate(15deg); }
-    /* 3. Mnemosyne 方格好感度纸条（折叠态塞在右中夹缝） */
-    .pi-grid   { left: 82%; top: 53%; width: 13%; aspect-ratio: 1.2 / 1; transform: translate(-50%, -50%) rotate(-10deg); }
-    /* 4. 橙红神偷奶爸折纸条（实拍对折图） */
-    .pi-orange { left: 22%; top: 54%; width: 18%; transform: translate(-50%, -50%) rotate(-74deg); }
-    /* 5. 白色手撕 shit 纸条 */
-    .pi-shit   { left: 73%; top: 68%; width: 20%; transform: translate(-50%, -50%) rotate(-24deg); }
-    /* 6. 十六宫格涂鸦大纸（折小成 1/16 方块露角压在左上） */
-    .pi-doodle { left: 27%; top: 27%; width: 12%; aspect-ratio: 1 / 1; transform: translate(-50%, -50%) rotate(12deg); }
-    /* 7. 手绘牛排折纸方块 */
-    .pi-steak  { left: 32%; top: 73%; width: 14%; aspect-ratio: 1.15 / 1; transform: translate(-50%, -50%) rotate(-12deg); }
-    /* 8. 樱桃蛋糕不规则白纸片 */
-    .pi-cake   { left: 68%; top: 26%; width: 14%; transform: translate(-50%, -50%) rotate(18deg); }
-    /* 9. 红珠链篮球小公仔挂件（紧挨右下白塑料环） */
-    .pi-duck   { left: 68%; top: 84%; width: 12.5%; transform: translate(-50%, -50%) rotate(16deg); z-index: 9; }
+    .pi-candy  { left: 21%; top: 41%; width: 14%; transform: translate(-50%, -50%) rotate(-16deg); }
+    /* 2. 黄色横线长纸条（折起塞在右上蓝袋壁） */
+    .pi-yellow { left: 77%; top: 42%; width: 12.5%; aspect-ratio: 1 / 1.15; transform: translate(-50%, -50%) rotate(11deg); }
+    .pi-yellow img { transform: scale(2.1); object-position: 38% 72%; }
+    /* 3. Mnemosyne 方格好感度纸条（折起塞在右中内衬） */
+    .pi-grid   { left: 78%; top: 55%; width: 12%; aspect-ratio: 1.15 / 1; transform: translate(-50%, -50%) rotate(-12deg); }
+    .pi-grid img { transform: scale(1.65); object-position: 45% 42%; }
+    /* 4. 橙红神偷奶爸折纸条（实拍对折图，塞在左中袋壁） */
+    .pi-orange { left: 22%; top: 55%; width: 17%; transform: translate(-50%, -50%) rotate(-76deg); }
+    /* 5. 白色手撕 shit 纸条（斜插右下笔隙） */
+    .pi-shit   { left: 67%; top: 68%; width: 19%; transform: translate(-50%, -50%) rotate(-24deg); }
+    /* 6. 十六宫格涂鸦大纸（折成 1/16 小格压在左上袋口内侧） */
+    .pi-doodle { left: 30%; top: 29%; width: 10.5%; aspect-ratio: 1 / 1; transform: translate(-50%, -50%) rotate(10deg); }
+    .pi-doodle img { transform: scale(3.2); object-position: 78% 36%; }
+    /* 7. 手绘牛排折纸方块（斜塞在左下袋角里面） */
+    .pi-steak  { left: 37%; top: 70%; width: 11.5%; aspect-ratio: 1.15 / 1; transform: translate(-50%, -50%) rotate(-14deg); }
+    /* 8. 樱桃蛋糕不规则白纸片（塞在右上白拉链内侧） */
+    .pi-cake   { left: 66%; top: 29%; width: 12.5%; transform: translate(-50%, -50%) rotate(16deg); }
+    /* 9. 红珠链篮球小公仔挂件（正好挂靠在右下白塑料拉环旁） */
+    .pi-duck   { left: 65%; top: 88%; width: 12.5%; transform: translate(-50%, -50%) rotate(14deg); z-index: 9; }
 
     /* 剥开纸糖果后直接展现真实折叠纸巾特写，只留六个句号 */
     .tissue-photo-overlay {
