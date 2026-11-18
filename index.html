@@ -197,7 +197,7 @@
 
     /* 主图 4 个桌面物品精确中心（classroom_desk_real_v4: 768x1376） */
     .hs-pencil   { left: 30%;   top: 49%;   width: 34%; height: 13%; }
-    .hs-camera   { left: 69%;   top: 51%;   width: 26%; height: 12%; }
+    .hs-photos   { left: 69.5%; top: 50.2%; width: 25%; height: 14%; }
     .hs-notebook { left: 35%;   top: 65%;   width: 28%; height: 17%; }
     .hs-watch    { left: 74.5%; top: 63.5%; width: 20%; height: 12%; }
 
@@ -662,416 +662,6 @@
     .modal-panel.active { display: flex; align-items: center; justify-content: center; }
 
     /* ==========================================================
-       三、Pentax Espio 925 银色胶片相机拟物建构 + 拉开胶卷看照片
-       ========================================================== */
-    .camera-stage {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: min(360px, 92vw);
-    }
-
-    /* 严格按照 Pentax Espio 925 银色外观建构的拟物金属机身 */
-    .espio-body {
-      position: relative;
-      width: 312px;
-      height: 178px;
-      border-radius: 20px 28px 22px 18px;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.42) 0%, rgba(255,255,255,0.06) 14%, transparent 65%, rgba(0,0,0,0.28) 100%),
-        linear-gradient(125deg, #dcdad2 0%, #c6c3b9 42%, #b5b1a7 78%, #9e9b91 100%);
-      box-shadow:
-        0 26px 56px rgba(0, 0, 0, 0.85),
-        inset 0 2px 3px rgba(255, 255, 255, 0.8),
-        inset 0 -4px 8px rgba(40, 38, 34, 0.5);
-      border: 1px solid rgba(255, 255, 255, 0.45);
-      flex-shrink: 0;
-    }
-
-    /* 机顶金属台阶与镀铬快门按钮 + 墨绿液晶屏 */
-    .espio-shutter {
-      position: absolute;
-      top: -9px;
-      right: 36px;
-      width: 32px;
-      height: 11px;
-      border-radius: 10px 10px 2px 2px;
-      background: linear-gradient(to bottom, #f4f4f6 0%, #a2a09a 100%);
-      border: 1px solid rgba(60, 58, 52, 0.45);
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.45);
-      cursor: pointer;
-      transition: transform 0.1s ease;
-    }
-    .espio-shutter:active { transform: translateY(3px); }
-
-    .espio-lcd {
-      position: absolute;
-      top: 8px;
-      right: 84px;
-      width: 44px;
-      height: 18px;
-      border-radius: 4px;
-      background: #7c8778;
-      border: 1.5px solid #4d4c48;
-      box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.55);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 4px;
-      font-family: var(--mono);
-      font-size: 9px;
-      font-weight: 700;
-      color: #1c221b;
-    }
-
-    /* 右侧立体黑色/深灰防滑人体工学握手 */
-    .espio-grip {
-      position: absolute;
-      right: 0;
-      top: 10px;
-      bottom: 8px;
-      width: 58px;
-      border-radius: 12px 26px 20px 10px;
-      background:
-        repeating-radial-gradient(circle at 0 0, rgba(0,0,0,0.22) 0 1px, transparent 1px 3px),
-        linear-gradient(to right, #3c3a37 0%, #262522 48%, #181715 100%);
-      box-shadow: -3px 0 8px rgba(0, 0, 0, 0.45), inset 2px 0 4px rgba(255, 255, 255, 0.12);
-    }
-
-    .espio-ir-dot {
-      position: absolute;
-      right: 44px;
-      bottom: 28px;
-      width: 9px;
-      height: 14px;
-      border-radius: 4px;
-      background: linear-gradient(145deg, #2b080a, #0b0202);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-    }
-
-    /* 左上闪光灯矩阵棱镜 */
-    .espio-flash {
-      position: absolute;
-      left: 18px;
-      top: 16px;
-      width: 58px;
-      height: 28px;
-      border-radius: 5px;
-      background:
-        repeating-linear-gradient(90deg, rgba(255,255,255,0.4) 0 2px, rgba(165,165,172,0.5) 2px 5px),
-        linear-gradient(to bottom, #f8f9fb, #c8ccd4);
-      border: 1.5px solid #6e6c66;
-      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.35);
-      transition: filter 0.12s ease;
-    }
-
-    .espio-flash.flashing {
-      filter: brightness(3.2) drop-shadow(0 0 24px #fff7de);
-    }
-
-    /* 光学取景窗 + 双 AF 红外对焦传感器 */
-    .espio-vf-row {
-      position: absolute;
-      left: 84px;
-      top: 16px;
-      display: flex;
-      gap: 6px;
-      align-items: center;
-    }
-
-    .espio-vf {
-      width: 24px;
-      height: 22px;
-      border-radius: 4px;
-      background: radial-gradient(circle at 32% 32%, #485e6a, #0c1014 70%);
-      border: 1.5px solid #595751;
-      box-shadow: inset 0 0 5px rgba(140, 210, 255, 0.25);
-    }
-
-    .espio-af {
-      width: 14px;
-      height: 18px;
-      border-radius: 3px;
-      background: linear-gradient(145deg, #1b1819, #080708);
-      border: 1px solid #5c5a54;
-    }
-
-    .espio-brand-pentax {
-      position: absolute;
-      left: 19px;
-      top: 52px;
-      font-family: "Helvetica Neue", Arial, sans-serif;
-      font-size: 13px;
-      font-weight: 800;
-      letter-spacing: 0.14em;
-      color: #242320;
-      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.65);
-    }
-
-    .espio-model-txt {
-      position: absolute;
-      left: 19px;
-      bottom: 20px;
-      font-family: "Helvetica Neue", Arial, sans-serif;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      color: #3b3934;
-    }
-
-    /* 居中偏右两段式银黑变焦镜头圆筒（带镀膜玻璃反光） */
-    .espio-lens-outer {
-      position: absolute;
-      left: 108px;
-      top: 46px;
-      width: 118px;
-      height: 118px;
-      border-radius: 50%;
-      background:
-        conic-gradient(from 30deg, #b8b5ab, #e6e4dc, #97948c, #dcdad2, #a7a49b, #b8b5ab);
-      box-shadow:
-        0 12px 24px rgba(0, 0, 0, 0.52),
-        inset 0 2px 4px rgba(255, 255, 255, 0.8),
-        inset 0 -3px 6px rgba(0, 0, 0, 0.4);
-      border: 1.5px solid #6b6860;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-    }
-
-    .espio-lens-mid {
-      width: 96px;
-      height: 96px;
-      border-radius: 50%;
-      background: radial-gradient(circle, #18181a 56%, #2b2b2f 85%, #111113 100%);
-      border: 2px solid #484642;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.9);
-    }
-
-    .espio-lens-ring-txt {
-      position: absolute;
-      inset: 4px;
-      border-radius: 50%;
-      border: 1px dashed rgba(255, 255, 255, 0.16);
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      padding-top: 4px;
-      font-size: 5.5px;
-      letter-spacing: 0.08em;
-      color: rgba(255, 255, 255, 0.6);
-    }
-
-    .espio-lens-glass {
-      width: 58px;
-      height: 58px;
-      border-radius: 50%;
-      background:
-        radial-gradient(circle at 34% 30%, rgba(255, 255, 255, 0.55) 0%, transparent 18%),
-        radial-gradient(circle at 68% 66%, rgba(80, 195, 165, 0.35) 0%, transparent 32%),
-        radial-gradient(circle at 28% 72%, rgba(165, 110, 220, 0.3) 0%, transparent 36%),
-        radial-gradient(circle, #06090f 30%, #142230 100%);
-      border: 3px solid #1e1e22;
-      box-shadow: inset 0 0 12px #000;
-    }
-
-    /* 胶卷暗盒 + 可向右滑动拉出的 35mm 实景胶片条 */
-    .film-pull-rig {
-      margin-top: 18px;
-      width: 100%;
-      display: flex;
-      align-items: center;
-      position: relative;
-      height: 154px;
-    }
-
-    /* 35mm 复古金属暗盒筒 */
-    .film-canister {
-      width: 62px;
-      height: 146px;
-      border-radius: 10px;
-      background:
-        linear-gradient(90deg, #1b2d22 0%, #2d553d 28%, #1d3527 68%, #101c15 100%);
-      border-top: 8px solid #1b1b1d;
-      border-bottom: 8px solid #1b1b1d;
-      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.78), inset 0 0 8px rgba(255, 255, 255, 0.14);
-      position: relative;
-      z-index: 6;
-      flex-shrink: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-    }
-
-    .canister-spool {
-      position: absolute;
-      top: -15px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 24px;
-      height: 9px;
-      border-radius: 3px 3px 0 0;
-      background: linear-gradient(90deg, #252528, #4b4b50, #222224);
-    }
-
-    .canister-stripe {
-      width: 100%;
-      padding: 6px 2px;
-      background: linear-gradient(to right, #d69838, #f0bc5e, #c48428);
-      color: #181209;
-      font-family: var(--mono);
-      font-size: 9px;
-      font-weight: 700;
-      text-align: center;
-      writing-mode: vertical-rl;
-      letter-spacing: 0.12em;
-    }
-
-    /* 从暗盒右侧唇口滑出来的 35mm 透明片基长条 */
-    .film-track-viewport {
-      flex: 1;
-      height: 138px;
-      overflow-x: auto;
-      overflow-y: hidden;
-      margin-left: -6px;
-      padding-left: 10px;
-      scrollbar-width: none;
-      display: flex;
-      align-items: center;
-      scroll-behavior: smooth;
-    }
-    .film-track-viewport::-webkit-scrollbar { display: none; }
-
-    .film-strip-ribbon {
-      display: inline-flex;
-      align-items: center;
-      background: #17120e;
-      padding: 17px 14px;
-      border-top: 2px solid #2b221a;
-      border-bottom: 2px solid #2b221a;
-      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.72);
-      position: relative;
-      gap: 10px;
-      transform: translateX(-82%);
-      transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
-      border-radius: 0 10px 10px 0;
-    }
-
-    .film-strip-ribbon.is-pulled {
-      transform: translateX(0);
-    }
-
-    /* 上下 35mm 胶卷标准矩形齿孔链 */
-    .film-strip-ribbon::before,
-    .film-strip-ribbon::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      right: 8px;
-      height: 9px;
-      background-image: repeating-linear-gradient(
-        to right,
-        transparent 0 7px,
-        rgba(8, 6, 5, 0.92) 7px 14px
-      );
-      pointer-events: none;
-    }
-    .film-strip-ribbon::before { top: 4px; }
-    .film-strip-ribbon::after { bottom: 4px; }
-
-    .film-frame {
-      width: 78px;
-      height: 100px;
-      background: #0c0a09;
-      padding: 2px;
-      border-radius: 2px;
-      position: relative;
-      flex-shrink: 0;
-      cursor: pointer;
-      box-shadow: inset 0 0 4px rgba(255, 255, 255, 0.08);
-    }
-
-    .film-frame img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 1px;
-      filter: contrast(1.06) saturate(1.08);
-    }
-
-    .film-frame-num {
-      position: absolute;
-      bottom: -14px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-family: var(--mono);
-      font-size: 7px;
-      color: rgba(235, 178, 102, 0.78);
-      letter-spacing: 0.08em;
-    }
-
-    /* 片头斜角拉耳（没拉开前可点此拉出胶卷） */
-    .film-leader-tongue {
-      width: 44px;
-      height: 82px;
-      flex-shrink: 0;
-      background: #17120e;
-      clip-path: polygon(0 0, 72% 0, 100% 42%, 100% 100%, 0 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      color: rgba(235, 178, 102, 0.85);
-      font-family: var(--mono);
-      font-size: 13px;
-      border-right: 1px solid rgba(255, 255, 255, 0.14);
-    }
-
-    /* 胶片看片台透光放大器 */
-    .film-loupe-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 130;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      background: rgba(5, 4, 3, 0.88);
-      backdrop-filter: blur(8px);
-      cursor: pointer;
-    }
-    .film-loupe-overlay.open { display: flex; animation: fadeSimple 0.22s ease; }
-    .film-loupe-card {
-      width: min(320px, 86vw);
-      background: #14110f;
-      padding: 12px 12px 16px;
-      border-radius: 6px;
-      border: 1px solid rgba(235, 178, 102, 0.24);
-      box-shadow: 0 28px 65px rgba(0, 0, 0, 0.88);
-      text-align: center;
-    }
-    .film-loupe-card img {
-      width: 100%;
-      aspect-ratio: 3/4;
-      object-fit: cover;
-      border-radius: 3px;
-      margin-bottom: 12px;
-    }
-    .film-loupe-cap {
-      font-family: var(--hand);
-      font-size: 18px;
-      line-height: 1.55;
-      color: #efe2cf;
-    }
-
-    /* ==========================================================
        四、100% 仿原版 Apple Watch（全动态十月二日指针表盘 + 3 App）
        ========================================================== */
     .watch-stage {
@@ -1488,71 +1078,50 @@
     .nb-page-num { font-family: var(--mono); font-size: 10.5px; color: rgba(206, 178, 128, 0.72); }
 
     /* ==========================================================
-       六、桌下抽屉内部：拍立得叠放 -> 散开 -> 网格 -> 翻面显影
+       六、桌面拍立得相片叠放 -> 散开 -> 网格 -> 翻面显影 + 背面真实手写
        ========================================================== */
-    .drawer-pol-trigger {
-      position: absolute;
-      left: 65%;
-      top: 61%;
-      transform: translate(-50%, -50%) rotate(7deg);
-      width: 112px;
-      height: 134px;
-      cursor: pointer;
-      z-index: 12;
-      transition: transform 0.3s ease;
-    }
-    .drawer-pol-trigger:hover { transform: translate(-50%, -50%) rotate(4deg) scale(1.04); }
-
-    .drawer-pol-stack-card {
-      position: absolute;
-      inset: 0;
-      border-radius: 4px;
-      background: linear-gradient(155deg, #272422 0%, #161413 100%);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.72);
-    }
-    .drawer-pol-stack-card:nth-child(1) { transform: rotate(-9deg) translate(-5px, -3px); }
-    .drawer-pol-stack-card:nth-child(2) { transform: rotate(3deg) translate(2px, -1px); }
-    .drawer-pol-stack-card:nth-child(3) {
-      transform: rotate(0deg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    /* 桌斗内展开拍立得全画布 */
     .drawer-pol-stage {
       position: fixed;
       inset: 0;
-      z-index: 75;
+      z-index: 80;
       display: none;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 20px 14px;
-      background: rgba(8, 6, 4, 0.62);
-      backdrop-filter: blur(4px);
+      background: rgba(8, 6, 4, 0.66);
+      backdrop-filter: blur(5px);
     }
     .drawer-pol-stage.open { display: flex; animation: fadeSimple 0.28s ease; }
 
     .pol-canvas {
       position: relative;
-      width: min(720px, 94vw);
+      width: min(720px, 95vw);
       height: min(620px, 84dvh);
     }
 
     .pol-card-slot {
       position: absolute;
-      width: 130px;
-      height: 160px;
+      width: 104px;
+      height: 162px;
       left: 50%;
       top: 50%;
-      perspective: 1000px;
+      perspective: 1100px;
       cursor: pointer;
-      transition: transform 0.72s cubic-bezier(0.22, 1, 0.36, 1);
+      transition: transform 0.68s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.28s ease;
     }
 
-    @media (min-width: 720px) { .pol-card-slot { width: 146px; height: 178px; } }
+    @media (min-width: 720px) { .pol-card-slot { width: 118px; height: 184px; } }
+
+    .pol-canvas.has-inspecting .pol-card-slot:not(.is-inspecting) {
+      opacity: 0.22;
+      pointer-events: none;
+    }
+
+    .pol-card-slot.is-inspecting {
+      z-index: 95 !important;
+      transform: translate(-50%, -50%) rotate(0deg) scale(2.35) !important;
+    }
 
     .pol-card-inner {
       position: relative;
@@ -1570,36 +1139,39 @@
       inset: 0;
       backface-visibility: hidden;
       -webkit-backface-visibility: hidden;
-      border-radius: 7px;
-      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.56);
+      border-radius: 5px;
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.58);
+      overflow: hidden;
     }
 
     .pol-back {
       transform: rotateY(180deg);
-      background: linear-gradient(155deg, #252220 0%, #171514 100%);
+      background: linear-gradient(155deg, #1b1a1b 0%, #101012 100%);
       border: 1px solid rgba(255, 255, 255, 0.14);
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 14px;
-      text-align: center;
-      color: rgba(246, 238, 224, 0.88);
+      padding: 0;
     }
 
-    .pol-back-sealed { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.16em; color: rgba(255, 255, 255, 0.32); }
-    .pol-back-note { display: none; font-family: var(--hand); font-size: 16px; line-height: 1.55; color: #2f231b; }
-    .pol-card-slot.has-developed .pol-back { background: linear-gradient(160deg, #f6eedf 0%, #eadec8 100%); color: #2f231b; }
-    .pol-card-slot.has-developed .pol-back-sealed { display: none; }
-    .pol-card-slot.has-developed .pol-back-note { display: block; }
+    /* 未翻开显影前背面仅保留暗色 instax 胶片背板，显影完成后翻转即展示真实手写照片 */
+    .pol-back-photo {
+      display: none;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #141416;
+    }
+    .pol-card-slot.has-developed .pol-back { background: #141416; border-color: rgba(255, 255, 255, 0.08); }
+    .pol-card-slot.has-developed .pol-back-photo { display: block; }
 
-    .pol-front { padding: 8px 8px 24px; display: flex; flex-direction: column; background: #f4ece0; color: #36291f; }
-    .pol-card-slot[data-theme="cream"]  .pol-front { background: #f4ece0; }
-    .pol-card-slot[data-theme="pink"]   .pol-front { background: #f2cfd6; }
-    .pol-card-slot[data-theme="mint"]   .pol-front { background: #cde0d8; }
-    .pol-card-slot[data-theme="butter"] .pol-front { background: #f3e4b8; }
-    .pol-card-slot[data-theme="dark"]   .pol-front { background: #232122; color: #eae2d6; }
-    .pol-card-slot[data-theme="peach"]  .pol-front { background: #f1d4be; }
+    .pol-front {
+      padding: 6px 6px 24px;
+      display: flex;
+      flex-direction: column;
+      background: #f6f4ee;
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05), 0 14px 32px rgba(0, 0, 0, 0.58);
+    }
 
     .pol-img-well { position: relative; flex: 1; background: #141211; overflow: hidden; border-radius: 2px; }
     .pol-img-well img {
@@ -1607,10 +1179,10 @@
       opacity: 0; filter: brightness(0.18) contrast(0.55) sepia(0.75) blur(8px);
       transition: opacity 2.6s ease-out 0.35s, filter 3.4s cubic-bezier(0.2, 0.7, 0.3, 1) 0.35s;
     }
+    .pol-img-well img.fit-contain { object-fit: contain; background: #131211; }
     .pol-card-slot.is-developing .pol-img-well img { opacity: 1; filter: brightness(1) contrast(1.03) sepia(0.06) blur(0px); }
     .pol-chem-veil { position: absolute; inset: 0; background: linear-gradient(180deg, #1b1817 0%, #26211e 100%); opacity: 1; transition: opacity 2.5s ease 0.35s; pointer-events: none; }
     .pol-card-slot.is-developing .pol-chem-veil { opacity: 0; }
-    .pol-front-cap { display: flex; justify-content: space-between; align-items: center; padding-top: 6px; font-family: var(--hand); font-size: 13px; }
 
     /* 低调导入弹窗 */
     .import-drawer { position: fixed; inset: 0; z-index: 150; display: none; align-items: center; justify-content: center; padding: 16px; background: rgba(6, 5, 4, 0.84); backdrop-filter: blur(12px); }
@@ -1666,7 +1238,7 @@
         <button class="hotspot hs-pencil" id="openPouchBtn" data-key="pencil" type="button" aria-label="打开蓝色笔袋">
           <span class="hs-dot"></span>
         </button>
-        <button class="hotspot hs-camera" data-modal="modalCamera" data-key="camera" type="button" aria-label="Pentax Espio 925 胶片相机">
+        <button class="hotspot hs-photos" id="openPolStageBtn" data-key="polaroids" type="button" aria-label="拍立得相片">
           <span class="hs-dot"></span>
         </button>
         <button class="hotspot hs-notebook" data-modal="modalNotebook" data-key="notebook" type="button" aria-label="Mnemosyne 笔记本">
@@ -1729,167 +1301,72 @@
     </section>
 
     <!-- ==========================================================
-         场景层 B：弯腰看进桌子下方中国高中经典开口抽屉（内藏拍立得）
+         场景层 B：弯腰看进桌子下方中国高中经典开口抽屉
          ========================================================== -->
     <section class="env-scene" id="drawerScene">
       <img src="assets/drawer-inside.jpg" alt="桌下抽屉内部" class="env-bg-img" />
       <button class="env-close-btn" id="closeDrawerBtn" type="button" aria-label="起身回到桌面">✕</button>
-
-      <div class="mapped-box" id="drawerMappedBox">
-        <!-- 抽屉底板上背面朝上叠放着的拍立得 -->
-        <div class="drawer-pol-trigger" id="drawerPolBtn" role="button" tabindex="0" aria-label="翻看抽屉里的拍立得">
-          <div class="drawer-pol-stack-card"></div>
-          <div class="drawer-pol-stack-card"></div>
-          <div class="drawer-pol-stack-card">
-            <span class="hs-dot"></span>
-          </div>
-        </div>
-      </div>
-
-      <!-- 抽屉内散开 -> 网格 -> 逐张翻面慢显影 -->
-      <div class="drawer-pol-stage" id="drawerPolStage">
-        <button class="env-close-btn" id="closePolStageBtn" type="button" aria-label="收起拍立得">✕</button>
-        <div class="pol-canvas" id="polCanvas">
-          <div class="pol-card-slot" data-idx="0" data-theme="cream">
-            <div class="pol-card-inner">
-              <div class="pol-side pol-back">
-                <span class="pol-back-sealed">POLAROID · #01</span>
-                <div class="pol-back-note">“答应自己要去的地方，无论多远，我都想站在你身旁一起看见雪山与倒影。”</div>
-              </div>
-              <div class="pol-side pol-front">
-                <div class="pol-img-well"><img src="assets/place-01.jpg" alt="高原湖畔" /><div class="pol-chem-veil"></div></div>
-                <div class="pol-front-cap"><span>高原湖畔</span><span>01</span></div>
-              </div>
-            </div>
-          </div>
-
-          <div class="pol-card-slot" data-idx="1" data-theme="pink">
-            <div class="pol-card-inner">
-              <div class="pol-side pol-back">
-                <span class="pol-back-sealed">POLAROID · #02</span>
-                <div class="pol-back-note">“天在将黑未黑时最美，你在我身边吹风的样子，比粉紫色的晚霞更动人。”</div>
-              </div>
-              <div class="pol-side pol-front">
-                <div class="pol-img-well"><img src="assets/place-02.jpg" alt="暮色甲板" /><div class="pol-chem-veil"></div></div>
-                <div class="pol-front-cap"><span>暮色甲板</span><span>02</span></div>
-              </div>
-            </div>
-          </div>
-
-          <div class="pol-card-slot" data-idx="2" data-theme="butter">
-            <div class="pol-card-inner">
-              <div class="pol-side pol-back">
-                <span class="pol-back-sealed">POLAROID · #03</span>
-                <div class="pol-back-note">“我们要散步，把八分钟的路绕成四十分钟，走到整片落日海岸线的尽头。”</div>
-              </div>
-              <div class="pol-side pol-front">
-                <div class="pol-img-well"><img src="assets/place-03.jpg" alt="金色海岸" /><div class="pol-chem-veil"></div></div>
-                <div class="pol-front-cap"><span>金色海岸</span><span>03</span></div>
-              </div>
-            </div>
-          </div>
-
-          <div class="pol-card-slot" data-idx="3" data-theme="dark">
-            <div class="pol-card-inner">
-              <div class="pol-side pol-back">
-                <span class="pol-back-sealed">POLAROID · #04</span>
-                <div class="pol-back-note">“车窗是流动的取景器。只要你靠在肩头，经过的山湖都是只放给我们看的电影。”</div>
-              </div>
-              <div class="pol-side pol-front">
-                <div class="pol-img-well"><img src="assets/place-04.jpg" alt="黄昏列车" /><div class="pol-chem-veil"></div></div>
-                <div class="pol-front-cap"><span>黄昏列车</span><span>04</span></div>
-              </div>
-            </div>
-          </div>
-
-          <div class="pol-card-slot" data-idx="4" data-theme="mint">
-            <div class="pol-card-inner">
-              <div class="pol-side pol-back">
-                <span class="pol-back-sealed">POLAROID · #05</span>
-                <div class="pol-back-note">“镜头失焦的时候光斑会变成温柔的圆，就像那天站在窗前看烟火时你的眼睛。”</div>
-              </div>
-              <div class="pol-side pol-front">
-                <div class="pol-img-well"><img src="assets/place-05.jpg" alt="失焦烟火" /><div class="pol-chem-veil"></div></div>
-                <div class="pol-front-cap"><span>失焦烟火</span><span>05</span></div>
-              </div>
-            </div>
-          </div>
-
-          <div class="pol-card-slot" data-idx="5" data-theme="peach">
-            <div class="pol-card-inner">
-              <div class="pol-side pol-back">
-                <span class="pol-back-sealed">POLAROID · #06</span>
-                <div class="pol-back-note">“在傍晚、晚风、余晖和路灯下，在你飘动的发丝间——和你一起浪费时间，是最美妙的事。”</div>
-              </div>
-              <div class="pol-side pol-front">
-                <div class="pol-img-well"><img src="assets/place-06.jpg" alt="路灯晚风" /><div class="pol-chem-veil"></div></div>
-                <div class="pol-front-cap"><span>路灯晚风</span><span>06</span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </section>
-  </main>
 
-  <!-- ==========================================================
-       桌面物件高拟物化特写容器（Watch / Mnemosyne / Pentax Espio 925）
-       ========================================================== -->
-  <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true">
-    <button class="env-close-btn" id="closeModalBtn" type="button" aria-label="返回课桌">✕</button>
-
-    <!-- 1. Pentax Espio 925 银色胶片相机拟物建构 + 拉开胶卷看照片 -->
-    <div class="modal-panel" id="modalCamera">
-      <div class="camera-stage">
-        <!-- 严格还原 Pentax Espio 925 银色质感前视图 -->
-        <div class="espio-body" id="espioBody">
-          <button class="espio-shutter" id="espioShutterBtn" type="button" title="按下快门"></button>
-          <div class="espio-lcd">
-            <span>AUTO</span>
-            <span id="espioExpNum">06</span>
+    <!-- ==========================================================
+         场景层 C：桌面拍立得叠放 -> 散开 -> 网格 -> 翻面显影 + 背面手写
+         ========================================================== -->
+    <div class="drawer-pol-stage" id="drawerPolStage">
+      <button class="env-close-btn" id="closePolStageBtn" type="button" aria-label="收起拍立得">✕</button>
+      <div class="pol-canvas" id="polCanvas">
+        <div class="pol-card-slot" data-idx="0">
+          <div class="pol-card-inner">
+            <div class="pol-side pol-back"><img class="pol-back-photo" src="assets/polaroids/p1-back.jpg" alt="" /></div>
+            <div class="pol-side pol-front"><div class="pol-img-well"><img src="assets/polaroids/p1-front.jpg" alt="" /><div class="pol-chem-veil"></div></div></div>
           </div>
-          <div class="espio-flash" id="espioFlash"></div>
-          <div class="espio-vf-row">
-            <div class="espio-vf"></div>
-            <div class="espio-af"></div>
-            <div class="espio-af"></div>
-          </div>
-          <div class="espio-brand-pentax">PENTAX</div>
-          <div class="espio-model-txt">ESPIO 925</div>
-
-          <div class="espio-lens-outer" id="espioLensBtn" title="轻点镜头或暗盒拉出胶卷">
-            <div class="espio-lens-mid">
-              <div class="espio-lens-ring-txt">PENTAX ZOOM LENS 28-90mm</div>
-              <div class="espio-lens-glass"></div>
-            </div>
-          </div>
-
-          <div class="espio-grip"></div>
-          <div class="espio-ir-dot"></div>
         </div>
-
-        <!-- 35mm 胶卷暗盒与可滑动拉开的 6 格胶片条 -->
-        <div class="film-pull-rig">
-          <div class="film-canister" id="filmCanisterBtn" title="点击拉出或收回胶卷">
-            <div class="canister-spool"></div>
-            <div class="canister-stripe">35mm 400</div>
+        <div class="pol-card-slot" data-idx="1">
+          <div class="pol-card-inner">
+            <div class="pol-side pol-back"><img class="pol-back-photo" src="assets/polaroids/p2-back.jpg" alt="" /></div>
+            <div class="pol-side pol-front"><div class="pol-img-well"><img src="assets/polaroids/p2-front.jpg" alt="" /><div class="pol-chem-veil"></div></div></div>
           </div>
-          <div class="film-track-viewport" id="filmTrackViewport">
-            <div class="film-strip-ribbon" id="filmStripRibbon">
-              <div class="film-frame" data-film-idx="0"><img src="assets/place-01.jpg" alt="01" /><span class="film-frame-num">01A</span></div>
-              <div class="film-frame" data-film-idx="1"><img src="assets/place-02.jpg" alt="02" /><span class="film-frame-num">02A</span></div>
-              <div class="film-frame" data-film-idx="2"><img src="assets/place-03.jpg" alt="03" /><span class="film-frame-num">03A</span></div>
-              <div class="film-frame" data-film-idx="3"><img src="assets/place-04.jpg" alt="04" /><span class="film-frame-num">04A</span></div>
-              <div class="film-frame" data-film-idx="4"><img src="assets/place-05.jpg" alt="05" /><span class="film-frame-num">05A</span></div>
-              <div class="film-frame" data-film-idx="5"><img src="assets/place-06.jpg" alt="06" /><span class="film-frame-num">06A</span></div>
-              <div class="film-leader-tongue" id="filmPullLeader" title="拉开胶卷">›</div>
-            </div>
+        </div>
+        <div class="pol-card-slot" data-idx="2">
+          <div class="pol-card-inner">
+            <div class="pol-side pol-back"><img class="pol-back-photo" src="assets/polaroids/p3-back.jpg" alt="" /></div>
+            <div class="pol-side pol-front"><div class="pol-img-well"><img src="assets/polaroids/p3-front.jpg" alt="" /><div class="pol-chem-veil"></div></div></div>
+          </div>
+        </div>
+        <div class="pol-card-slot" data-idx="3">
+          <div class="pol-card-inner">
+            <div class="pol-side pol-back"><img class="pol-back-photo" src="assets/polaroids/p4-back.jpg" alt="" /></div>
+            <div class="pol-side pol-front"><div class="pol-img-well"><img src="assets/polaroids/p4-front.jpg" alt="" /><div class="pol-chem-veil"></div></div></div>
+          </div>
+        </div>
+        <div class="pol-card-slot" data-idx="4">
+          <div class="pol-card-inner">
+            <div class="pol-side pol-back"><img class="pol-back-photo" src="assets/polaroids/p5-back.jpg" alt="" /></div>
+            <div class="pol-side pol-front"><div class="pol-img-well"><img class="fit-contain" src="assets/polaroids/p5-front.jpg" alt="" /><div class="pol-chem-veil"></div></div></div>
+          </div>
+        </div>
+        <div class="pol-card-slot" data-idx="5">
+          <div class="pol-card-inner">
+            <div class="pol-side pol-back"><img class="pol-back-photo" src="assets/polaroids/p6-back.jpg" alt="" /></div>
+            <div class="pol-side pol-front"><div class="pol-img-well"><img src="assets/polaroids/p6-front.jpg" alt="" /><div class="pol-chem-veil"></div></div></div>
+          </div>
+        </div>
+        <div class="pol-card-slot" data-idx="6">
+          <div class="pol-card-inner">
+            <div class="pol-side pol-back"><img class="pol-back-photo" src="assets/polaroids/p7-back.jpg" alt="" /></div>
+            <div class="pol-side pol-front"><div class="pol-img-well"><img class="fit-contain" src="assets/polaroids/p7-front.jpg" alt="" /><div class="pol-chem-veil"></div></div></div>
           </div>
         </div>
       </div>
     </div>
+  </main>
 
-    <!-- 2. Apple Watch（全动态十月二日模拟表盘 + 3 App + 微信关键词回复 + 极低调表带配置键） -->
+  <!-- ==========================================================
+       桌面物件高拟物化特写容器（Watch / Mnemosyne）
+       ========================================================== -->
+  <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true">
+    <button class="env-close-btn" id="closeModalBtn" type="button" aria-label="返回课桌">✕</button>
+
+    <!-- Apple Watch（全动态十月二日模拟表盘 + 3 App + 微信关键词回复 + 极低调表带配置键） -->
     <div class="modal-panel" id="modalWatch">
       <div class="watch-stage">
         <div class="watch-hardware">
@@ -2230,14 +1707,6 @@
     </div>
   </div>
 
-  <!-- 胶片放大看片层 -->
-  <div class="film-loupe-overlay" id="filmLoupeOverlay">
-    <div class="film-loupe-card">
-      <img id="filmLoupeImg" src="assets/place-01.jpg" alt="胶片" />
-      <div class="film-loupe-cap" id="filmLoupeCap"></div>
-    </div>
-  </div>
-
   <!-- 歌单/聊天记录与自定义回复导入面板 -->
   <div class="import-drawer" id="importDrawer">
     <div class="import-card">
@@ -2323,8 +1792,7 @@
     const IMG_RATIO = 768 / 1376;
     const mappedBoxes = [
       document.getElementById("hotspotsBox"),
-      document.getElementById("pouchMappedBox"),
-      document.getElementById("drawerMappedBox")
+      document.getElementById("pouchMappedBox")
     ];
 
     function syncMappedBoxes() {
@@ -2698,7 +2166,7 @@
     });
 
     // ==========================================================
-    // 5. 抽屉里的拍立得交互墙（叠放 -> 散开 -> 网格 -> 翻面显影 + 写字）
+    // 5. 桌面拍立得相片交互（叠放 -> 散开 -> 7张均衡网格 -> 翻面显影 + 翻转背面真实手写放大）
     // ==========================================================
     const drawerPolStage = document.getElementById("drawerPolStage");
     const polCanvas = document.getElementById("polCanvas");
@@ -2708,10 +2176,11 @@
     function resetPolaroidsToStack() {
       polTimers.forEach(clearTimeout);
       polTimers = [];
+      polCanvas.classList.remove("has-inspecting");
       polSlots.forEach((slot, i) => {
-        slot.classList.remove("is-face-up", "is-developing", "has-developed", "show-writing");
+        slot.classList.remove("is-face-up", "is-developing", "has-developed", "show-writing", "is-inspecting");
         slot.style.zIndex = 10 + i;
-        slot.style.transform = `translate(calc(-50% + ${(i - 2.5) * 1.5}px), calc(-50% + ${(i - 2.5) * 1.5}px)) rotate(${(i - 2.5) * 2.5}deg) scale(0.95)`;
+        slot.style.transform = `translate(calc(-50% + ${(i - 3) * 1.4}px), calc(-50% + ${(i - 3) * 1.4}px)) rotate(${(i - 3) * 2.4}deg) scale(0.96)`;
       });
     }
 
@@ -2719,30 +2188,39 @@
       const w = polCanvas.clientWidth || 360;
       const scale = Math.min(1, w / 420);
       const map = [
-        { x: -115, y: -76, r: -14 }, { x: 105, y: -72, r: 12 }, { x: -125, y: 52, r: 9 },
-        { x: 16, y: -96, r: -4 }, { x: 120, y: 58, r: -11 }, { x: -10, y: 88, r: 6 }
+        { x: -112, y: -118, r: -14 }, { x: 102, y: -108, r: 12 }, { x: -124, y: 12, r: 9 },
+        { x: 6, y: -22, r: -5 }, { x: 118, y: 18, r: -11 }, { x: -82, y: 128, r: 7 }, { x: 86, y: 132, r: -9 }
       ];
       polSlots.forEach((slot, i) => {
-        const p = map[i];
+        const p = map[i] || { x: 0, y: 0, r: 0 };
         slot.style.transform = `translate(calc(-50% + ${(p.x * scale).toFixed(1)}px), calc(-50% + ${(p.y * scale).toFixed(1)}px)) rotate(${p.r}deg) scale(0.95)`;
       });
     }
 
     function gridPolaroids() {
       const w = polCanvas.clientWidth || 360;
-      const h = polCanvas.clientHeight || 520;
-      const cols = w >= 480 ? 3 : 2;
-      const rows = Math.ceil(polSlots.length / cols);
-      const cellW = Math.min(176, w / cols);
-      const cellH = Math.min(186, h / rows);
+      const h = polCanvas.clientHeight || 560;
+      const isWide = w >= 540;
+      // 390x844 竖屏使用 2+3+2 居中错落排版；宽屏使用 4+3 居中排版
+      const colStep = isWide ? Math.min(134, w / 4.2) : Math.min(114, (w - 10) / 3.05);
+      const rowStep = isWide ? Math.min(198, h / 2.2) : Math.min(176, (h - 20) / 3.15);
+      const positions = isWide
+        ? [
+            [-1.5, -0.52], [-0.5, -0.52], [0.5, -0.52], [1.5, -0.52],
+            [-1.0,  0.52], [ 0.0,  0.52], [1.0,  0.52]
+          ]
+        : [
+            [-0.56, -1.02], [ 0.56, -1.02],
+            [-1.04,  0.00], [ 0.00,  0.00], [ 1.04,  0.00],
+            [-0.56,  1.02], [ 0.56,  1.02]
+          ];
       polSlots.forEach((slot, i) => {
-        const c = i % cols;
-        const r = Math.floor(i / cols);
-        slot.style.transform = `translate(calc(-50% + ${(c - (cols - 1) / 2) * cellW}px), calc(-50% + ${(r - (rows - 1) / 2) * cellH}px)) rotate(${i % 2 === 0 ? -1.5 : 1.5}deg) scale(0.92)`;
+        const [cx, cy] = positions[i] || [0, 0];
+        slot.style.transform = `translate(calc(-50% + ${(cx * colStep).toFixed(1)}px), calc(-50% + ${(cy * rowStep).toFixed(1)}px)) rotate(${i % 2 === 0 ? -1.4 : 1.4}deg) scale(0.95)`;
       });
     }
 
-    document.getElementById("drawerPolBtn").addEventListener("click", () => {
+    document.getElementById("openPolStageBtn").addEventListener("click", () => {
       triggerHaptic("heavy");
       drawerPolStage.classList.add("open");
       resetPolaroidsToStack();
@@ -2750,89 +2228,50 @@
       polTimers.push(setTimeout(() => { triggerHaptic("tick"); gridPolaroids(); }, 1050));
     });
 
+    function closePolInspectIfActive() {
+      const inspecting = polSlots.find((s) => s.classList.contains("is-inspecting"));
+      if (!inspecting) return false;
+      inspecting.classList.remove("is-inspecting", "show-writing");
+      polCanvas.classList.remove("has-inspecting");
+      return true;
+    }
+
     document.getElementById("closePolStageBtn").addEventListener("click", () => {
       triggerHaptic("tick");
       polTimers.forEach(clearTimeout);
+      polCanvas.classList.remove("has-inspecting");
       drawerPolStage.classList.remove("open");
     });
 
+    drawerPolStage.addEventListener("click", (e) => {
+      if (!e.target.closest(".pol-card-slot") && e.target.id !== "closePolStageBtn") {
+        if (closePolInspectIfActive()) triggerHaptic("tick");
+      }
+    });
+
     polSlots.forEach((slot) => {
-      slot.addEventListener("click", () => {
+      slot.addEventListener("click", (e) => {
+        e.stopPropagation();
         triggerHaptic("heavy");
         if (!slot.classList.contains("is-face-up")) {
           slot.classList.add("is-face-up");
-          setTimeout(() => slot.classList.add("is-developing"), 320);
-          setTimeout(() => slot.classList.add("has-developed"), 3400);
+          polTimers.push(setTimeout(() => slot.classList.add("is-developing"), 320));
+          polTimers.push(setTimeout(() => slot.classList.add("has-developed"), 3400));
         } else if (slot.classList.contains("has-developed")) {
-          slot.classList.toggle("show-writing");
+          const willShowBack = !slot.classList.contains("show-writing");
+          polSlots.forEach((s) => s.classList.remove("is-inspecting", "show-writing"));
+          if (willShowBack) {
+            slot.classList.add("show-writing", "is-inspecting");
+            polCanvas.classList.add("has-inspecting");
+          } else {
+            polCanvas.classList.remove("has-inspecting");
+          }
         }
       });
     });
 
     // ==========================================================
-    // 6. Pentax Espio 925 银色相机：快门闪光 + 拉开 35mm 胶卷看照片
-    // ==========================================================
-    const filmStripRibbon = document.getElementById("filmStripRibbon");
-    const filmTrackViewport = document.getElementById("filmTrackViewport");
-    const espioFlash = document.getElementById("espioFlash");
-    const espioExpNum = document.getElementById("espioExpNum");
-    let filmPulled = false;
-
-    function toggleFilmStrip(forceOpen = null) {
-      filmPulled = forceOpen !== null ? forceOpen : !filmPulled;
-      triggerHaptic("heavy");
-      playMicroTick(520, 0.04, 0.03);
-      filmStripRibbon.classList.toggle("is-pulled", filmPulled);
-      espioExpNum.textContent = filmPulled ? "00" : "06";
-      if (filmPulled) {
-        setTimeout(() => { filmTrackViewport.scrollLeft = 40; }, 220);
-      }
-    }
-
-    document.getElementById("espioShutterBtn").addEventListener("click", () => {
-      ensureAudio();
-      triggerHaptic("heavy");
-      playMicroTick(960, 0.025, 0.035);
-      setTimeout(() => playMicroTick(640, 0.035, 0.025), 55);
-      espioFlash.classList.add("flashing");
-      setTimeout(() => espioFlash.classList.remove("flashing"), 180);
-      if (!filmPulled) setTimeout(() => toggleFilmStrip(true), 240);
-    });
-
-    document.getElementById("espioLensBtn").addEventListener("click", () => toggleFilmStrip());
-    document.getElementById("filmCanisterBtn").addEventListener("click", () => toggleFilmStrip());
-    document.getElementById("filmPullLeader").addEventListener("click", () => toggleFilmStrip(true));
-
-    // 胶片各格写真 + 透光看片放大镜
-    const filmCaptions = [
-      "答应自己要去的地方，无论多远，我都想站在你身旁一起看见雪山与倒影。",
-      "天在将黑未黑时最美，你在我身边吹风的样子，比粉紫色的晚霞更动人。",
-      "我们要散步，把八分钟的路绕成四十分钟，走到整片落日海岸线的尽头。",
-      "车窗是流动的取景器。只要你靠在肩头，经过的山湖都是只放给我们看的电影。",
-      "镜头失焦的时候光斑会变成温柔的圆，就像那天站在窗前看烟火时你的眼睛。",
-      "在傍晚、晚风、余晖和路灯下，在你飘动的发丝间——和你一起浪费时间，是最美妙的事。"
-    ];
-    const filmLoupeOverlay = document.getElementById("filmLoupeOverlay");
-    const filmLoupeImg = document.getElementById("filmLoupeImg");
-    const filmLoupeCap = document.getElementById("filmLoupeCap");
-
-    document.querySelectorAll(".film-frame").forEach((frame) => {
-      frame.addEventListener("click", () => {
-        if (!filmPulled) { toggleFilmStrip(true); return; }
-        triggerHaptic("tick");
-        const idx = Number(frame.dataset.filmIdx);
-        filmLoupeImg.src = `assets/place-0${idx + 1}.jpg`;
-        filmLoupeCap.textContent = filmCaptions[idx];
-        filmLoupeOverlay.classList.add("open");
-      });
-    });
-    filmLoupeOverlay.addEventListener("click", () => {
-      triggerHaptic("tick");
-      filmLoupeOverlay.classList.remove("open");
-    });
-
-    // ==========================================================
-    // 7. Apple Watch（全动态十月二日指针表盘 + 表冠上下滑 + 微信回复与导入）
+    // 6. Apple Watch（全动态十月二日指针表盘 + 表冠上下滑 + 微信回复与导入）
     // ==========================================================
     let currentWatchScreen = "wScreenFace";
     let focusedAppIndex = 0;
