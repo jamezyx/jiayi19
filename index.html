@@ -379,198 +379,71 @@
     .intro-btn:active { transform: scale(0.96); }
 
     /* ==========================================================
-       一、蓝色笔袋内部实景物体（糖果纸巾整蛊 + 4张不同做旧质感小纸条）
+       一、蓝色笔袋内部实景热区（直接点击照片内水平笔间的真纸条与真银糖果）
        ========================================================== */
-    .pouch-item {
+    .pouch-hotspot {
       position: absolute;
+      transform: translate(-50%, -50%);
+      border: none;
+      background: transparent;
       cursor: pointer;
-      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), filter 0.3s ease;
-    }
-
-    .pouch-item:hover {
-      transform: scale(1.04) translateY(-2px);
-    }
-
-    /* 糖果实物（真实银箔扭结包装 -> 剥开变成折成方块的棉柔白纸巾） */
-    .pouch-candy {
-      left: 50%;
-      top: 52%;
-      transform: translate(-50%, -50%) rotate(-12deg);
-      width: 108px;
-      height: 54px;
-      z-index: 8;
-    }
-
-    .candy-foil-wrap {
-      position: relative;
-      width: 100%;
-      height: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
-      filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.55));
+      z-index: 6;
     }
 
-    .candy-twist-left, .candy-twist-right {
-      width: 24px;
-      height: 28px;
-      background: linear-gradient(135deg, #f3f5f8 0%, #aeb6c2 45%, #e8ecf2 100%);
-      clip-path: polygon(0 15%, 100% 35%, 100% 65%, 0 85%, 22% 50%);
-    }
-    .candy-twist-right {
-      transform: scaleX(-1);
+    .pouch-hotspot .hs-dot {
+      width: 9px;
+      height: 9px;
+      opacity: 0.85;
     }
 
-    .candy-core {
-      width: 58px;
-      height: 38px;
-      border-radius: 14px;
-      background:
-        repeating-linear-gradient(125deg, rgba(255,255,255,0.28) 0 3px, rgba(160,170,185,0.22) 3px 7px),
-        linear-gradient(160deg, #ffffff 0%, #c6cdd6 55%, #eef2f7 100%);
-      border: 1px solid rgba(255, 255, 255, 0.75);
-      box-shadow: inset 0 -4px 8px rgba(70, 82, 98, 0.35), inset 0 3px 6px rgba(255, 255, 255, 0.9);
-    }
+    /* 精准对应 pouch_horizontal_pens_v2 (768x1376) 内的真实物品坐标 */
+    .pouch-hs-sticky { left: 24%; top: 31%;   width: 24%; height: 15%; }
+    .pouch-hs-lined  { left: 75%; top: 33%;   width: 24%; height: 15%; }
+    .pouch-hs-candy  { left: 50%; top: 39.5%; width: 24%; height: 10%; }
+    .pouch-hs-kraft  { left: 11%; top: 56%;   width: 18%; height: 18%; }
+    .pouch-hs-ticket { left: 84%; top: 72%;   width: 18%; height: 16%; }
 
-    /* 折叠方块白纸巾实体（棉柔纸纤维质感 + 立体四折十字压痕） */
-    .tissue-folded-real {
+    /* 剥开银箔糖果后直接展现真实折叠纸巾微距实拍图 */
+    .tissue-photo-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 106;
       display: none;
-      width: 112px;
-      height: 112px;
-      margin: -28px auto 0;
-      border-radius: 7px;
-      background:
-        radial-gradient(circle at 25% 22%, rgba(255, 255, 255, 0.95), rgba(240, 237, 230, 0.92)),
-        repeating-linear-gradient(45deg, rgba(200,195,185,0.06) 0 2px, transparent 2px 5px);
-      background-color: #f6f4ef;
-      box-shadow:
-        0 14px 28px rgba(0, 0, 0, 0.6),
-        inset 0 0 14px rgba(255, 255, 255, 0.95),
-        inset -4px -5px 10px rgba(175, 168, 155, 0.28);
-      border: 1px solid rgba(220, 215, 205, 0.7);
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(6, 5, 4, 0.72);
+      backdrop-filter: blur(6px);
+      cursor: pointer;
+    }
+    .tissue-photo-overlay.open { display: flex; animation: fadeSimple 0.24s ease; }
+
+    .tissue-photo-frame {
       position: relative;
-      transform: rotate(6deg);
-      animation: panelPop 0.38s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    /* 纸巾折痕光影线条 */
-    .tissue-folded-real::before {
-      content: "";
-      position: absolute;
-      left: 50%;
-      top: 4px;
-      bottom: 4px;
-      width: 2px;
-      background: linear-gradient(to right, rgba(145, 140, 130, 0.25), rgba(255, 255, 255, 0.65));
-    }
-    .tissue-folded-real::after {
-      content: "";
-      position: absolute;
-      top: 50%;
-      left: 4px;
-      right: 4px;
-      height: 2px;
-      background: linear-gradient(to bottom, rgba(145, 140, 130, 0.24), rgba(255, 255, 255, 0.65));
-    }
-
-    .tissue-tiny-wink {
-      position: absolute;
-      right: 8px;
-      bottom: 7px;
-      font-family: var(--hand);
-      font-size: 13px;
-      color: rgba(45, 76, 132, 0.62);
-      transform: rotate(-5deg);
-    }
-
-    .pouch-candy.is-unwrapped .candy-foil-wrap { display: none; }
-    .pouch-candy.is-unwrapped .tissue-folded-real { display: block; }
-
-    /* 4 张不同质感与样式的小纸条（停留在笔袋内部的折叠实物态） */
-    /* 1. 撕下来的泛黄带胶便利贴 */
-    .scrap-sticky {
-      left: 26%;
-      top: 30%;
-      width: 82px;
-      height: 76px;
-      background: linear-gradient(155deg, #f3e19e 0%, #e4cd79 100%);
-      clip-path: polygon(0 4%, 25% 0, 58% 3%, 88% 0, 100% 6%, 97% 96%, 68% 100%, 3% 97%);
-      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.55), inset 0 12px 10px -8px rgba(175, 138, 45, 0.35);
-      transform: rotate(-14deg);
-      padding: 12px 8px 6px;
-      z-index: 4;
-    }
-    .scrap-sticky::before {
-      content: "";
-      position: absolute;
-      top: -5px;
-      left: 22px;
-      width: 34px;
-      height: 12px;
-      background: rgba(255, 248, 224, 0.42);
-      transform: rotate(3deg);
-      border: 0.5px solid rgba(255, 255, 255, 0.3);
-    }
-
-    /* 2. 折成小块压痕的淡蓝横线作业纸角 */
-    .scrap-lined {
-      left: 60%;
-      top: 26%;
-      width: 92px;
-      height: 62px;
-      background:
-        linear-gradient(135deg, transparent 49%, rgba(80, 95, 120, 0.18) 50%, transparent 51%),
-        repeating-linear-gradient(to bottom, transparent 0 13px, rgba(84, 132, 198, 0.32) 13px 14px),
-        linear-gradient(160deg, #f4f1e6 0%, #e2dcc9 100%);
-      box-shadow: 0 10px 18px rgba(0, 0, 0, 0.55);
-      border-radius: 2px;
-      transform: rotate(11deg);
-      padding: 8px;
-      z-index: 5;
-    }
-
-    /* 3. 粗糙锯齿牛皮纸条 */
-    .scrap-kraft {
-      left: 24%;
-      top: 63%;
-      width: 96px;
-      height: 54px;
-      background:
-        radial-gradient(circle at 80% 72%, rgba(92, 54, 24, 0.22) 0%, transparent 40%),
-        linear-gradient(145deg, #c9a67a 0%, #a98153 100%);
-      clip-path: polygon(3% 2%, 96% 0, 100% 35%, 97% 72%, 99% 98%, 5% 96%, 0 65%, 2% 28%);
-      box-shadow: 0 9px 18px rgba(0, 0, 0, 0.58);
-      transform: rotate(9deg);
-      padding: 8px 10px;
-      z-index: 4;
-    }
-
-    /* 4. 褪色旧热敏小票/车票纸条 */
-    .scrap-ticket {
-      left: 64%;
-      top: 64%;
-      width: 74px;
-      height: 82px;
-      background:
-        radial-gradient(circle at 20% 20%, rgba(160, 152, 138, 0.22), transparent 55%),
-        linear-gradient(175deg, #eae8e1 0%, #d4d0c5 100%);
-      border-top: 2px dashed rgba(120, 114, 104, 0.45);
-      border-bottom: 2px dashed rgba(120, 114, 104, 0.45);
-      box-shadow: 0 9px 18px rgba(0, 0, 0, 0.55);
-      transform: rotate(-11deg);
-      padding: 10px 8px;
-      z-index: 4;
-    }
-
-    .scrap-mini-ink {
-      font-family: var(--hand);
-      font-size: 12px;
-      line-height: 1.3;
-      color: rgba(33, 38, 54, 0.72);
+      width: min(330px, 88vw);
+      border-radius: 10px;
       overflow: hidden;
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
+      box-shadow: 0 28px 65px rgba(0, 0, 0, 0.85);
+      border: 1px solid rgba(255, 240, 220, 0.16);
+      animation: panelPop 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .tissue-photo-frame img {
+      width: 100%;
+      display: block;
+    }
+
+    .tissue-photo-wink {
+      position: absolute;
+      left: 16px;
+      bottom: 12px;
+      font-family: var(--hand);
+      font-size: 19px;
+      color: rgba(255, 246, 232, 0.92);
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.85);
     }
 
     /* 点开纸条后的实体摊平特写层（只显示放大后的做旧纸张本身，无多余 UI 框文字） */
@@ -1696,36 +1569,25 @@
       <button class="env-close-btn" id="closePouchBtn" type="button" aria-label="拉上笔袋">✕</button>
 
       <div class="mapped-box" id="pouchMappedBox">
-        <!-- 4 张不同质感做旧小纸条 -->
-        <div class="pouch-item scrap-sticky" data-scrap="0">
-          <div class="scrap-mini-ink">早自习别睡着了，桌角帮你留了一颗糖…</div>
-        </div>
-        <div class="pouch-item scrap-lined" data-scrap="1">
-          <div class="scrap-mini-ink">下晚自习一起走那条最长的路回家…</div>
-        </div>
-        <div class="pouch-item scrap-kraft" data-scrap="2">
-          <div class="scrap-mini-ink">19岁也要一直一起去看很多很多地方…</div>
-        </div>
-        <div class="pouch-item scrap-ticket" data-scrap="3">
-          <div class="scrap-mini-ink">那天没讲完的话，我悄悄写进本子里了</div>
-        </div>
-
-        <!-- 笔袋里的糖果 -> 原地剥开变成折叠方块白纸巾 -->
-        <div class="pouch-item pouch-candy" id="candyPrankBtn" role="button" tabindex="0" aria-label="糖果">
-          <div class="candy-foil-wrap">
-            <div class="candy-twist-left"></div>
-            <div class="candy-core"></div>
-            <div class="candy-twist-right"></div>
-          </div>
-          <div class="tissue-folded-real">
-            <span class="tissue-tiny-wink">整蛊到啦</span>
-          </div>
-        </div>
+        <!-- 直接附着在笔袋写真真物品上的微光热区 -->
+        <button class="pouch-hotspot pouch-hs-sticky" data-scrap="0" type="button" aria-label="便利贴纸条"><span class="hs-dot"></span></button>
+        <button class="pouch-hotspot pouch-hs-lined"  data-scrap="1" type="button" aria-label="横线折纸条"><span class="hs-dot"></span></button>
+        <button class="pouch-hotspot pouch-hs-kraft"  data-scrap="2" type="button" aria-label="牛皮纸条"><span class="hs-dot"></span></button>
+        <button class="pouch-hotspot pouch-hs-ticket" data-scrap="3" type="button" aria-label="小票纸条"><span class="hs-dot"></span></button>
+        <button class="pouch-hotspot pouch-hs-candy"  id="candyPrankBtn" type="button" aria-label="银色糖果"><span class="hs-dot"></span></button>
       </div>
 
       <!-- 点击纸条后的实体放大摊平读纸层 -->
       <div class="scrap-reader-overlay" id="scrapReader">
         <div class="scrap-paper-zoom" id="scrapPaperZoom"></div>
+      </div>
+
+      <!-- 点击糖果后呈现剥开糖纸露出的真实折叠方块白纸巾 -->
+      <div class="tissue-photo-overlay" id="tissuePhotoOverlay">
+        <div class="tissue-photo-frame">
+          <img src="assets/candy-tissue.jpg" alt="剥开糖纸里面的方块纸巾" />
+          <div class="tissue-photo-wink">……叠得真方正啊</div>
+        </div>
       </div>
     </section>
 
@@ -2614,11 +2476,16 @@
       scrapReader.classList.remove("open");
     });
 
-    // 笔袋里糖果 -> 原地剥开变折叠方块白纸巾
+    // 笔袋里糖果 -> 展示真实剥开糖纸后的折叠方块纸巾特写
     const candyPrankBtn = document.getElementById("candyPrankBtn");
+    const tissuePhotoOverlay = document.getElementById("tissuePhotoOverlay");
     candyPrankBtn.addEventListener("click", () => {
       triggerHaptic("heavy");
-      candyPrankBtn.classList.toggle("is-unwrapped");
+      tissuePhotoOverlay.classList.add("open");
+    });
+    tissuePhotoOverlay.addEventListener("click", () => {
+      triggerHaptic("tick");
+      tissuePhotoOverlay.classList.remove("open");
     });
 
     // --- 丝滑推进：弯腰看进桌下开口抽屉（桌斗） ---
