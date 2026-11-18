@@ -379,114 +379,242 @@
     .intro-btn:active { transform: scale(0.96); }
 
     /* ==========================================================
-       一、蓝色笔袋内部实景物体（真实实拍物品折起来放进笔袋，单击展开）
+       一、蓝色笔袋内部：①看不见纸条(只留微点) -> ②折叠实物 -> ③展开动画 -> ④风格重绘纸条
        ========================================================== */
-    .pouch-real-item {
+    .pouch-secret-btn {
       position: absolute;
       transform: translate(-50%, -50%);
+      width: 46px;
+      height: 46px;
       border: none;
       background: transparent;
       cursor: pointer;
-      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       z-index: 7;
-      transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), filter 0.25s ease;
     }
 
-    .pouch-real-item:hover {
-      transform: translate(-50%, -50%) scale(1.07) translateY(-2px);
-      z-index: 12;
-    }
-
-    /* 折起来放进笔袋里的纸条外框（带真实对折暗影与压进布袋阴影） */
-    .folded-paper-slip {
+    /* 图① 示意的极简隐秘小圆点（笔袋深处暗藏纸条/糖果，不透漏多余文字） */
+    .pouch-secret-dot {
       position: relative;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      border-radius: 2px;
-      box-shadow:
-        0 6px 14px rgba(0, 0, 0, 0.72),
-        inset 0 0 8px rgba(0, 0, 0, 0.28);
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: rgba(255, 118, 138, 0.92);
+      border: 1.5px solid rgba(255, 240, 242, 0.95);
+      box-shadow: 0 0 10px rgba(255, 108, 130, 0.85), 0 2px 5px rgba(0, 0, 0, 0.55);
+      transition: transform 0.2s ease, background 0.25s ease;
     }
 
-    .folded-paper-slip::after {
+    .pouch-secret-dot::before {
       content: "";
       position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(128deg, transparent 44%, rgba(0, 0, 0, 0.26) 49%, rgba(255, 255, 255, 0.22) 52%, transparent 56%),
-        linear-gradient(to bottom, rgba(255, 206, 140, 0.08), rgba(0, 0, 0, 0.22));
-      pointer-events: none;
+      inset: -5px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 148, 165, 0.48);
+      animation: dotRing 2.6s cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
     }
 
-    .folded-paper-slip img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      filter: brightness(0.88) contrast(1.04) sepia(0.08);
+    .pouch-secret-btn.is-opened .pouch-secret-dot {
+      background: rgba(255, 212, 160, 0.92);
+      border-color: rgba(255, 248, 232, 0.92);
     }
 
+    /* 7 个深藏于笔袋内袋夹缝/笔缝中的看不见小圆点（完全不遮挡笔） */
+    .ps-candy  { left: 21%; top: 41%; }
+    .ps-yellow { left: 79%; top: 40%; }
+    .ps-grid   { left: 81%; top: 55%; }
+    .ps-orange { left: 22%; top: 56%; }
+    .ps-doodle { left: 28%; top: 28%; }
+    .ps-steak  { left: 32%; top: 72%; }
+    .ps-cake   { left: 72%; top: 30%; }
+    .ps-shit   { left: 70%; top: 69%; }
+
+    /* 外挂在右下白色塑料拉环上的红珠链小鸡公仔 */
+    .pouch-real-charm {
+      position: absolute;
+      left: 65%;
+      top: 88%;
+      width: 12.5%;
+      transform: translate(-50%, -50%) rotate(14deg);
+      border: none;
+      background: transparent;
+      padding: 0;
+      cursor: pointer;
+      z-index: 9;
+      transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .pouch-real-charm:hover { transform: translate(-50%, -50%) rotate(8deg) scale(1.08); }
     .pouch-cutout-img {
       width: 100%;
       height: auto;
       display: block;
-      filter: drop-shadow(0 6px 11px rgba(0, 0, 0, 0.74)) brightness(0.92);
+      filter: drop-shadow(0 6px 11px rgba(0, 0, 0, 0.74)) brightness(0.94);
     }
 
-    /* 各真实物品完全塞进白拉链开口之内的蓝布内衬与笔缝间（pouch-inside.jpg: 768x1376） */
-    /* 1. 阿尔卑斯折纸糖果 */
-    .pi-candy  { left: 21%; top: 41%; width: 14%; transform: translate(-50%, -50%) rotate(-16deg); }
-    /* 2. 黄色横线长纸条（折起塞在右上蓝袋壁） */
-    .pi-yellow { left: 77%; top: 42%; width: 12.5%; aspect-ratio: 1 / 1.15; transform: translate(-50%, -50%) rotate(11deg); }
-    .pi-yellow img { transform: scale(2.1); object-position: 38% 72%; }
-    /* 3. Mnemosyne 方格好感度纸条（折起塞在右中内衬） */
-    .pi-grid   { left: 78%; top: 55%; width: 12%; aspect-ratio: 1.15 / 1; transform: translate(-50%, -50%) rotate(-12deg); }
-    .pi-grid img { transform: scale(1.65); object-position: 45% 42%; }
-    /* 4. 橙红神偷奶爸折纸条（实拍对折图，塞在左中袋壁） */
-    .pi-orange { left: 22%; top: 55%; width: 17%; transform: translate(-50%, -50%) rotate(-76deg); }
-    /* 5. 白色手撕 shit 纸条（斜插右下笔隙） */
-    .pi-shit   { left: 67%; top: 68%; width: 19%; transform: translate(-50%, -50%) rotate(-24deg); }
-    /* 6. 十六宫格涂鸦大纸（折成 1/16 小格压在左上袋口内侧） */
-    .pi-doodle { left: 30%; top: 29%; width: 10.5%; aspect-ratio: 1 / 1; transform: translate(-50%, -50%) rotate(10deg); }
-    .pi-doodle img { transform: scale(3.2); object-position: 78% 36%; }
-    /* 7. 手绘牛排折纸方块（斜塞在左下袋角里面） */
-    .pi-steak  { left: 37%; top: 70%; width: 11.5%; aspect-ratio: 1.15 / 1; transform: translate(-50%, -50%) rotate(-14deg); }
-    /* 8. 樱桃蛋糕不规则白纸片（塞在右上白拉链内侧） */
-    .pi-cake   { left: 66%; top: 29%; width: 12.5%; transform: translate(-50%, -50%) rotate(16deg); }
-    /* 9. 红珠链篮球小公仔挂件（正好挂靠在右下白塑料拉环旁） */
-    .pi-duck   { left: 65%; top: 88%; width: 12.5%; transform: translate(-50%, -50%) rotate(14deg); z-index: 9; }
-
-    /* 剥开纸糖果后直接展现真实折叠纸巾特写，只留六个句号 */
-    .tissue-photo-overlay {
+    /* ② 折叠的纸条/糖果舞台 -> ③ 3D折页展开动画 -> ④ 风格重绘纸条（全程无解释文字） */
+    .unfold-stage {
       position: fixed;
       inset: 0;
-      z-index: 106;
+      z-index: 108;
       display: none;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 24px;
-      background: rgba(6, 5, 4, 0.78);
-      backdrop-filter: blur(7px);
+      background: rgba(6, 5, 4, 0.8);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       cursor: pointer;
     }
-    .tissue-photo-overlay.open { display: flex; animation: fadeSimple 0.24s ease; }
+    .unfold-stage.open { display: flex; animation: fadeSimple 0.24s ease; }
+
+    /* ② 阶段：实体折叠小纸包（可单击触发展开动画） */
+    .folded-packet {
+      position: relative;
+      width: 148px;
+      height: 112px;
+      perspective: 1100px;
+      transform-style: preserve-3d;
+      cursor: pointer;
+      filter: drop-shadow(0 24px 44px rgba(0, 0, 0, 0.85));
+      animation: panelPop 0.36s cubic-bezier(0.22, 1, 0.36, 1);
+      transform: rotate(-4deg);
+    }
+
+    .unfold-stage.is-unfolding .folded-packet,
+    .unfold-stage.is-unfolded .folded-packet {
+      pointer-events: none;
+    }
+
+    /* 折叠纸包底层叠边质感 */
+    .fold-base-sheet {
+      position: absolute;
+      inset: 0;
+      border-radius: 3px 4px 3px 5px;
+      overflow: hidden;
+      background-color: #ece6d8;
+      box-shadow:
+        0 2px 0 rgba(215, 206, 188, 0.9),
+        0 4px 0 rgba(180, 170, 152, 0.85),
+        inset 0 0 18px rgba(0, 0, 0, 0.16);
+      border: 1px solid rgba(255, 250, 238, 0.45);
+    }
+
+    .fold-base-sheet img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scale(2.8);
+      filter: brightness(0.92) contrast(1.02) blur(0.4px);
+    }
+
+    /* 上半层翻折折盖（③展开动画时绕中心向上翻起！） */
+    .fold-flap-top {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 54%;
+      border-radius: 3px 4px 1px 1px;
+      overflow: hidden;
+      transform-origin: center bottom;
+      backface-visibility: hidden;
+      background-color: #f3ede0;
+      box-shadow: 0 5px 14px rgba(0, 0, 0, 0.32);
+      border-bottom: 1.5px solid rgba(90, 75, 55, 0.25);
+      transition: transform 0.46s cubic-bezier(0.32, 0.85, 0.35, 1), opacity 0.32s ease 0.14s;
+    }
+
+    .fold-flap-top img {
+      width: 100%;
+      height: 185%;
+      object-fit: cover;
+      transform: scale(2.4);
+      filter: brightness(0.96) blur(0.5px);
+    }
+
+    /* 不同纸条对应不同的折纸质感色彩（黄纸/方格/橙红纸/牛皮涂鸦/白撕纸） */
+    .folded-packet.tone-yellow .fold-base-sheet,
+    .folded-packet.tone-yellow .fold-flap-top {
+      background-color: #e6bf4d;
+    }
+    .folded-packet.tone-orange .fold-base-sheet,
+    .folded-packet.tone-orange .fold-flap-top {
+      background-color: #cd6a43;
+    }
+    .folded-packet.tone-grid .fold-base-sheet,
+    .folded-packet.tone-grid .fold-flap-top {
+      background-color: #ede9e0;
+    }
+
+    /* 如果是糖果（②阶段直接展示折叠包裹的阿尔卑斯真实包装） */
+    .candy-packet-view {
+      display: none;
+      width: 146px;
+      cursor: pointer;
+      filter: drop-shadow(0 22px 42px rgba(0, 0, 0, 0.86));
+      animation: panelPop 0.36s cubic-bezier(0.22, 1, 0.36, 1);
+      transform: rotate(-8deg);
+    }
+    .unfold-stage.mode-candy .folded-packet { display: none; }
+    .unfold-stage.mode-candy .candy-packet-view { display: block; }
+    .unfold-stage.mode-candy.is-unfolded .candy-packet-view { display: none; }
+
+    /* 触发③展开动画态：折盖翻开 -> 整个折块淡出 -> ④完整重绘纸条丝滑舒展 */
+    .unfold-stage.is-unfolding .fold-flap-top {
+      transform: rotateX(168deg);
+      opacity: 0.15;
+    }
+
+    .unfold-stage.is-unfolded .folded-packet {
+      display: none;
+    }
+
+    /* ④ 展开后最终展示（完全经风格重绘后的无框透明纸条本身，无任何多余文字） */
+    .unfolded-result {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .unfold-stage.is-unfolded .unfolded-result {
+      display: flex;
+      animation: expandPaperFull 0.56s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    @keyframes expandPaperFull {
+      0%   { opacity: 0.25; transform: perspective(1200px) rotateX(34deg) scaleY(0.42) scaleX(0.66); }
+      55%  { opacity: 1;    transform: perspective(1200px) rotateX(-4deg) scaleY(1.02) scaleX(1.01); }
+      100% { opacity: 1;    transform: perspective(1200px) rotateX(0deg) scale(1); }
+    }
+
+    .unfolded-art-img {
+      max-width: min(350px, 88vw);
+      max-height: 78dvh;
+      object-fit: contain;
+      filter: drop-shadow(0 28px 62px rgba(0, 0, 0, 0.9));
+    }
+
+    /* 阿尔卑斯纸糖果剥开后的纸巾实拍图 + 仅留六个句号 */
+    .unfolded-tissue-box {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+    }
+    .unfold-stage.mode-candy.is-unfolded .unfolded-art-img { display: none; }
+    .unfold-stage.mode-candy.is-unfolded .unfolded-tissue-box { display: flex; }
 
     .tissue-photo-frame {
-      position: relative;
       width: min(330px, 88vw);
       border-radius: 10px;
       overflow: hidden;
       box-shadow: 0 28px 65px rgba(0, 0, 0, 0.88);
       border: 1px solid rgba(255, 240, 220, 0.14);
-      animation: panelPop 0.34s cubic-bezier(0.22, 1, 0.36, 1);
     }
-
-    .tissue-photo-frame img {
-      width: 100%;
-      display: block;
-    }
+    .tissue-photo-frame img { width: 100%; display: block; }
 
     .tissue-six-dots {
       margin-top: 16px;
@@ -495,35 +623,6 @@
       letter-spacing: 0.25em;
       color: rgba(255, 246, 232, 0.9);
       text-shadow: 0 2px 10px rgba(0, 0, 0, 0.85);
-    }
-
-    /* 单击折起来的纸条 -> 丝滑物理展开原纸张照片特写层 */
-    .scrap-reader-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 105;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 22px;
-      background: rgba(6, 5, 4, 0.76);
-      backdrop-filter: blur(7px);
-      cursor: pointer;
-    }
-    .scrap-reader-overlay.open { display: flex; animation: fadeSimple 0.22s ease; }
-
-    @keyframes unfoldPaper {
-      from { opacity: 0.3; transform: perspective(900px) rotateX(55deg) scale(0.45); }
-      to   { opacity: 1;   transform: perspective(900px) rotateX(0deg) scale(1); }
-    }
-
-    .scrap-photo-zoom {
-      max-width: min(350px, 88vw);
-      max-height: 80dvh;
-      object-fit: contain;
-      border-radius: 4px;
-      filter: drop-shadow(0 28px 62px rgba(0, 0, 0, 0.88));
-      animation: unfoldPaper 0.44s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     /* ==========================================================
@@ -1591,55 +1690,41 @@
       <button class="env-close-btn" id="closePouchBtn" type="button" aria-label="拉上笔袋">✕</button>
 
       <div class="mapped-box" id="pouchMappedBox">
-        <!-- 真实实拍纸条与小物（折起来放入笔袋，单击直接展开） -->
-        <button class="pouch-real-item pi-candy" id="candyPrankBtn" type="button" aria-label="纸糖果">
-          <img class="pouch-cutout-img" src="assets/items/candy-alps-bar.png" alt="纸糖果" />
-        </button>
+        <!-- ① 笔袋内看不见纸条，仅在各夹缝处保留小圆点 -->
+        <button class="pouch-secret-btn ps-candy"  data-secret="candy"  type="button" aria-label="藏着的物品"><span class="pouch-secret-dot"></span></button>
+        <button class="pouch-secret-btn ps-yellow" data-secret="yellow" type="button" aria-label="藏着的小纸条"><span class="pouch-secret-dot"></span></button>
+        <button class="pouch-secret-btn ps-grid"   data-secret="grid"   type="button" aria-label="藏着的小纸条"><span class="pouch-secret-dot"></span></button>
+        <button class="pouch-secret-btn ps-orange" data-secret="orange" type="button" aria-label="藏着的小纸条"><span class="pouch-secret-dot"></span></button>
+        <button class="pouch-secret-btn ps-doodle" data-secret="doodle" type="button" aria-label="藏着的小纸条"><span class="pouch-secret-dot"></span></button>
+        <button class="pouch-secret-btn ps-steak"  data-secret="steak"  type="button" aria-label="藏着的小纸条"><span class="pouch-secret-dot"></span></button>
+        <button class="pouch-secret-btn ps-cake"   data-secret="cake"   type="button" aria-label="藏着的小纸条"><span class="pouch-secret-dot"></span></button>
+        <button class="pouch-secret-btn ps-shit"   data-secret="shit"   type="button" aria-label="藏着的小纸条"><span class="pouch-secret-dot"></span></button>
 
-        <button class="pouch-real-item pi-yellow" data-open-img="assets/items/note-yellow.jpg" type="button" aria-label="黄色纸条">
-          <div class="folded-paper-slip"><img src="assets/items/note-yellow.jpg" alt="黄色纸条" /></div>
-        </button>
-
-        <button class="pouch-real-item pi-grid" data-open-img="assets/items/note-grid.jpg" type="button" aria-label="方格纸条">
-          <div class="folded-paper-slip"><img src="assets/items/note-grid.jpg" alt="方格纸条" /></div>
-        </button>
-
-        <button class="pouch-real-item pi-orange" data-open-img="assets/items/note-orange.png" type="button" aria-label="橙色折纸条">
-          <img class="pouch-cutout-img" src="assets/items/note-orange.png" alt="橙色折纸条" />
-        </button>
-
-        <button class="pouch-real-item pi-shit" data-open-img="assets/items/note-shit.png" type="button" aria-label="小纸条">
-          <img class="pouch-cutout-img" src="assets/items/note-shit.png" alt="小纸条" />
-        </button>
-
-        <button class="pouch-real-item pi-doodle" data-open-img="assets/items/note-doodle.png" type="button" aria-label="大涂鸦折纸">
-          <div class="folded-paper-slip"><img src="assets/items/note-doodle.png" style="object-position: 16% 68%; transform: scale(1.65);" alt="涂鸦折纸" /></div>
-        </button>
-
-        <button class="pouch-real-item pi-steak" data-open-img="assets/items/note-steak.jpg" type="button" aria-label="牛排折纸">
-          <div class="folded-paper-slip"><img src="assets/items/note-steak.jpg" alt="牛排折纸" /></div>
-        </button>
-
-        <button class="pouch-real-item pi-cake" data-open-img="assets/items/note-cake.png" type="button" aria-label="蛋糕纸片">
-          <img class="pouch-cutout-img" src="assets/items/note-cake.png" alt="蛋糕纸片" />
-        </button>
-
-        <button class="pouch-real-item pi-duck" data-open-img="assets/items/charm-duck.png" type="button" aria-label="篮球公仔挂件">
+        <!-- 外挂在拉链圆环上的篮球公仔挂件（实物可见，轻点放大） -->
+        <button class="pouch-real-charm" id="duckCharmBtn" type="button" aria-label="篮球公仔挂件">
           <img class="pouch-cutout-img" src="assets/items/charm-duck.png" alt="篮球公仔挂件" />
         </button>
       </div>
 
-      <!-- 点击折起来的纸条后直接展开真纸张实物 -->
-      <div class="scrap-reader-overlay" id="scrapReader">
-        <img class="scrap-photo-zoom" id="scrapPhotoZoom" src="" alt="纸条展开" />
-      </div>
-
-      <!-- 点击糖果后呈现剥开纸糖果露出的纸巾特写，不需要文字解释，只需要六个句号 -->
-      <div class="tissue-photo-overlay" id="tissuePhotoOverlay">
-        <div class="tissue-photo-frame">
-          <img src="assets/candy-tissue.jpg" alt="糖纸里的纸巾" />
+      <!-- ②折叠态 -> ③展开动画 -> ④风格重绘纸条（无任何多余解释文字） -->
+      <div class="unfold-stage" id="unfoldStage">
+        <!-- ② 折起来的纸条 -->
+        <div class="folded-packet" id="foldedPacket">
+          <div class="fold-base-sheet"><img id="foldBasePreview" src="" alt="" /></div>
+          <div class="fold-flap-top"><img id="foldFlapPreview" src="" alt="" /></div>
         </div>
-        <div class="tissue-six-dots">。。。。。。</div>
+
+        <!-- ② 如果是阿尔卑斯纸糖果，直接展示折裹的阿尔卑斯 -->
+        <img class="candy-packet-view" id="candyPacketView" src="assets/items/candy-alps-bar.png" alt="纸糖果" />
+
+        <!-- ④ 展开最终态 -->
+        <div class="unfolded-result" id="unfoldedResult">
+          <img class="unfolded-art-img" id="unfoldedArtImg" src="" alt="" />
+          <div class="unfolded-tissue-box">
+            <div class="tissue-photo-frame"><img src="assets/candy-tissue.jpg" alt="" /></div>
+            <div class="tissue-six-dots">。。。。。。</div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -2514,31 +2599,91 @@
       pouchScene.classList.remove("is-active");
     });
 
-    // 笔袋内部真实纸条与挂件点击展开还原质感原图
-    const scrapReader = document.getElementById("scrapReader");
-    const scrapPhotoZoom = document.getElementById("scrapPhotoZoom");
-    document.querySelectorAll("[data-open-img]").forEach((el) => {
-      el.addEventListener("click", () => {
+    // ① 看不见纸条的小圆点 -> ② 折叠纸条 -> ③ 展开动画 -> ④ 风格重绘完整纸条
+    const SECRET_NOTES = {
+      yellow: { src: "assets/items/note-yellow-art.png", tone: "tone-yellow" },
+      grid:   { src: "assets/items/note-grid-art.png",   tone: "tone-grid" },
+      orange: { src: "assets/items/note-orange-art.png", tone: "tone-orange" },
+      doodle: { src: "assets/items/note-doodle-art.png", tone: "tone-grid" },
+      steak:  { src: "assets/items/note-steak-art.png",  tone: "tone-grid" },
+      cake:   { src: "assets/items/note-cake-art.png",   tone: "tone-grid" },
+      shit:   { src: "assets/items/note-shit.png",       tone: "tone-grid" }
+    };
+
+    const unfoldStage = document.getElementById("unfoldStage");
+    const foldedPacket = document.getElementById("foldedPacket");
+    const foldBasePreview = document.getElementById("foldBasePreview");
+    const foldFlapPreview = document.getElementById("foldFlapPreview");
+    const candyPacketView = document.getElementById("candyPacketView");
+    const unfoldedArtImg = document.getElementById("unfoldedArtImg");
+    let unfoldTimer = null;
+
+    function openSecretItem(key, btnEl) {
+      if (unfoldTimer) { clearTimeout(unfoldTimer); unfoldTimer = null; }
+      if (btnEl) btnEl.classList.add("is-opened");
+      unfoldStage.classList.remove("is-unfolding", "is-unfolded", "mode-candy");
+      foldedPacket.className = "folded-packet";
+
+      if (key === "candy") {
         triggerHaptic("tick");
-        scrapPhotoZoom.src = el.dataset.openImg;
-        scrapReader.classList.add("open");
-      });
-    });
-    scrapReader.addEventListener("click", () => {
+        unfoldStage.classList.add("mode-candy", "open");
+        return;
+      }
+
+      const item = SECRET_NOTES[key];
+      if (!item) return;
       triggerHaptic("tick");
-      scrapReader.classList.remove("open");
+      foldedPacket.classList.add(item.tone);
+      foldBasePreview.src = item.src;
+      foldFlapPreview.src = item.src;
+      unfoldedArtImg.src = item.src;
+      unfoldedArtImg.style.filter = key === "shit"
+        ? "sepia(0.14) saturate(1.06) brightness(0.95) drop-shadow(0 28px 62px rgba(0, 0, 0, 0.9))"
+        : "";
+      unfoldStage.classList.add("open");
+    }
+
+    function triggerUnfoldReveal(e) {
+      e.stopPropagation();
+      if (unfoldStage.classList.contains("is-unfolding") || unfoldStage.classList.contains("is-unfolded")) return;
+      triggerHaptic("heavy");
+      playMicroTick(720, 0.035, 0.025);
+
+      if (unfoldStage.classList.contains("mode-candy")) {
+        unfoldStage.classList.add("is-unfolded");
+        return;
+      }
+
+      unfoldStage.classList.add("is-unfolding");
+      unfoldTimer = setTimeout(() => {
+        playMicroTick(560, 0.03, 0.02);
+        unfoldStage.classList.remove("is-unfolding");
+        unfoldStage.classList.add("is-unfolded");
+      }, 390);
+    }
+
+    document.querySelectorAll("[data-secret]").forEach((btn) => {
+      btn.addEventListener("click", () => openSecretItem(btn.dataset.secret, btn));
+    });
+    foldedPacket.addEventListener("click", triggerUnfoldReveal);
+    candyPacketView.addEventListener("click", triggerUnfoldReveal);
+
+    document.getElementById("duckCharmBtn").addEventListener("click", () => {
+      if (unfoldTimer) clearTimeout(unfoldTimer);
+      triggerHaptic("tick");
+      unfoldStage.classList.remove("is-unfolding", "mode-candy");
+      unfoldedArtImg.src = "assets/items/charm-duck.png";
+      unfoldedArtImg.style.filter = "";
+      unfoldStage.classList.add("open", "is-unfolded");
     });
 
-    // 笔袋里阿尔卑斯纸糖果 -> 展示剥开后纸巾实物，仅留六个句号
-    const candyPrankBtn = document.getElementById("candyPrankBtn");
-    const tissuePhotoOverlay = document.getElementById("tissuePhotoOverlay");
-    candyPrankBtn.addEventListener("click", () => {
-      triggerHaptic("heavy");
-      tissuePhotoOverlay.classList.add("open");
-    });
-    tissuePhotoOverlay.addEventListener("click", () => {
-      triggerHaptic("tick");
-      tissuePhotoOverlay.classList.remove("open");
+    unfoldStage.addEventListener("click", (e) => {
+      // ② 折叠状态时点外部关闭；④ 展开后轻触任意位置收起回到笔袋
+      if (e.target === unfoldStage || unfoldStage.classList.contains("is-unfolded")) {
+        if (unfoldTimer) clearTimeout(unfoldTimer);
+        triggerHaptic("tick");
+        unfoldStage.classList.remove("open", "is-unfolding", "is-unfolded", "mode-candy");
+      }
     });
 
     // --- 丝滑推进：弯腰看进桌下开口抽屉（桌斗） ---
