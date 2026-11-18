@@ -2079,10 +2079,10 @@
                 <div class="w-music-body" id="wMusicBody">
                   <div class="w-music-now">
                     <div class="w-music-art-row">
-                      <img class="w-music-art" src="assets/music/maybe-tomorrow.jpg" alt="专辑封面" />
+                      <img class="w-music-art" src="assets/music/how-dhruv.jpg" alt="专辑封面" />
                       <div class="w-music-meta">
-                        <div class="w-music-title" id="wTrackTitle">Maybe Tomorrow</div>
-                        <div class="w-music-sub" id="wTrackArtist">Awake For Days</div>
+                        <div class="w-music-title" id="wTrackTitle">How?</div>
+                        <div class="w-music-sub" id="wTrackArtist">Dhruv</div>
                       </div>
                     </div>
                     <div class="w-music-controls">
@@ -2409,10 +2409,8 @@
     const STORAGE_KEY = "jiayi19_plus1_config_v1";
 
     const DEFAULT_TRACKS = [
-      { title: "Maybe Tomorrow", artist: "Awake For Days", cover: "assets/music/maybe-tomorrow.jpg", audioUrl: "assets/music/maybe-tomorrow.m4a", notes: [261.63, 329.63, 392.00, 493.88], tempo: 660 },
       { title: "How?", artist: "Dhruv", cover: "assets/music/how-dhruv.jpg", audioUrl: "assets/music/how-dhruv.m4a", notes: [261.63, 329.63, 392.00, 493.88], tempo: 660 },
       { title: "Handful of Water", artist: "Sofía Valdés", cover: "assets/music/handful-of-water.jpg", audioUrl: "assets/music/handful-of-water.m4a", notes: [261.63, 329.63, 392.00, 493.88], tempo: 660 },
-      { title: "Speed of Light", artist: "Raphael Weinroth-Browne", cover: "assets/music/speed-of-light.jpg", audioUrl: "assets/music/speed-of-light.m4a", notes: [261.63, 329.63, 392.00, 493.88], tempo: 660 },
       { title: "Somebody New", artist: "Matt Wertz", cover: "assets/music/somebody-new.jpg", audioUrl: "assets/music/somebody-new.m4a", notes: [261.63, 329.63, 392.00, 493.88], tempo: 660 },
       { title: "All The Time", artist: "Bahamas", cover: "assets/music/all-the-time.jpg", audioUrl: "assets/music/all-the-time.m4a", notes: [261.63, 329.63, 392.00, 493.88], tempo: 660 },
       { title: "Who Knows", artist: "Daniel Caesar", cover: "assets/music/who-knows.jpg", audioUrl: "assets/music/who-knows.m4a", notes: [261.63, 329.63, 392.00, 493.88], tempo: 660 },
@@ -2443,7 +2441,7 @@
     let wechatHistory = DEFAULT_WECHAT_HISTORY.map((m) => ({ ...m }));
     let wechatReplyRules = DEFAULT_WECHAT_RULES.map((r) => ({ ...r }));
 
-    const LEGACY_TRACK_TITLES = new Set(["放学后的夕阳前奏", "晚风里的八音盒", "十九岁夜空的星尘", "给你的未完待续"]);
+    const LEGACY_TRACK_TITLES = new Set(["放学后的夕阳前奏", "晚风里的八音盒", "十九岁夜空的星尘", "给你的未完待续", "Maybe Tomorrow", "Speed of Light"]);
     try {
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
       if (saved) {

@@ -1,19 +1,6 @@
 // 自动生成的 Apple Watch 歌单数据（含本地封面与 AAC 音频路径）
 window.WATCH_CUSTOM_TRACKS = [
   {
-    "title": "Maybe Tomorrow",
-    "artist": "Awake For Days",
-    "cover": "assets/music/maybe-tomorrow.jpg",
-    "audioUrl": "assets/music/maybe-tomorrow.m4a",
-    "notes": [
-      261.63,
-      329.63,
-      392.0,
-      493.88
-    ],
-    "tempo": 660
-  },
-  {
     "title": "How?",
     "artist": "Dhruv",
     "cover": "assets/music/how-dhruv.jpg",
@@ -31,19 +18,6 @@ window.WATCH_CUSTOM_TRACKS = [
     "artist": "Sofía Valdés",
     "cover": "assets/music/handful-of-water.jpg",
     "audioUrl": "assets/music/handful-of-water.m4a",
-    "notes": [
-      261.63,
-      329.63,
-      392.0,
-      493.88
-    ],
-    "tempo": 660
-  },
-  {
-    "title": "Speed of Light",
-    "artist": "Raphael Weinroth-Browne",
-    "cover": "assets/music/speed-of-light.jpg",
-    "audioUrl": "assets/music/speed-of-light.m4a",
     "notes": [
       261.63,
       329.63,
