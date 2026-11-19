@@ -335,11 +335,14 @@
       background: radial-gradient(circle at 50% 45%, #f7f3ea 0%, #efe9da 72%, #e4dcc9 100%);
     }
 
-    body.is-awake .intro-overlay {
+    body.is-awake .intro-overlay,
+    body.is-awake .intro-overlay * {
       opacity: 0;
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
+    body.is-awake .intro-overlay {
       transform: scale(1.04);
-      visibility: hidden;
-      pointer-events: none;
     }
 
     /* 手账细微纸张纹理与彩旗挂饰 */
@@ -3004,8 +3007,14 @@
       ensureAudio();
       triggerHaptic("heavy", true);
       SFX.enterClassroom();
+      introOverlay.style.pointerEvents = "none";
+      bdayStage.style.pointerEvents = "none";
       document.body.classList.add("is-awake");
-      setTimeout(() => { confettiRunning = false; }, 1500);
+      setTimeout(() => {
+        bdayStage.classList.remove("active");
+        introOverlay.style.display = "none";
+        confettiRunning = false;
+      }, 1050);
     });
 
     const modalBackdrop = document.getElementById("modalBackdrop");
