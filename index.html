@@ -1819,7 +1819,7 @@
       <div class="bday-prompt-area">
         <div class="bday-prompt-main" id="bdayPromptMain">闭上眼睛，许个愿吧</div>
         <div class="bday-prompt-sub" id="bdayPromptSub">按住屏幕，许好愿再松开</div>
-        <button class="enter-desk-btn" id="enterDeskBtn" type="button">看看桌上的礼物 →</button>
+        <button class="enter-desk-btn" id="enterDeskBtn" type="button">回到我们相遇的地方 →</button>
       </div>
     </div>
 
@@ -2350,45 +2350,245 @@
 
   <script>
     // ==========================================================
-    // 0. 震动与音频反馈引擎
+    // 0. 震动与拟物物理音效反馈引擎 (Web Audio + iOS Taptic)
     // ==========================================================
     const hapticLabel = document.getElementById("hapticLabel");
     const hapticSwitch = document.getElementById("hapticSwitch");
     let audioCtx = null;
+    let cachedNoiseBuf = null;
 
     function ensureAudio() {
       if (!audioCtx) {
         const Ctx = window.AudioContext || window.webkitAudioContext;
         if (Ctx) audioCtx = new Ctx();
       }
-      if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+      if (audioCtx && audioCtx.state === "suspended") audioCtx.resume().catch(() => {});
     }
+
+    function getNoiseBuffer() {
+      if (!audioCtx) return null;
+      if (cachedNoiseBuf && cachedNoiseBuf.sampleRate === audioCtx.sampleRate) return cachedNoiseBuf;
+      const len = Math.floor(audioCtx.sampleRate * 1.2);
+      const buf = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
+      const data = buf.getChannelData(0);
+      for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+      cachedNoiseBuf = buf;
+      return buf;
+    }
+
+    function playFilteredNoise(filterType, fStart, fEnd, dur, vol, delay = 0, q = 1.2) {
+      if (!audioCtx) return;
+      const buf = getNoiseBuffer();
+      if (!buf) return;
+      const t0 = audioCtx.currentTime + delay;
+      const src = audioCtx.createBufferSource();
+      src.buffer = buf;
+      const filt = audioCtx.createBiquadFilter();
+      filt.type = filterType;
+      filt.Q.setValueAtTime(q, t0);
+      filt.frequency.setValueAtTime(Math.max(40, fStart), t0);
+      filt.frequency.exponentialRampToValueAtTime(Math.max(40, fEnd), t0 + dur);
+      const gain = audioCtx.createGain();
+      gain.gain.setValueAtTime(0.0001, t0);
+      gain.gain.linearRampToValueAtTime(vol, t0 + Math.min(0.03, dur * 0.22));
+      gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+      src.connect(filt);
+      filt.connect(gain);
+      gain.connect(audioCtx.destination);
+      src.start(t0);
+      src.stop(t0 + dur + 0.02);
+    }
+
+    function playTone(freqStart, freqEnd, dur, vol, type = "sine", delay = 0) {
+      if (!audioCtx) return;
+      const t0 = audioCtx.currentTime + delay;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(Math.max(30, freqStart), t0);
+      if (freqEnd !== freqStart) {
+        osc.frequency.exponentialRampToValueAtTime(Math.max(30, freqEnd), t0 + dur);
+      }
+      gain.gain.setValueAtTime(0.0001, t0);
+      gain.gain.linearRampToValueAtTime(vol, t0 + Math.min(0.025, dur * 0.2));
+      gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(t0);
+      osc.stop(t0 + dur + 0.02);
+    }
+
+    const SFX = {
+      ribbonUntie() {
+        try {
+          ensureAudio();
+          playFilteredNoise("bandpass", 1500, 3100, 0.22, 0.06, 0, 1.8);
+          playFilteredNoise("bandpass", 2200, 1100, 0.14, 0.04, 0.11, 1.4);
+          playTone(523.25, 523.25, 0.55, 0.055, "sine", 0.04);
+          playTone(783.99, 783.99, 0.65, 0.05, "triangle", 0.14);
+        } catch (_) {}
+      },
+      eyesClose() {
+        try {
+          ensureAudio();
+          playFilteredNoise("lowpass", 920, 320, 0.34, 0.05, 0, 0.8);
+          [174.61, 261.63, 329.63].forEach((f, i) => playTone(f, f, 0.52, 0.028, "sine", i * 0.03));
+        } catch (_) {}
+      },
+      eyesOpen() {
+        try {
+          ensureAudio();
+          playFilteredNoise("highpass", 1800, 3200, 0.16, 0.025, 0, 0.9);
+          playTone(659.25, 659.25, 0.42, 0.045, "sine", 0);
+          playTone(880.00, 880.00, 0.55, 0.045, "sine", 0.09);
+        } catch (_) {}
+      },
+      blowCandle() {
+        try {
+          ensureAudio();
+          // 吹气呼风声 + 礼花彩带轻爆碎响
+          playFilteredNoise("bandpass", 360, 1180, 0.22, 0.11, 0, 1.1);
+          playFilteredNoise("bandpass", 1180, 260, 0.28, 0.09, 0.14, 0.9);
+          playTone(170, 62, 0.12, 0.08, "sine", 0.12);
+          [1500, 2200, 2900, 1950, 2650].forEach((f, i) => {
+            playFilteredNoise("bandpass", f, f * 0.8, 0.055, 0.045, 0.12 + i * 0.036, 2.2);
+          });
+        } catch (_) {}
+      },
+      enterClassroom() {
+        try {
+          ensureAudio();
+          playFilteredNoise("lowpass", 650, 2100, 0.45, 0.045, 0, 0.7);
+          [261.63, 329.63, 392.00, 493.88, 587.33].forEach((f, i) => {
+            playTone(f, f, 1.1, 0.035, "sine", i * 0.065);
+          });
+        } catch (_) {}
+      },
+      zipper(opening = true) {
+        try {
+          ensureAudio();
+          const count = 13;
+          playFilteredNoise("bandpass", opening ? 1400 : 2400, opening ? 2800 : 1200, 0.24, 0.04, 0, 1.5);
+          for (let i = 0; i < count; i++) {
+            const frac = i / (count - 1);
+            const f = opening ? (1750 + frac * 900) : (2600 - frac * 900);
+            playTone(f, f * 0.88, 0.015, 0.022, "triangle", i * 0.016);
+          }
+        } catch (_) {}
+      },
+      paperPick() {
+        try {
+          ensureAudio();
+          playFilteredNoise("bandpass", 2100, 3200, 0.095, 0.055, 0, 1.4);
+          playTone(320, 220, 0.035, 0.02, "sine", 0);
+        } catch (_) {}
+      },
+      paperUnfold() {
+        try {
+          ensureAudio();
+          playFilteredNoise("bandpass", 1700, 3400, 0.15, 0.075, 0, 1.2);
+          playTone(280, 140, 0.045, 0.035, "triangle", 0.09);
+          playFilteredNoise("bandpass", 2600, 1500, 0.18, 0.065, 0.24, 1.1);
+        } catch (_) {}
+      },
+      candyCrinkle(unwrapping = false) {
+        try {
+          ensureAudio();
+          [0, 0.042, 0.088, 0.135].forEach((d, idx) => {
+            playFilteredNoise("highpass", 3400 + idx * 350, 4800, 0.048, 0.06, d, 1.0);
+          });
+          if (unwrapping) {
+            playTone(310, 195, 0.14, 0.055, "sine", 0.15);
+            playTone(220, 340, 0.11, 0.04, "sine", 0.27);
+          }
+        } catch (_) {}
+      },
+      charmBoing() {
+        try {
+          ensureAudio();
+          playTone(540, 690, 0.09, 0.045, "sine", 0);
+          playTone(720, 860, 0.11, 0.04, "sine", 0.07);
+        } catch (_) {}
+      },
+      drawerSlide(opening = true) {
+        try {
+          ensureAudio();
+          playFilteredNoise("lowpass", opening ? 240 : 420, opening ? 480 : 180, 0.28, 0.095, 0, 0.9);
+          playFilteredNoise("bandpass", 780, 520, 0.22, 0.035, 0.02, 1.3);
+          playTone(138, 62, 0.09, 0.075, "sine", 0.22);
+        } catch (_) {}
+      },
+      polaroidDeal() {
+        try {
+          ensureAudio();
+          [0, 0.075, 0.15, 0.225].forEach((d, i) => {
+            playFilteredNoise("bandpass", 2000 + i * 240, 1400, 0.065, 0.055, d, 1.6);
+          });
+        } catch (_) {}
+      },
+      polaroidFlip() {
+        try {
+          ensureAudio();
+          playFilteredNoise("bandpass", 1900, 750, 0.085, 0.065, 0, 1.3);
+          playTone(260, 130, 0.045, 0.04, "triangle", 0.01);
+        } catch (_) {}
+      },
+      polaroidDevelop() {
+        try {
+          ensureAudio();
+          [440.0, 554.37, 659.25].forEach((f, i) => playTone(f, f, 0.75, 0.02, "sine", i * 0.09));
+        } catch (_) {}
+      },
+      notebookFlip(dir = 1) {
+        try {
+          ensureAudio();
+          playFilteredNoise("bandpass", dir > 0 ? 1550 : 2850, dir > 0 ? 2950 : 1450, 0.18, 0.07, 0, 1.2);
+          playTone(dir > 0 ? 680 : 560, 420, 0.03, 0.025, "triangle", 0.03);
+        } catch (_) {}
+      },
+      watchCrownTick() {
+        try {
+          ensureAudio();
+          playTone(2400, 1100, 0.014, 0.028, "triangle", 0);
+          playTone(880, 540, 0.016, 0.018, "sine", 0);
+        } catch (_) {}
+      },
+      watchClick() {
+        try {
+          ensureAudio();
+          playTone(1180, 740, 0.024, 0.032, "sine", 0);
+        } catch (_) {}
+      },
+      wechatSend() {
+        try {
+          ensureAudio();
+          playTone(587.33, 880.0, 0.08, 0.048, "sine", 0);
+        } catch (_) {}
+      },
+      wechatReceive() {
+        try {
+          ensureAudio();
+          playTone(783.99, 783.99, 0.14, 0.045, "sine", 0);
+          playTone(1046.50, 1046.50, 0.22, 0.05, "sine", 0.085);
+        } catch (_) {}
+      }
+    };
 
     function playMicroTick(freq = 1200, dur = 0.015, vol = 0.025) {
       if (!audioCtx) return;
       try {
-        const now = audioCtx.currentTime;
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = "triangle";
-        osc.frequency.setValueAtTime(freq, now);
-        gain.gain.setValueAtTime(vol, now);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start(now);
-        osc.stop(now + dur + 0.005);
+        playTone(freq, freq, dur, vol, "triangle", 0);
       } catch (_) {}
     }
 
-    function triggerHaptic(kind = "tick") {
+    function triggerHaptic(kind = "tick", silent = false) {
       try {
         if (hapticLabel) hapticLabel.click();
         else if (hapticSwitch) hapticSwitch.click();
       } catch (_) {}
       if (navigator.vibrate) navigator.vibrate(kind === "heavy" ? [14, 24, 18] : 7);
-      if (audioCtx && audioCtx.state === "running") {
-        playMicroTick(kind === "heavy" ? 800 : 1480, 0.014, 0.02);
+      if (!silent && audioCtx && audioCtx.state === "running") {
+        playMicroTick(kind === "heavy" ? 800 : 1480, 0.014, 0.016);
       }
     }
 
@@ -2569,7 +2769,7 @@
         const row = document.createElement("div");
         row.className = `w-track-row${i === trackIdx ? " active" : ""}`;
         row.innerHTML = `<img src="${t.cover || "assets/place-03.jpg"}" alt="" /><div class="w-track-row-meta"><div class="w-track-row-title">${t.title}</div><div class="w-track-row-artist">${t.artist || "To +1 · 19"}</div></div><span style="font-size:10px;color:#fa2d48;">${i === trackIdx && isPlaying ? "♫" : ""}</span>`;
-        row.addEventListener("click", () => { triggerHaptic("tick"); trackIdx = i; noteStep = 0; showMusicList = false; startMusic(); });
+        row.addEventListener("click", () => { triggerHaptic("tick", true); SFX.watchClick(); trackIdx = i; noteStep = 0; showMusicList = false; startMusic(); });
         listEl.appendChild(row);
       });
     }
@@ -2710,10 +2910,10 @@
       if (introPhase !== "gift") return;
       introPhase = "transition";
       ensureAudio();
-      triggerHaptic("heavy");
-      playMusicNote(523.25);
-      setTimeout(() => playMusicNote(659.25), 110);
+      triggerHaptic("heavy", true);
+      SFX.ribbonUntie();
       giftOpenBtn.classList.add("is-untying");
+      bdayPromptSub.style.display = "";
       setTimeout(() => {
         stageGift.classList.remove("active");
         introOverlay.classList.add("is-paper-bg");
@@ -2725,10 +2925,11 @@
     function openEyesToBlow() {
       if (introPhase !== "closing") return;
       eyelidVeil.classList.remove("closed");
-      triggerHaptic("tick");
-      playMusicNote(440.00);
+      triggerHaptic("tick", true);
+      SFX.eyesOpen();
       bdayPromptMain.textContent = "许好了！现在，吹蜡烛";
       bdayPromptSub.textContent = "轻点蜡烛吹灭它";
+      bdayPromptSub.style.display = "";
       setTimeout(() => {
         if (introPhase === "closing") introPhase = "blow";
       }, 280);
@@ -2738,13 +2939,15 @@
       if (introPhase !== "blow") return;
       introPhase = "celebrate";
       celebrateAtMs = Date.now();
-      triggerHaptic("heavy");
+      triggerHaptic("heavy", true);
+      SFX.blowCandle();
       bdayCakeWrap.classList.add("is-blown");
       bdayStage.classList.add("is-celebrating");
-      bdayPromptMain.textContent = "+1，十九岁生日快乐";
-      bdayPromptSub.textContent = "从今天起，每个生日我都陪你过。";
+      bdayPromptMain.textContent = "十九岁生日快乐";
+      bdayPromptSub.textContent = "";
+      bdayPromptSub.style.display = "none";
       launchIntroConfetti();
-      playBirthdayPrelude();
+      setTimeout(playBirthdayPrelude, 220);
     }
 
     bdayStage.addEventListener("contextmenu", (e) => e.preventDefault());
@@ -2754,7 +2957,8 @@
       if (e.target.closest("#enterDeskBtn")) return;
       if (introPhase === "wish") {
         ensureAudio();
-        triggerHaptic("tick");
+        triggerHaptic("tick", true);
+        SFX.eyesClose();
         introPhase = "closing";
         holdStartMs = Date.now();
         clearTimeout(closeHoldTimer);
@@ -2781,7 +2985,8 @@
       if (e.target.closest("#enterDeskBtn")) return;
       if (introPhase === "wish") {
         ensureAudio();
-        triggerHaptic("tick");
+        triggerHaptic("tick", true);
+        SFX.eyesClose();
         introPhase = "closing";
         holdStartMs = Date.now();
         eyelidVeil.classList.add("closed");
@@ -2797,10 +3002,8 @@
       if (introPhase !== "celebrate" || Date.now() - celebrateAtMs < 650) return;
       introPhase = "done";
       ensureAudio();
-      triggerHaptic("heavy");
-      playMusicNote(523.25);
-      setTimeout(() => playMusicNote(659.25), 110);
-      setTimeout(() => playMusicNote(783.99), 220);
+      triggerHaptic("heavy", true);
+      SFX.enterClassroom();
       document.body.classList.add("is-awake");
       setTimeout(() => { confettiRunning = false; }, 1500);
     });
@@ -2808,7 +3011,9 @@
     const modalBackdrop = document.getElementById("modalBackdrop");
 
     function openItemModal(modalId, key) {
-      triggerHaptic("tick");
+      triggerHaptic("tick", true);
+      if (modalId === "modalNotebook") SFX.paperPick();
+      else SFX.watchClick();
       document.querySelectorAll(".modal-panel").forEach((p) => p.classList.remove("active"));
       const target = document.getElementById(modalId);
       if (!target) return;
@@ -2820,7 +3025,10 @@
     }
 
     function closeItemModal() {
-      triggerHaptic("tick");
+      const nbOpen = document.getElementById("modalNotebook")?.classList.contains("active");
+      triggerHaptic("tick", true);
+      if (nbOpen) SFX.paperPick();
+      else SFX.watchClick();
       modalBackdrop.classList.remove("active");
       document.body.classList.remove("modal-open");
       document.querySelectorAll(".modal-panel").forEach((p) => p.classList.remove("active"));
@@ -2835,13 +3043,15 @@
     // --- 丝滑推进：真实看向蓝色笔袋内部 ---
     const pouchScene = document.getElementById("pouchScene");
     document.getElementById("openPouchBtn").addEventListener("click", () => {
-      triggerHaptic("heavy");
+      triggerHaptic("heavy", true);
+      SFX.zipper(true);
       document.querySelector(".hs-pencil").classList.add("is-visited");
       document.body.classList.add("view-pouch");
       pouchScene.classList.add("is-active");
     });
     document.getElementById("closePouchBtn").addEventListener("click", () => {
-      triggerHaptic("tick");
+      triggerHaptic("tick", true);
+      SFX.zipper(false);
       document.body.classList.remove("view-pouch");
       pouchScene.classList.remove("is-active");
     });
@@ -2872,14 +3082,16 @@
       foldedPacket.className = "folded-packet";
 
       if (key === "candy") {
-        triggerHaptic("tick");
+        triggerHaptic("tick", true);
+        SFX.candyCrinkle(false);
         unfoldStage.classList.add("mode-candy", "open");
         return;
       }
 
       const item = SECRET_NOTES[key];
       if (!item) return;
-      triggerHaptic("tick");
+      triggerHaptic("tick", true);
+      SFX.paperPick();
       foldedPacket.classList.add(item.tone);
       foldBasePreview.src = item.src;
       foldFlapPreview.src = item.src;
@@ -2893,17 +3105,17 @@
     function triggerUnfoldReveal(e) {
       e.stopPropagation();
       if (unfoldStage.classList.contains("is-unfolding") || unfoldStage.classList.contains("is-unfolded")) return;
-      triggerHaptic("heavy");
-      playMicroTick(720, 0.035, 0.025);
+      triggerHaptic("heavy", true);
 
       if (unfoldStage.classList.contains("mode-candy")) {
+        SFX.candyCrinkle(true);
         unfoldStage.classList.add("is-unfolded");
         return;
       }
 
+      SFX.paperUnfold();
       unfoldStage.classList.add("is-unfolding");
       unfoldTimer = setTimeout(() => {
-        playMicroTick(560, 0.03, 0.02);
         unfoldStage.classList.remove("is-unfolding");
         unfoldStage.classList.add("is-unfolded");
       }, 390);
@@ -2917,7 +3129,8 @@
 
     document.getElementById("duckCharmBtn").addEventListener("click", () => {
       if (unfoldTimer) clearTimeout(unfoldTimer);
-      triggerHaptic("tick");
+      triggerHaptic("tick", true);
+      SFX.charmBoing();
       unfoldStage.classList.remove("is-unfolding", "mode-candy");
       unfoldedArtImg.src = "assets/items/charm-duck.png";
       unfoldedArtImg.style.filter = "";
@@ -2928,7 +3141,8 @@
       // ② 折叠状态时点外部关闭；④ 展开后轻触任意位置收起回到笔袋
       if (e.target === unfoldStage || unfoldStage.classList.contains("is-unfolded")) {
         if (unfoldTimer) clearTimeout(unfoldTimer);
-        triggerHaptic("tick");
+        triggerHaptic("tick", true);
+        SFX.paperPick();
         unfoldStage.classList.remove("open", "is-unfolding", "is-unfolded", "mode-candy");
       }
     });
@@ -2936,12 +3150,14 @@
     // --- 丝滑推进：弯腰看进桌下开口抽屉（桌斗） ---
     const drawerScene = document.getElementById("drawerScene");
     document.getElementById("openDrawerBtn").addEventListener("click", () => {
-      triggerHaptic("heavy");
+      triggerHaptic("heavy", true);
+      SFX.drawerSlide(true);
       document.body.classList.add("view-drawer");
       drawerScene.classList.add("is-active");
     });
     document.getElementById("closeDrawerBtn").addEventListener("click", () => {
-      triggerHaptic("tick");
+      triggerHaptic("tick", true);
+      SFX.drawerSlide(false);
       document.body.classList.remove("view-drawer");
       drawerScene.classList.remove("is-active");
     });
@@ -3002,11 +3218,12 @@
     }
 
     document.getElementById("openPolStageBtn").addEventListener("click", () => {
-      triggerHaptic("heavy");
+      triggerHaptic("heavy", true);
+      SFX.polaroidDeal();
       drawerPolStage.classList.add("open");
       resetPolaroidsToStack();
-      polTimers.push(setTimeout(() => { triggerHaptic("tick"); scatterPolaroids(); }, 340));
-      polTimers.push(setTimeout(() => { triggerHaptic("tick"); gridPolaroids(); }, 1050));
+      polTimers.push(setTimeout(() => { triggerHaptic("tick", true); SFX.polaroidDeal(); scatterPolaroids(); }, 340));
+      polTimers.push(setTimeout(() => { triggerHaptic("tick", true); SFX.paperPick(); gridPolaroids(); }, 1050));
     });
 
     function closePolInspectIfActive() {
@@ -3018,7 +3235,8 @@
     }
 
     document.getElementById("closePolStageBtn").addEventListener("click", () => {
-      triggerHaptic("tick");
+      triggerHaptic("tick", true);
+      SFX.polaroidDeal();
       polTimers.forEach(clearTimeout);
       polCanvas.classList.remove("has-inspecting");
       drawerPolStage.classList.remove("open");
@@ -3026,17 +3244,24 @@
 
     drawerPolStage.addEventListener("click", (e) => {
       if (!e.target.closest(".pol-card-slot") && e.target.id !== "closePolStageBtn") {
-        if (closePolInspectIfActive()) triggerHaptic("tick");
+        if (closePolInspectIfActive()) {
+          triggerHaptic("tick", true);
+          SFX.polaroidFlip();
+        }
       }
     });
 
     polSlots.forEach((slot) => {
       slot.addEventListener("click", (e) => {
         e.stopPropagation();
-        triggerHaptic("heavy");
+        triggerHaptic("heavy", true);
+        SFX.polaroidFlip();
         if (!slot.classList.contains("is-face-up")) {
           slot.classList.add("is-face-up");
-          polTimers.push(setTimeout(() => slot.classList.add("is-developing"), 320));
+          polTimers.push(setTimeout(() => {
+            slot.classList.add("is-developing");
+            SFX.polaroidDevelop();
+          }, 320));
           polTimers.push(setTimeout(() => slot.classList.add("has-developed"), 3400));
         } else if (slot.classList.contains("has-developed")) {
           const willShowBack = !slot.classList.contains("show-writing");
@@ -3064,7 +3289,8 @@
       const target = document.getElementById(screenId);
       if (target) target.classList.add("active");
       if (screenId === "wScreenFace") animateWatchComplications();
-      triggerHaptic("tick");
+      triggerHaptic("tick", true);
+      SFX.watchClick();
     }
 
     (function initAnalogWatchDial() {
@@ -3142,7 +3368,8 @@
     function handleCrownStep(dir) {
       crownBgPos += dir * 6;
       crownEl.style.backgroundPosition = `0 ${crownBgPos}px`;
-      triggerHaptic("tick");
+      triggerHaptic("tick", true);
+      SFX.watchCrownTick();
       if (currentWatchScreen === "wScreenHome") {
         focusedAppIndex = (focusedAppIndex + dir + appBtns.length) % appBtns.length;
         appBtns.forEach((b, i) => b.classList.toggle("focused", i === focusedAppIndex));
@@ -3181,14 +3408,14 @@
     const wPhotoViewer = document.getElementById("wPhotoViewer");
     const wViewerImg = document.getElementById("wViewerImg");
     document.querySelectorAll(".w-photo-thumb").forEach((img) => {
-      img.addEventListener("click", () => { triggerHaptic("tick"); wViewerImg.src = img.src; wPhotoViewer.classList.add("active"); });
+      img.addEventListener("click", () => { triggerHaptic("tick", true); SFX.watchClick(); wViewerImg.src = img.src; wPhotoViewer.classList.add("active"); });
     });
-    document.getElementById("wClosePhotoBtn").addEventListener("click", () => { triggerHaptic("tick"); wPhotoViewer.classList.remove("active"); });
+    document.getElementById("wClosePhotoBtn").addEventListener("click", () => { triggerHaptic("tick", true); SFX.watchClick(); wPhotoViewer.classList.remove("active"); });
 
-    document.getElementById("wPlaylistToggleBtn").addEventListener("click", () => { triggerHaptic("tick"); showMusicList = !showMusicList; syncMusicUI(); });
-    document.getElementById("wPlayBtn").addEventListener("click", () => { triggerHaptic("heavy"); if (isPlaying) pauseMusic(); else startMusic(); });
-    document.getElementById("wPrevBtn").addEventListener("click", () => { triggerHaptic("tick"); trackIdx = (trackIdx - 1 + tracks.length) % tracks.length; noteStep = 0; startMusic(); });
-    document.getElementById("wNextBtn").addEventListener("click", () => { triggerHaptic("tick"); trackIdx = (trackIdx + 1) % tracks.length; noteStep = 0; startMusic(); });
+    document.getElementById("wPlaylistToggleBtn").addEventListener("click", () => { triggerHaptic("tick", true); SFX.watchClick(); showMusicList = !showMusicList; syncMusicUI(); });
+    document.getElementById("wPlayBtn").addEventListener("click", () => { triggerHaptic("heavy", true); SFX.watchClick(); if (isPlaying) pauseMusic(); else startMusic(); });
+    document.getElementById("wPrevBtn").addEventListener("click", () => { triggerHaptic("tick", true); SFX.watchClick(); trackIdx = (trackIdx - 1 + tracks.length) % tracks.length; noteStep = 0; startMusic(); });
+    document.getElementById("wNextBtn").addEventListener("click", () => { triggerHaptic("tick", true); SFX.watchClick(); trackIdx = (trackIdx + 1) % tracks.length; noteStep = 0; startMusic(); });
 
     const wcScroll = document.getElementById("wWechatScroll");
     function renderWechatMessages() {
@@ -3216,7 +3443,8 @@
     function sendPlus1WechatMessage(text) {
       const clean = text.trim();
       if (!clean) return;
-      triggerHaptic("heavy");
+      triggerHaptic("heavy", true);
+      SFX.wechatSend();
       wechatHistory.push({ role: "plus1", text: clean });
       saveCustomConfig();
       renderWechatMessages();
@@ -3233,8 +3461,8 @@
         wechatHistory.push({ role: "me", text: replyText });
         saveCustomConfig();
         renderWechatMessages();
-        triggerHaptic("tick");
-        playMicroTick(980, 0.04, 0.025);
+        triggerHaptic("tick", true);
+        SFX.wechatReceive();
       }, 780);
     }
 
@@ -3244,7 +3472,8 @@
     const wcComposeBar = document.getElementById("wcComposeBar");
     const wcCustomInput = document.getElementById("wcCustomInput");
     document.getElementById("wcToggleInputBtn").addEventListener("click", () => {
-      triggerHaptic("tick");
+      triggerHaptic("tick", true);
+      SFX.watchClick();
       wcComposeBar.classList.toggle("open");
       if (wcComposeBar.classList.contains("open")) wcCustomInput.focus();
     });
@@ -3267,7 +3496,7 @@
       importRulesInput.value = wechatReplyRules.map((r) => `${r.keywords.join(",")} => ${r.reply}`).join("\n");
     }
 
-    document.getElementById("openImportBtn").addEventListener("click", () => { triggerHaptic("tick"); populateImportFields(); importDrawer.classList.add("open"); });
+    document.getElementById("openImportBtn").addEventListener("click", () => { triggerHaptic("tick", true); SFX.watchClick(); populateImportFields(); importDrawer.classList.add("open"); });
     document.getElementById("closeImportBtn").addEventListener("click", () => importDrawer.classList.remove("open"));
     document.querySelectorAll(".import-tab").forEach((tab) => {
       tab.addEventListener("click", () => {
@@ -3287,7 +3516,8 @@
     });
 
     document.getElementById("applyImportBtn").addEventListener("click", () => {
-      triggerHaptic("heavy");
+      triggerHaptic("heavy", true);
+      SFX.watchClick();
       const trackLines = importTracksInput.value.split(/\n+/).map((s) => s.trim()).filter(Boolean);
       if (trackLines.length) {
         tracks = trackLines.map((line, i) => {
@@ -3373,9 +3603,10 @@
 
     function updateNotebookPage(newIdx) {
       if (newIdx < 0 || newIdx >= nbPages.length) return;
+      const dir = newIdx > currentNbPage ? 1 : -1;
       currentNbPage = newIdx;
-      triggerHaptic("tick");
-      playMicroTick(640, 0.03, 0.018);
+      triggerHaptic("tick", true);
+      SFX.notebookFlip(dir);
       nbPages.forEach((pg, i) => {
         pg.classList.remove("is-current", "is-flipped-up", "is-waiting-down");
         if (i < currentNbPage) pg.classList.add("is-flipped-up");
